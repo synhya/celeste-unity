@@ -17,6 +17,7 @@ public class Classic
     private int start_game_flash;
     private bool has_dashed;
     private bool has_key;
+    private int shake;
 
     private void title_screen()
     {
@@ -32,7 +33,10 @@ public class Classic
 
     #region objects
 
-
+    class player : ClassicObject
+    {
+        
+    }
 
     class platform : ClassicObject
     {
@@ -113,8 +117,34 @@ public class Classic
     
     private T init_object<T>(T obj, float x, float y, int? tile = null) where T : ClassicObject
     {
+        objects.Add(obj);
+        if (tile.HasValue)
+            obj.spr = tile.Value;
+        obj.x = (int)x;
+        obj.y = (int)y;
+        obj.init(this, E);
 
-        return null;
+        return obj;
+    }
+
+    private void destroy_object(ClassicObject obj)
+    {
+        var index = objects.IndexOf(obj);
+        if (index >= 0)
+            objects[index] = null; 
+    }
+
+    private void kill_player(player obj)
+    {
+        deaths++;
+        shake = 10;
+        destroy_object(obj);
+
+        for (var dir = 0; dir <= 7; dir++)
+        {
+            var angle = (dir / 8f);
+            // show particles
+        }
     }
 
     #endregion

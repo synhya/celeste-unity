@@ -1,5 +1,6 @@
 # Portfolio
-Platformer based on Celeste
+Platformer based on Celeste   
+[8BIT MINIGAME](https://maddymakesgamesinc.itch.io/celesteclassic)
 
 ## Referenced Assets 
 - [Pixel Art GUI Elements](https://mounirtohami.itch.io/pixel-art-gui-elements)

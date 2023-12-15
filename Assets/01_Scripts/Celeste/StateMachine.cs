@@ -31,7 +31,7 @@ public class StateMachine : MonoBehaviour
         public IEnumerator coroutine;
     }
     
-    public static StateMachine AttachStateMachine(GameObject gameObject, int capacity = -1)
+    public static StateMachine AttachStateMachine(GameObject gameObject, int? capacity = null)
     {
         var newStateMachine = gameObject.AddComponent<StateMachine>();
         newStateMachine.hideFlags = HideFlags.HideInInspector;
@@ -45,9 +45,9 @@ public class StateMachine : MonoBehaviour
     /// https://www.dotnetperls.com/capacity
     /// </summary>
     /// <param name="capacity"></param>
-    private void Initialize(int capacity = -1)
+    private void Initialize(int? capacity)
     {
-        stateDict = capacity > 0 ? new Dictionary<int, StateActions>(capacity) : 
+        stateDict = capacity.HasValue ? new Dictionary<int, StateActions>(capacity.Value) : 
             new Dictionary<int, StateActions>();
     }
 
