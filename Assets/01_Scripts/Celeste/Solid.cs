@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Solid : MonoBehaviour
+public class Solid : Entity
 {
     private float xRemainder;
     private float yRemainder;
@@ -12,7 +12,7 @@ public class Solid : MonoBehaviour
     
     public float Left { get; set; }
     public float Right { get; set; }
-    
+
     public void Move(float x, float y)
     {
         xRemainder += x;

@@ -6,5 +6,6 @@ Platformer based on Celeste
 - [Red Hood](https://legnops.itch.io/red-hood-character)
 - [fantasy icons pack](https://shikashipx.itch.io/shikashis-fantasy-icons-pack)
 
-## Referenced Script
+## Articles And Scripts
 - [CelestePlayer](https://github.com/NoelFB/Celeste/tree/master/Source/Player)
+- [Tiles](https://aran.ink/posts/celeste-tilesets)
