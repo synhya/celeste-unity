@@ -1,22 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
+using UnityEngine.Tilemaps;
 
 
 /// <summary>
 /// class Classic
 /// </summary>
-public class Game : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
-    public static Game G =>
-        (instance ??= (new GameObject("Manager")).AddComponent<Game>());
-    private static Game instance = null;
-    
+    public static GameManager G =>
+        (instance ??= (new GameObject("Manager")).AddComponent<GameManager>());
+    private static GameManager instance = null;
+
     /// <summary>
     /// entities in current room
     /// </summary>
-    public static List<Entity> Entities => G.entities;
-    private List<Entity> entities;
+    public List<Entity> Entities;
+
+    public TilemapCollider2D spikeCollider;
+    
+    public bool PausePlayer => pausePlayer;
+    private bool pausePlayer = false;
+    
 
     private void Awake()
     {
@@ -29,30 +36,42 @@ public class Game : MonoBehaviour
         DontDestroyOnLoad(this);
         
         // init 
-        entities = new List<Entity>();
+        Entities = new List<Entity>();
     }
 
 
     private T InitEntity<T>(T entity, float x, float y, int? tile = null) 
         where T : Entity
     {
-        entities.Add(entity);
+        Entities.Add(entity);
         if (tile.HasValue)
             entity.SpriteIdx = tile.Value;
         entity.Position.x = (int)x;
         entity.Position.y = (int)y;
-        entity.Init();
+        entity.Init(G);
 
         return entity;
     }
 
     private void DestroyEntity<T>(T entity) where T : Entity
     {
-        var index = entities.IndexOf(entity);
+        var index = Entities.IndexOf(entity);
         if (index >= 0)
-            entities[index] = null; // remove from room.
+            Entities[index] = null; // remove from room.
         Destroy(entity.gameObject);
     }
+
+    public void KillPlayer(Player player)
+    {
+        DestroyEntity(player);
+    }
+    
+    public bool SpikesAt(Collider2D col, Vector2 spd)
+    {
+        return col.IsTouching(spikeCollider);
+    }
+    
+    
 }
 
 

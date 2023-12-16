@@ -15,9 +15,9 @@ public class Actor : Entity
     public float Right { get; set; }
 
     
-    public override void Init()
+    public override void Init(GameManager G)
     {
-        base.Init();
+        base.Init(G);
 
         solids = false;
         Level.AllActors.Add(this);
@@ -39,7 +39,7 @@ public class Actor : Entity
                 
                 // get the solids besides actor.. how?
                 
-                if(!CollideAt(solids, Position + new Vector2(sign, 0)))
+                if(!CollideAt(Position + new Vector2(sign, 0)))
                 {
                     Position.x += sign;
                     move -= sign;
