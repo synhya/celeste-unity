@@ -9,17 +9,17 @@ using UnityEngine;
 public class Actor : Entity
 {
     private float xRemainder;
-    public Vector2 Position;
-    List<Solid> solids;
+    
     
     public float Left { get; set; }
     public float Right { get; set; }
 
     
-    protected override void Start()
+    public override void Init()
     {
-        base.Start();
-        
+        base.Init();
+
+        solids = false;
         Level.AllActors.Add(this);
     }
 
@@ -53,17 +53,9 @@ public class Actor : Entity
             }
         }
     }
-    private bool CollideAt(List<Solid> solids, Vector2 position)
-    {
-        return false;
-    }
 
     public virtual bool IsRiding(Solid[] solid) { return true; }
     public virtual void Squish() { }
-
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-        
-    }
+    
 }
 

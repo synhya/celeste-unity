@@ -41,9 +41,9 @@ public class Player : Actor
 
     #endregion
 
-    protected override void Start()
+    public override void Init()
     {
-        base.Start();
+        base.Init();
         
         StateMachine = StateMachine.AttachStateMachine(this.gameObject, 23);
         

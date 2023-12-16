@@ -17,7 +17,6 @@ public class Classic
     private int start_game_flash;
     private bool has_dashed;
     private bool has_key;
-    private int shake;
 
     private void title_screen()
     {
@@ -33,14 +32,38 @@ public class Classic
 
     #region objects
 
-    class player : ClassicObject
+
+    /// <summary>
+    /// moving object (not solid)
+    /// </summary>
+    class platform : ClassicObject
+    {
+        public float dir;
+        private float last;
+
+        public override void init(Classic g, Emulator e)
+        {
+            base.init(g, e);
+            x -= 4;
+            solids = false;
+            hitbox.width = 16;
+            last = x;
+        }
+
+        public override void update()
+        {
+            spd.x = dir * 0.65f;
+        }
+    }
+
+    class fall_floor : ClassicObject
     {
         
     }
 
-    class platform : ClassicObject
+    class fake_wall : ClassicObject
     {
-        public float dir;
+        
     }
 
     #endregion
@@ -83,15 +106,37 @@ public class Classic
         {
         
         }
+        
 
+        /// <param name="ox">difference_x</param>
+        /// <param name="oy">difference_y</param>
+        /// <returns></returns>
         public bool is_solid(int ox, int oy)
         {
-            return true;
+            if (oy > 0 && !check<platform>(ox, 0) && check<platform>(ox, oy))
+                return true;
+            return G.solid_at(x + hitbox.x + ox, y + hitbox.y + oy, hitbox.width, hitbox.height) ||
+                   check<fall_floor>(ox, oy) ||
+                   check<fake_wall>(ox, oy);
         }
 
+        /// <summary>
+        /// how about non rectangluar object such as platform
+        /// </summary>
         public T collide<T>(int ox, int oy) where T : ClassicObject
         {
-
+            var type = typeof(T);
+            foreach (var other in G.objects)
+            {
+                if (other != null && other.GetType() == type &&
+                    other != this && other.collideable &&
+                    other.x + other.hitbox.x + other.hitbox.width > x + hitbox.x + ox &&
+                    other.y + other.hitbox.y + other.hitbox.height > y + hitbox.y + oy &&
+                    other.x + other.hitbox.x < x + hitbox.x + ox &&
+                    other.y + other.hitbox.y < y + hitbox.y + oy)
+                    return other as T;
+            }
+            
             return null;
         }
 
@@ -117,34 +162,8 @@ public class Classic
     
     private T init_object<T>(T obj, float x, float y, int? tile = null) where T : ClassicObject
     {
-        objects.Add(obj);
-        if (tile.HasValue)
-            obj.spr = tile.Value;
-        obj.x = (int)x;
-        obj.y = (int)y;
-        obj.init(this, E);
 
-        return obj;
-    }
-
-    private void destroy_object(ClassicObject obj)
-    {
-        var index = objects.IndexOf(obj);
-        if (index >= 0)
-            objects[index] = null; 
-    }
-
-    private void kill_player(player obj)
-    {
-        deaths++;
-        shake = 10;
-        destroy_object(obj);
-
-        for (var dir = 0; dir <= 7; dir++)
-        {
-            var angle = (dir / 8f);
-            // show particles
-        }
+        return null;
     }
 
     #endregion
@@ -177,6 +196,28 @@ public class Classic
             }
         }
         
+    }
+
+    #endregion
+
+    #region util
+
+    private float appr(float val, float target, float amount)
+    {
+        return (val > target ? Mathf.Max(val - amount, target) : 
+            Mathf.Min(val + amount, target));
+    }
+
+    private bool solid_at(float x, float y, float w, float h)
+    {
+        return tile_flag_at(x, y, w, h, 0);
+    }
+
+    private bool tile_flag_at(float x, float y, float w, float h, int flag)
+    {
+        
+
+        return false;
     }
 
     #endregion
