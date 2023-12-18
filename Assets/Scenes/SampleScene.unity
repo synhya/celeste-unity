@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 63917545}
   - component: {fileID: 63917544}
   m_Layer: 0
-  m_Name: idle sheet-Sheet_0
+  m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

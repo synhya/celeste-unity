@@ -13,12 +13,13 @@ public class Entity : MonoBehaviour
     protected Collider2D collisionChecker;
     protected bool solids = true;
     protected bool collideable = true;
-    protected Rect hitbox;
 
-    
-    public float SpriteIdx;
     public Vector2 Position;
-    
+    protected float xRemainder;
+    protected float yRemainder;
+
+    public float Right => transform.position.x + collisionChecker.bounds.extents.x;
+    public float Left => transform.position.x - collisionChecker.bounds.extents.x;
     /// <summary>
     /// called when room changes
     /// </summary>

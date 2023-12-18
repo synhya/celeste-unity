@@ -40,12 +40,10 @@ public class GameManager : MonoBehaviour
     }
 
 
-    private T InitEntity<T>(T entity, float x, float y, int? tile = null) 
+    public T InitEntity<T>(T entity, float x, float y) 
         where T : Entity
     {
         Entities.Add(entity);
-        if (tile.HasValue)
-            entity.SpriteIdx = tile.Value;
         entity.Position.x = (int)x;
         entity.Position.y = (int)y;
         entity.Init(G);
@@ -53,7 +51,7 @@ public class GameManager : MonoBehaviour
         return entity;
     }
 
-    private void DestroyEntity<T>(T entity) where T : Entity
+    public void DestroyEntity<T>(T entity) where T : Entity
     {
         var index = Entities.IndexOf(entity);
         if (index >= 0)

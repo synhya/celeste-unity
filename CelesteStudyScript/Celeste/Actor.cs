@@ -8,12 +8,6 @@ using UnityEngine;
 /// </summary>
 public class Actor : Entity
 {
-    private float xRemainder;
-    
-    
-    public float Left { get; set; }
-    public float Right { get; set; }
-
     
     public override void Init(GameManager G)
     {
@@ -27,7 +21,6 @@ public class Actor : Entity
     {
         xRemainder += amount;
         int move = Mathf.RoundToInt(xRemainder);
-            
 
         if (move != 0)
         {
@@ -36,12 +29,37 @@ public class Actor : Entity
 
             while (move != 0)
             {
-                
-                // get the solids besides actor.. how?
-                
                 if(!CollideAt(Position + new Vector2(sign, 0)))
                 {
                     Position.x += sign;
+                    move -= sign;
+                }
+                else
+                {
+                    if (onCollide != null)
+                        onCollide();
+                    break;
+                }
+            }
+        }
+    }
+    
+    public void MoveY(float amount, Action onCollide)
+    {
+        yRemainder += amount;
+        int move = Mathf.RoundToInt(yRemainder);
+            
+
+        if (move != 0)
+        {
+            yRemainder -= move;
+            int sign = (int)Mathf.Sign(move);
+
+            while (move != 0)
+            {
+                if(!CollideAt(Position + new Vector2(sign, 0)))
+                {
+                    Position.y += sign;
                     move -= sign;
                 }
                 else

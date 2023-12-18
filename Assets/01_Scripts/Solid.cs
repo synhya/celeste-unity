@@ -3,23 +3,25 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// every solids are tile based
+/// </summary>
 public class Solid : Entity
 {
-    private float xRemainder;
-    private float yRemainder;
-    public bool Collidable = true;
-    public Vector2 Position;
+    public GridLayout gridLayout;
     
-    public float Left { get; set; }
-    public float Right { get; set; }
+    private void Start()
+    {
+        Room.Solids.Add(this);
+    }
 
     public void Move(float x, float y)
     {
-        xRemainder += x;
-        yRemainder += y;
+        XRemainder += x;
+        YRemainder += y;
 
-        int moveX = Mathf.RoundToInt(xRemainder);
-        int moveY = Mathf.RoundToInt(yRemainder);
+        int moveX = Mathf.RoundToInt(XRemainder);
+        int moveY = Mathf.RoundToInt(YRemainder);
 
         if (moveX != 0 || moveY != 0)
         {
@@ -29,15 +31,15 @@ public class Solid : Entity
             
             // Make this Solid non-collidable for actors,
             // so that actors moved by it do not get stuck on it
-            Collidable = false;
+            Collideable = false;
 
             if (moveX != 0)
             {
-                xRemainder -= moveX;
+                XRemainder -= moveX;
                 Position.x += moveX;
                 if (moveX > 0)
                 {
-                    foreach (var actor in Level.AllActors)
+                    foreach (var actor in Room.Actors)
                     {
                         if (OverlapCheck(actor))
                         {
@@ -55,7 +57,7 @@ public class Solid : Entity
                 }
                 else
                 {
-                    foreach (var actor in Level.AllActors)
+                    foreach (var actor in Room.Actors)
                     {
                         if (OverlapCheck(actor))
                         {
@@ -75,7 +77,7 @@ public class Solid : Entity
         // do same for the y-axis
     
         //then turn collider on
-        Collidable = true;
+        Collideable = true;
     }
 
     private bool OverlapCheck(Actor actor)
