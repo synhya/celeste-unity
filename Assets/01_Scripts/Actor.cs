@@ -8,21 +8,27 @@ using UnityEngine;
 /// </summary>
 public class Actor : Entity
 {
+    protected override void Start()
+    {
+        base.Start();
+        Room.Actors.Add(this);
+    }
+
     public void MoveX(float amount, Action onCollide)
     {
-        XRemainder += amount;
-        int move = Mathf.RoundToInt(XRemainder);
+        Remainder.x += amount;
+        int move = Mathf.RoundToInt(Remainder.x);
 
         if (move != 0)
         {
-            XRemainder -= move;
+            Remainder.x -= move;
             int sign = (int)Mathf.Sign(move);
 
             while (move != 0)
             {
-                if(!IsTile(TileType.Gray, Position.x + sign, Position.y))
+                if(!IsTile(TileType.Gray, PositionWS.x + sign, PositionWS.y))
                 {
-                    Position.x += sign;
+                    PositionWS.x += sign;
                     move -= sign;
                 }
                 else
@@ -37,20 +43,20 @@ public class Actor : Entity
     
     public void MoveY(float amount, Action onCollide)
     {
-        YRemainder += amount;
-        int move = Mathf.RoundToInt(YRemainder);
+        Remainder.y += amount;
+        int move = Mathf.RoundToInt(Remainder.y);
             
 
         if (move != 0)
         {
-            YRemainder -= move;
+            Remainder.y -= move;
             int sign = (int)Mathf.Sign(move);
 
             while (move != 0)
             {
-                if(!IsTile( TileType.Gray, Position.x , Position.y + sign))
+                if(!IsTile( TileType.Gray, PositionWS.x , PositionWS.y + sign))
                 {
-                    Position.y += sign;
+                    PositionWS.y += sign;
                     move -= sign;
                 }
                 else

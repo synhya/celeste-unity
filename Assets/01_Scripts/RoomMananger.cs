@@ -24,6 +24,7 @@ public class RoomMananger : MonoBehaviour
         DontDestroyOnLoad(this);
 
         Solids = new List<Solid>();
+        Actors = new List<Actor>();
     }
 }
 

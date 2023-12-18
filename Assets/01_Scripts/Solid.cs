@@ -9,18 +9,19 @@ using UnityEngine.Serialization;
 /// </summary>
 public class Solid : Entity
 {
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
         Room.Solids.Add(this);
     }
 
     public void Move(float x, float y)
     {
-        XRemainder += x;
-        YRemainder += y;
+        Remainder.x += x;
+        Remainder.y += y;
 
-        int moveX = Mathf.RoundToInt(XRemainder);
-        int moveY = Mathf.RoundToInt(YRemainder);
+        int moveX = Mathf.RoundToInt(Remainder.x);
+        int moveY = Mathf.RoundToInt(Remainder.y);
 
         if (moveX != 0 || moveY != 0)
         {
@@ -34,8 +35,8 @@ public class Solid : Entity
 
             if (moveX != 0)
             {
-                XRemainder -= moveX;
-                Position.x += moveX;
+                Remainder.x -= moveX;
+                PositionWS.x += moveX;
                 if (moveX > 0)
                 {
                     foreach (var actor in Room.Actors)

@@ -13,16 +13,30 @@ public abstract class Entity : MonoBehaviour
     
     protected RoomMananger Room => RoomMananger.Room;
     
-    protected Collider2D Hitbox;
     protected bool Collideable = true;
 
-    public Vector2Int Position ; // => transform.position + groundOffset
-    protected float XRemainder;
-    protected float YRemainder;
-
-    public float WorldRight => transform.position.x + Hitbox.bounds.extents.x;
-    public float WorldLeft => transform.position.x - Hitbox.bounds.extents.x;
+    // to get,set world position
+    public Vector3Int PositionWS;
     
+    // contains list of boxes player consume in OS(object space)
+    public Vector2[] hitBox;
+
+    protected Vector2 Speed;
+    protected Vector2 Remainder;
+
+    public float WorldRight => transform.position.x ;
+    public float WorldLeft => transform.position.x;
+
+    protected virtual void Start()
+    {
+        PositionWS = Vector3Int.RoundToInt(transform.position);
+    }
+
+    protected virtual void LateUpdate()
+    {
+         transform.position = PositionWS;
+    }
+
     /// <summary>
     /// Get "World Position" And Check tile type
     /// </summary>
@@ -30,13 +44,13 @@ public abstract class Entity : MonoBehaviour
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <returns></returns>
-    protected bool IsTile(TileType type ,int x, int y)
+    protected bool IsTile(TileType type ,float x, float y)
     {
         foreach (var other in Room.Solids)
         {
             if (other != null && other != this && other.Collideable)
             {
-                var targetPos = new Vector3Int(x, y, 0);
+                var targetPos = GetGridPosition(x, y);
                 var tile = Room.Tilemap.GetTile(targetPos) as TypeTile;
                 // tile.RefreshTile(targetPos, other.Tilemap);
                 if (tile && tile.Type == type)
@@ -47,7 +61,18 @@ public abstract class Entity : MonoBehaviour
         return false;
     }
 
+    protected bool IsTile(TileType type, Vector3 pos)
+    {
+        return IsTile(type, pos.x, pos.y);
+    }
+    
+
     #region Utils
+
+    public void SetX(int value)
+    {
+        PositionWS = new Vector3Int(PositionWS.x, value, PositionWS.z);
+    }
 
     public Vector3Int GetGridPosition(float x, float y, float z)
     {
