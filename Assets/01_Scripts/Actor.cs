@@ -8,7 +8,6 @@ using UnityEngine;
 /// </summary>
 public class Actor : Entity
 {
-    
     public void MoveX(float amount, Action onCollide)
     {
         XRemainder += amount;
@@ -21,7 +20,7 @@ public class Actor : Entity
 
             while (move != 0)
             {
-                if(!CollideAt(Position + new Vector2(sign, 0)))
+                if(!IsTile(TileType.Gray, Position.x + sign, Position.y))
                 {
                     Position.x += sign;
                     move -= sign;
@@ -49,7 +48,7 @@ public class Actor : Entity
 
             while (move != 0)
             {
-                if(!CollideAt(Position + new Vector2(sign, 0)))
+                if(!IsTile( TileType.Gray, Position.x , Position.y + sign))
                 {
                     Position.y += sign;
                     move -= sign;

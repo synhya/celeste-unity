@@ -2,14 +2,13 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>
 /// every solids are tile based
 /// </summary>
 public class Solid : Entity
 {
-    public GridLayout gridLayout;
-    
     private void Start()
     {
         Room.Solids.Add(this);
@@ -44,7 +43,7 @@ public class Solid : Entity
                         if (OverlapCheck(actor))
                         {
                             // Push right
-                            actor.MoveX(this.Right - actor.Left, actor.Squish);
+                            actor.MoveX(this.WorldRight - actor.WorldLeft, actor.Squish);
                         }
                         else if (riding.Contains(actor))
                         {
@@ -62,7 +61,7 @@ public class Solid : Entity
                         if (OverlapCheck(actor))
                         {
                             // Push left
-                            actor.MoveX(this.Left - actor.Right, actor.Squish);
+                            actor.MoveX(this.WorldLeft - actor.WorldRight, actor.Squish);
                         }
                         else if (riding.Contains(actor))
                         {

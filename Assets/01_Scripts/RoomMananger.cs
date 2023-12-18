@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class RoomMananger : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class RoomMananger : MonoBehaviour
 
     public List<Solid> Solids;
     public List<Actor> Actors;
+    public Tilemap Tilemap;
     
     private void Awake()
     {
