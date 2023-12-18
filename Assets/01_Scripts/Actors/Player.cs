@@ -18,8 +18,6 @@ public class Player : Actor
     
     private void Update()
     {
-        PositionWS = Vector3Int.RoundToInt(transform.position);
-        
         var input = Input.GetAxisRaw("Horizontal");
         
         // move
@@ -33,13 +31,16 @@ public class Player : Actor
         // then check bottom is solid
         
         
-        if (IsTile(TileType.Gray, 0, -1))
+        if (TileType.Grey == GetTileType(PositionWS.x, PositionWS.y-1))
         {
             
         }
         
         MoveX(Speed.x, null);
-        MoveX(Speed.y, null);
+        MoveY(Speed.y, null);
+
+
+        UpdatePosition();
     }
 }
 

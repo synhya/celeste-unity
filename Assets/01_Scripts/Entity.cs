@@ -7,35 +7,95 @@ using UnityEngine.Tilemaps;
 /// </summary>
 public abstract class Entity : MonoBehaviour
 {
-    [Header("Offset Setting")] [Tooltip("Place Slightly above Entity's feet")]
-    // In Order to Get Valid Grid Position
-    [SerializeField] private float groundOffset = 0.001f;
-    
-    protected RoomMananger Room => RoomMananger.Room;
+    protected Room Room;
     
     protected bool Collideable = true;
-
-    // to get,set world position
-    public Vector3Int PositionWS;
+    protected bool IsSolid;
     
     // contains list of boxes player consume in OS(object space)
-    public Vector2[] hitBox;
-
+    public Collider2D HitBox;
+    
+    /// <summary>
+    /// all entity move based on this value
+    /// not transform.position!
+    /// </summary>
+    protected Vector3Int PositionWS;
     protected Vector2 Speed;
     protected Vector2 Remainder;
 
-    public float WorldRight => transform.position.x ;
-    public float WorldLeft => transform.position.x;
+    public int RightWS => PositionWS.x + (int)HitBox.bounds.extents.x;
+    public int LeftWS => PositionWS.x - (int)HitBox.bounds.extents.x;
 
     protected virtual void Start()
     {
         PositionWS = Vector3Int.RoundToInt(transform.position);
+        
+        if(!TryGetComponent(out HitBox)) 
+            Debug.Log($"No Collider Found for entity {gameObject.name}");
+
+        FindRoom();
     }
 
-    protected virtual void LateUpdate()
+    protected virtual void FindRoom()
     {
-         transform.position = PositionWS;
+        // Recurses upwards until it finds a valid component
+        if(!(Room = GetComponentInParent<Room>())) 
+            Debug.Log($"No Room Found for entity {gameObject.name}");
     }
+    
+    protected void UpdatePosition()
+    {
+        transform.position = PositionWS;
+    }
+
+    #region Collision
+
+    protected bool CheckCollision(float offsetX, float offsetY)
+    {
+        // move hitbox by offset
+        HitBox.offset += new Vector2(offsetX, offsetY);
+        
+        if (!IsSolid)
+        {
+            foreach (var other in Room.Solids)
+            {
+                if (EntityCollision(other))
+                {
+                    HitBox.offset -= new Vector2(offsetX, offsetY);
+                    return true;
+                }
+            }
+        }
+        else
+        {
+            foreach (var other in Room.Actors)
+            {
+                if (EntityCollision(other)) 
+                {
+                    HitBox.offset -= new Vector2(offsetX, offsetY);
+                    return true;
+                }
+            }
+        }
+        
+        HitBox.offset -= new Vector2(offsetX, offsetY);
+        return false;
+    }
+
+    private bool EntityCollision(Entity entity)
+    {
+        if (entity != null && entity != this && entity.Collideable
+            && !entity.IsSolid && HitBox.IsTouching(entity.HitBox))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    #endregion
+    
+
+    #region Utils
 
     /// <summary>
     /// Get "World Position" And Check tile type
@@ -44,7 +104,7 @@ public abstract class Entity : MonoBehaviour
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <returns></returns>
-    protected bool IsTile(TileType type ,float x, float y)
+    protected TileType? GetTileType(float x, float y)
     {
         foreach (var other in Room.Solids)
         {
@@ -53,27 +113,20 @@ public abstract class Entity : MonoBehaviour
                 var targetPos = GetGridPosition(x, y);
                 var tile = Room.Tilemap.GetTile(targetPos) as TypeTile;
                 // tile.RefreshTile(targetPos, other.Tilemap);
-                if (tile && tile.Type == type)
-                    return true;
+                if (tile)
+                    return tile.Type;
             }
         }
         
-        return false;
+        return null;
     }
 
-    protected bool IsTile(TileType type, Vector3 pos)
+    protected TileType? GetTileType(Vector3Int pos)
     {
-        return IsTile(type, pos.x, pos.y);
+        return GetTileType(pos.x, pos.y);
     }
     
-
-    #region Utils
-
-    public void SetX(int value)
-    {
-        PositionWS = new Vector3Int(PositionWS.x, value, PositionWS.z);
-    }
-
+    
     public Vector3Int GetGridPosition(float x, float y, float z)
     {
         return Room.Tilemap.WorldToCell(new Vector3(x, y, z));
@@ -82,9 +135,9 @@ public abstract class Entity : MonoBehaviour
     {
         return GetGridPosition(x, y, 0);
     }
-    public Vector3Int GetGridPosition(Vector3 pos)
+    public Vector3Int GetGridPosition(Vector3Int posWS)
     {
-        return Room.Tilemap.WorldToCell(pos);
+        return Room.Tilemap.WorldToCell(posWS);
     }
 
     #endregion

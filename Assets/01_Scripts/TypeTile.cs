@@ -5,7 +5,8 @@ using UnityEngine.Tilemaps;
 
 public enum TileType
 {
-    Gray,
+    None,
+    Grey,
     Grass,
     Ice,
     Fire,
@@ -14,7 +15,7 @@ public enum TileType
 [CreateAssetMenu(fileName = "IndexTile", menuName = "Tile/IndexTile")]
 public class TypeTile : Tile
 {
-    public TileType Type = TileType.Gray;
+    public TileType Type = TileType.Grey;
     
     public override void RefreshTile(Vector3Int position, ITilemap tilemap)
     {

@@ -6,12 +6,19 @@ using UnityEngine;
 /// Actors don’t have any concept of their own velocity, acceleration, or gravity.
 /// Every class that extends Actor takes care of that
 /// </summary>
-public class Actor : Entity
+public abstract class Actor : Entity
 {
+    
+    protected override void FindRoom()
+    {
+        Room = RoomManager.Instance.CurrentRoom;
+    }
+    
     protected override void Start()
     {
         base.Start();
         Room.Actors.Add(this);
+        IsSolid = false;
     }
 
     public void MoveX(float amount, Action onCollide)
@@ -26,7 +33,7 @@ public class Actor : Entity
 
             while (move != 0)
             {
-                if(!IsTile(TileType.Gray, PositionWS.x + sign, PositionWS.y))
+                if(!CheckCollision( sign, 0))
                 {
                     PositionWS.x += sign;
                     move -= sign;
@@ -54,7 +61,7 @@ public class Actor : Entity
 
             while (move != 0)
             {
-                if(!IsTile( TileType.Gray, PositionWS.x , PositionWS.y + sign))
+                if(!CheckCollision(0, sign))
                 {
                     PositionWS.y += sign;
                     move -= sign;

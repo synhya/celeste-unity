@@ -7,12 +7,15 @@ using UnityEngine.Serialization;
 /// <summary>
 /// every solids are tile based
 /// </summary>
-public class Solid : Entity
+public abstract class Solid : Entity
 {
+    protected bool IsMobile = true;
+    
     protected override void Start()
     {
         base.Start();
         Room.Solids.Add(this);
+        IsSolid = true;
     }
 
     public void Move(float x, float y)
@@ -44,7 +47,7 @@ public class Solid : Entity
                         if (OverlapCheck(actor))
                         {
                             // Push right
-                            actor.MoveX(this.WorldRight - actor.WorldLeft, actor.Squish);
+                            actor.MoveX(this.RightWS - actor.LeftWS, actor.Squish);
                         }
                         else if (riding.Contains(actor))
                         {
@@ -62,7 +65,7 @@ public class Solid : Entity
                         if (OverlapCheck(actor))
                         {
                             // Push left
-                            actor.MoveX(this.WorldLeft - actor.WorldRight, actor.Squish);
+                            actor.MoveX(this.LeftWS - actor.RightWS, actor.Squish);
                         }
                         else if (riding.Contains(actor))
                         {
