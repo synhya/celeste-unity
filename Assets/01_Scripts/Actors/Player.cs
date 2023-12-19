@@ -31,11 +31,6 @@ public class Player : Actor
         // then check bottom is solid
         
         
-        if (TileType.Grey == GetTileType(PositionWS.x, PositionWS.y-1))
-        {
-            
-        }
-        
         MoveX(Speed.x, null);
         MoveY(Speed.y, null);
 

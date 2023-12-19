@@ -6,7 +6,7 @@ using UnityEngine;
 /// Actors don’t have any concept of their own velocity, acceleration, or gravity.
 /// Every class that extends Actor takes care of that
 /// </summary>
-public abstract class Actor : Entity
+public class Actor : Entity
 {
     
     protected override void FindRoom()

@@ -10,7 +10,6 @@ public class RoomManager : MonoBehaviour
         (instance ??= (new GameObject("Manager")).AddComponent<RoomManager>());
     private static RoomManager instance = null;
     
-    public Tilemap DefaultTilemap;
     public Room CurrentRoom;
 
     void Awake() 

@@ -7,10 +7,8 @@ using UnityEngine.Serialization;
 /// <summary>
 /// every solids are tile based
 /// </summary>
-public abstract class Solid : Entity
+public class Solid : Entity
 {
-    protected bool IsMobile = true;
-    
     protected override void Start()
     {
         base.Start();
