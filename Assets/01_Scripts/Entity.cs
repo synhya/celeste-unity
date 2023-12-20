@@ -21,62 +21,32 @@ public class Entity : MonoBehaviour
     [HideInInspector] public Vector2Int PositionWS;
     [HideInInspector] public Vector2Int PreviousPos;
     
-    private RectInt hitBoxWS;
-    private Vector2Int gridPosMin;
-    private Vector2Int gridPosMax;
+    public RectInt HitBoxWS => new RectInt(PositionWS + HitboxBottomLeftOffset, HitboxSize);
+    public Vector2Int GridPosMin => (Vector2Int)Room.StaticTilemap.WorldToCell((Vector3Int)HitBoxWS.position);
+
+    public Vector2Int GridPosMax
+    {
+        get {
+            var h = HitBoxWS;
+            return (Vector2Int)Room.StaticTilemap.WorldToCell((Vector3Int)(h.position + h.size));
+        }
+    }
+    public int RightWS => HitBoxWS.xMax;
+    public int LeftWS => HitBoxWS.xMin;
+    public Vector2 PosCenterWS => PositionWS + (Vector2)HitboxSize / 2f;
+    public const int TileSize = 8;
     
-    public RectInt GetHitBoxWS()
-    {
-        hitBoxWS.position = PositionWS + HitboxBottomLeftOffset;
-        return hitBoxWS;
-    }
-
-    public Vector2Int GetGridPosMin()
-    {
-        var hitbox = GetHitBoxWS();
-        
-        gridPosMin = (Vector2Int)Room.Tilemap.WorldToCell((Vector3Int)hitbox.position)
-                     + Vector2Int.left;
-        
-        return gridPosMin;
-    }
-    public Vector2Int GetGridPosMax()
-    {
-        var hitbox = GetHitBoxWS();
-        
-        gridPosMax = (Vector2Int)Room.Tilemap.WorldToCell((Vector3Int)(hitbox.position + hitbox.size))
-                     + Vector2Int.right;
-        
-        return gridPosMin;
-    }
-
-    [HideInInspector] public RectInt TileRect = new RectInt()
-    {
-        width = TileSize,
-        height = TileSize,
-    };
     
     protected Vector2 Speed;
     public Vector2 Remainder;
 
 
-    public int RightWS => GetHitBoxWS().xMax;
-    public int LeftWS => GetHitBoxWS().xMax;
-
-    private const int TileSize = 8;
 
     protected virtual void Start()
     {
         FindRoom();
         
         PositionWS = Vector2Int.RoundToInt(transform.position);
-        hitBoxWS = new RectInt
-        {
-            x = PositionWS.x + HitboxBottomLeftOffset.x,
-            y = PositionWS.y + HitboxBottomLeftOffset.y,
-            width = HitboxSize.x,
-            height = HitboxSize.y
-        };
     }
 
     protected virtual void FindRoom()
@@ -117,22 +87,22 @@ public class Entity : MonoBehaviour
     protected bool CheckCollision(int offsetX, int offsetY)
     {
         HitboxBottomLeftOffset.x += offsetX;
-        HitboxBottomLeftOffset.x += offsetY;
+        HitboxBottomLeftOffset.y += offsetY;
         var ret = CheckCollision();
         HitboxBottomLeftOffset.x -= offsetX;
-        HitboxBottomLeftOffset.x -= offsetY;
+        HitboxBottomLeftOffset.y -= offsetY;
         
         return ret;
     }
 
     private bool CheckCollision()
     {
-        var hitbox = GetHitBoxWS();
+        var hitbox = HitBoxWS;
         
         if (!IsSolid)
         {
             // first check the room tilemap (only for actors)
-            if (CheckRoomTileCollision(hitbox))
+            if (IsTouchingStaticTileType(TileType.Grey))
                 return true;
             
             // then check with each solid objects 
@@ -153,30 +123,34 @@ public class Entity : MonoBehaviour
         
         return false;
     }
-    private bool CheckRoomTileCollision(RectInt hitbox)
+    
+    protected bool IsTouchingStaticTileType(TileType targetType)
     {
-        Vector3Int pos = new Vector3Int();
+        var tileRect = new RectInt();
+        var pos = new Vector3Int();
         
-        var min = GetGridPosMin();
-        var max = GetGridPosMax();
+        var min = GridPosMin;
+        var max = GridPosMax;
         
-        for(int i = min.x; i <= gridPosMax.x; i++)
+        for(int i = min.x; i <= max.x; i++)
         {
-            for (int j = max.y; j <= gridPosMax.y; j++)
+            for (int j = min.y; j <= max.y; j++)
             {
                 pos.x = i;
                 pos.y = j;
-                if (Room.Tilemap.HasTile(pos))
+                var tile = Room.StaticTilemap.GetTile(pos) as TypeTile;
+                
+                if (tile && tile.Type == targetType)
                 {
-                    var tileCenter = Room.Tilemap.GetCellCenterWorld(pos);
-                    TileRect.x = (int)tileCenter.x - TileSize / 2;
-                    TileRect.y = (int)tileCenter.y - TileSize / 2;
+                    tileRect = tile.AABB;
+                    var tilePosWS = Room.StaticTilemap.GetCellCenterWorld(pos) 
+                                    - Vector3.one * TileSize / 2;
+                    tileRect.position += Vector2Int.RoundToInt(tilePosWS);
 
-                    if (hitbox.Overlaps(TileRect))
+                    if (HitBoxWS.Overlaps(tileRect))
                     {
                         return true;
                     }
-                        
                 }
             }
         }
@@ -186,7 +160,7 @@ public class Entity : MonoBehaviour
     private bool EntityCollision(RectInt hitbox, Entity other)
     {
         if (other != null && other != this && other.Collideable
-            && other.IsSolid != IsSolid && hitbox.Overlaps(other.GetHitBoxWS()))
+            && other.IsSolid != IsSolid && hitbox.Overlaps(other.HitBoxWS))
         {
             return true;
         }
@@ -195,9 +169,6 @@ public class Entity : MonoBehaviour
 
     #endregion
     
-
-    #region Utils
-
     #region GetTile
 
     /// <summary>
@@ -207,7 +178,7 @@ public class Entity : MonoBehaviour
     /// <returns></returns>
     protected TileType? GetTileFromGridPos(Vector2Int gridPos)
     {
-        var tile = Room.Tilemap.GetTile((Vector3Int) gridPos) as TypeTile;
+        var tile = Room.StaticTilemap.GetTile((Vector3Int) gridPos) as TypeTile;
         // tile.RefreshTile(targetPos, other.Tilemap);
         if (tile)
             return tile.Type;
@@ -217,12 +188,18 @@ public class Entity : MonoBehaviour
     
     protected TileType? GetTileFromWS(Vector2Int posWS)
     {
-        var gridPos = (Vector2Int)Room.Tilemap.WorldToCell((Vector3Int)posWS);
+        var gridPos = (Vector2Int)Room.StaticTilemap.WorldToCell((Vector3Int)posWS);
+        
+        return GetTileFromGridPos(gridPos);
+    }
+    
+    protected TileType? GetTileFromOS(Vector2Int posOS)
+    {
+        var posWS = PositionWS + posOS;
+        var gridPos = (Vector2Int)Room.StaticTilemap.WorldToCell((Vector3Int)posWS);
         
         return GetTileFromGridPos(gridPos);
     }
 
-    #endregion
-    
     #endregion
 }

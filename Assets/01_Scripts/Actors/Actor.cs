@@ -33,7 +33,7 @@ public class Actor : Entity
 
             while (move != 0)
             {
-                if(!CheckCollision( sign, 0))
+                if(!Collideable || !CheckCollision( sign, 0))
                 {
                     PositionWS.x += sign;
                     move -= sign;

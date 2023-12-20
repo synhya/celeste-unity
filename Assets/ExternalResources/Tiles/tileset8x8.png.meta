@@ -131,7 +131,7 @@ TextureImporter:
         width: 8
         height: 8
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -139,6 +139,48 @@ TextureImporter:
       bones: []
       spriteID: b7fdd59efd4d9054e80932e29cd3b19c
       internalID: 798316127
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tileset8x8_1
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 56
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2a297ab8712a2f048a7f6288cfeaf2ab
+      internalID: -89264239
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: tileset8x8_2
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 56
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3886e6b90390f3240a1d2a51cc45fe7e
+      internalID: -1891356221
       vertices: []
       indices: 
       edges: []
@@ -155,6 +197,8 @@ TextureImporter:
     secondaryTextures: []
     nameFileIdTable:
       tileset8x8_0: 798316127
+      tileset8x8_1: -89264239
+      tileset8x8_2: -1891356221
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

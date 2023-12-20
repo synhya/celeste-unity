@@ -7,7 +7,7 @@ public class Room : MonoBehaviour
 {
     public HashSet<Solid> Solids;
     public HashSet<Actor> Actors;
-    [HideInInspector] public Tilemap Tilemap;
+    [HideInInspector] public Tilemap StaticTilemap;
     
     private void Awake()
     {
@@ -15,7 +15,7 @@ public class Room : MonoBehaviour
         
         Solids = new HashSet<Solid>();
         Actors = new HashSet<Actor>();
-        Tilemap = GetComponent<Tilemap>();
+        StaticTilemap = GetComponent<Tilemap>();
     }
 }
 
