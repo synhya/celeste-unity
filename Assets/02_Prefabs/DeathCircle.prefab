@@ -50,7 +50,7 @@ MonoBehaviour:
   moveTime: 0.6
   spinTime: 2.3
   angleSpeed: 160
-  shrinkRatio: 0.837
+  shrinkRatio: 0.8
 --- !u!212 &4269692089095498868
 SpriteRenderer:
   m_ObjectHideFlags: 0

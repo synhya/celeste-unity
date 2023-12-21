@@ -30,6 +30,12 @@ public partial class Player
     private bool flipAnimFlag = false;
     private bool shouldKeepCurrentAnimation = false;
     private float keepAnimTimer = 0f;
+    
+    private int curHash;
+    private int nextHash;
+    private string nextAnim;
+    
+    private bool hasToSwitch;
 
     private void InitAnimation()
     {
@@ -46,22 +52,15 @@ public partial class Player
         
         // get current state
         var curState = anim.GetCurrentAnimatorStateInfo(0);
-        
-        if (shouldKeepCurrentAnimation)
-        {
-            shouldKeepCurrentAnimation = false;
-
-            keepAnimTimer = curState.length - Time.deltaTime;
-            return;
-        }
+        hasToSwitch = false;
         
         // figure out what should be current animation based on state
         if (curState.shortNameHash != HashIdle &&
             onGround && Abs(Speed.x) <= runAnimThreshold)
-            SwitchAnimation(curState.shortNameHash, HashIdle, StAnimIdle);
+            SetAsNextAnimation(curState.shortNameHash, HashIdle, StAnimIdle);
         else if (curState.shortNameHash != HashRun &&
                  onGround && Abs(Speed.x) > runAnimThreshold)
-            SwitchAnimation(curState.shortNameHash, HashRun, StAnimRun);
+            SetAsNextAnimation(curState.shortNameHash, HashRun, StAnimRun);
         
         
         // ready jump turnaround fall land
@@ -76,35 +75,54 @@ public partial class Player
         
         else if (curState.shortNameHash != HashJump &&
                  !onGround && Speed.y > jumpTurnAroundThreshold)
-            SwitchAnimation(curState.shortNameHash, HashJump, StAnimJump);
+            SetAsNextAnimation(curState.shortNameHash, HashJump, StAnimJump);
         
         else if (curState.shortNameHash != HashJumpToFall &&
                  !onGround && Abs(Speed.y) <= jumpTurnAroundThreshold)
-            SwitchAnimation(curState.shortNameHash, HashJump, StAnimJumpToFall);
+            SetAsNextAnimation(curState.shortNameHash, HashJump, StAnimJumpToFall);
         
         else if (curState.shortNameHash != HashFall &&
                  !onGround && Speed.y < -jumpTurnAroundThreshold)
-            SwitchAnimation(curState.shortNameHash, HashFall, StAnimFall);
+            SetAsNextAnimation(curState.shortNameHash, HashFall, StAnimFall);
         
-        else if (curState.shortNameHash != HashLand &&
-                 !wasGround && onGround  && Speed.y > jumpTurnAroundThreshold)
+        if (curState.shortNameHash == HashFall &&
+                 !wasGround && onGround)  // 점프 시간재서 일정시간 이상이면 플레이하게 바꾸자.
         {
-            Debug.Log("Land");
             shouldKeepCurrentAnimation = true;
-            SwitchAnimation(curState.shortNameHash, HashLand, StAnimLand);
+            SetAsNextAnimation(curState.shortNameHash, HashLand, StAnimLand);
         }
 
         #endregion
         
         // attack
         
+        // ...
         
-        // set flip
+        // finally switch
+        if(hasToSwitch)
+            SwitchAnimation();
+        
+        // after switching animation
         if (Speed.x != 0)
             sr.flipX = Speed.x < 0 ^ flipAnimFlag;
+        
+        if (shouldKeepCurrentAnimation)
+        {
+            shouldKeepCurrentAnimation = false;
+
+            keepAnimTimer = curState.length;
+        }
     }
 
-    void SwitchAnimation(int curHash, int nextHash ,string nextAnim)
+    void SetAsNextAnimation(int curHash, int nextHash ,string nextAnim)
+    {
+        hasToSwitch = true;
+        this.curHash = curHash;
+        this.nextHash = nextHash;
+        this.nextAnim = nextAnim;
+    }
+
+    void SwitchAnimation()
     {
         if (curHash == HashIdle)
             flipAnimFlag = true;

@@ -23,7 +23,7 @@ public class PlayerDeadBody : MonoBehaviour
 
     [Header("Other Settings")]
     [SerializeField] private float respawnTime = 8f;
-    [SerializeField] private float circleYPosOffset = 3.5f;
+    [SerializeField] private float circleYPosOffset = 2.5f;
     [SerializeField] private GameObject deathCircleObj;
 
     private SpriteRenderer sr;

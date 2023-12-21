@@ -6,6 +6,8 @@ using UnityEngine.Tilemaps;
 
 public class Room : MonoBehaviour
 {
+    public Vector2Int RoomCoordinate = Vector2Int.zero;
+    
     public HashSet<Solid> Solids;
     public HashSet<Actor> Actors;
     [HideInInspector] public Tilemap StaticTilemap;

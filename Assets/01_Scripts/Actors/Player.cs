@@ -111,11 +111,15 @@ public partial class Player : Actor
         inputJump = Input.GetKeyDown(KeyCode.C);
         deltaTime = Time.deltaTime;
         
+        // fall death check 320 * 180
+        if (PositionWS.y < Room.RoomCoordinate.y * 180)
+        {
+            Die(Vector2.up);
+        }
 
         // spike check
         if (IsTouchingStaticTileType(TileType.Spike))
         {
-            // on death
             var deathDir = -Speed;
             Die(deathDir.normalized);
         }

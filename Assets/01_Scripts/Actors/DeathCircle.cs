@@ -56,7 +56,7 @@ public class DeathCircle : MonoBehaviour
         {
             // shrink scale
             didStartShrink = true;
-            transform.DOScale(Vector3.zero, spinTime * shrinkRatio).SetEase(Ease.InCirc).OnComplete(() =>
+            transform.DOScale(Vector3.zero, spinTime * shrinkRatio).SetEase(Ease.OutExpo).OnComplete(() =>
             {
                 Destroy(gameObject);
             });
