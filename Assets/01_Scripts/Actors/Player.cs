@@ -1,11 +1,13 @@
 ﻿
 using System;
 using System.Net.Http.Headers;
+using DG.Tweening;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Serialization;
 using static UnityEngine.Mathf;
 
-public class Player : Actor
+public partial class Player : Actor
 {
     [Header("Run settings")]
     [SerializeField] private float maxRun = 4f;
@@ -20,67 +22,54 @@ public class Player : Actor
     [SerializeField] private float gravityIncreaseThreshold = 1f;
     
     [Header("Prefabs")]
-    [SerializeField] private GameObject deathCircleObj;
+    [SerializeField] private GameObject deadBodyPrefab;
     
     private SpriteRenderer sr;
-    private Animator anim;
+
+    private float inputX;
+    private bool inputJump;
+    private float deltaTime;
 
     private float gravityAccel;
+    
+    // state vars
     private bool onGround;
     private bool wasGround;
-
-
     
+    private bool isLanding;
+    
+    private bool jumpConfirmed;
+
     // state machine 구현해서 death 처리하자!
 
     protected override void Start()
     {
         base.Start();
 
+        InitAnimation();
+        
         sr = GetComponent<SpriteRenderer>();
-        anim = GetComponent<Animator>();
         wasGround = true;
     }
 
     private void Update()
     {
-        var inputX = Input.GetAxisRaw("Horizontal");
-        var inputJump = Input.GetKeyDown(KeyCode.C);
-        var deltaTime = Time.deltaTime;
-        
-        // spike check
-        if (IsTouchingStaticTileType(TileType.Spike))
-        {
-            // on death
-            var deathDir = new Vector2Int(160, 90) - PosCenterWS;
-            Die(deathDir.normalized);
-        }
-        
-        // ground check
-        onGround = GetTileFromOS(Vector2Int.down) == TileType.Grey;
-
-        // // landing frame
-        // if (onGround && !wasGround)
-        // {
-        //     Speed.y = 0;
-        // }
-        wasGround = onGround;
+        InputAndStateCheck();
         
         // move
         if (Abs(Speed.x) > maxRun)
             Speed.x = MathUtil.Appr(Speed.x, Sign(Speed.x) * maxRun, deccel);
         else
             Speed.x = MathUtil.Appr(Speed.x, inputX * maxRun, accel);
-            
-        // flip
-        if (Speed.x != 0)
-            sr.flipX = Speed.x < 0;
         
-        // jump
+        // confirm jump
         if (inputJump && onGround)
-        {
+            jumpConfirmed = true;
+        else
+            jumpConfirmed = false;
+        
+        if(jumpConfirmed) 
             Speed.y = jumpStrength;
-        }
         
         // gravity
         gravityAccel = gravityValue;
@@ -95,8 +84,8 @@ public class Player : Actor
         }
             
         
-        // get player tile position
-        // then check bottom is solid
+        // should be called after speed is confirmed
+        SetAnimation();
 
         var moveAmount = Speed *  deltaTime;
         
@@ -104,21 +93,69 @@ public class Player : Actor
         MoveY(moveAmount.y, null);
 
         UpdatePosition();
+
+        SetPreviousValues();
+    }
+    
+
+    // call at the end of update or lateUpdate
+    private void SetPreviousValues()
+    {
+        wasGround = onGround;
     }
 
-    void Die(Vector2 direction)
-    {
-        // 튕기는건 나중에 구현하고 우선 쪼개지는 거부터
 
-        for (var dir = 0; dir <= 7; dir++)
+    private void InputAndStateCheck()
+    {
+        inputX = Input.GetAxisRaw("Horizontal");
+        inputJump = Input.GetKeyDown(KeyCode.C);
+        deltaTime = Time.deltaTime;
+        
+
+        // spike check
+        if (IsTouchingStaticTileType(TileType.Spike))
         {
-            var angle = dir / 4f * PI;
-            var spd = new Vector2(Cos(angle), Sin(angle)) * 5;
-            // create new circles at center of player and spread out
-            var animHandler= Instantiate(deathCircleObj, PosCenterWS, Quaternion.identity)
-                .GetComponent<PlayerDeadBody>();
-            animHandler.Play(spd);
+            // on death
+            var deathDir = -Speed;
+            Die(deathDir.normalized);
         }
+        
+        var hitbox = HitBoxWS;
+        onGround = false;
+        for (int i = hitbox.xMin; i <= hitbox.xMax; i++)
+        {
+            int j = hitbox.yMin - 1;
+
+            if (GetTileFromWS(new Vector2Int(i, j)) == TileType.Grey)
+            {
+                onGround = true;
+                break;
+            }
+        }
+        
+        // ice check .. etc
+        
+        // landing frame
+        if (onGround && !wasGround)
+        {
+            
+        }
+    }
+
+    void Die(Vector2 knockBackDir)
+    {
+        // camera shake (cinemachine)
+        
+        // spawn dead body (dont set as parent as it will be disabled)
+        var body = Instantiate(deadBodyPrefab, transform.position, quaternion.identity)
+            .GetComponent<PlayerDeadBody>();
+        body.Init(knockBackDir, sr.flipX ^ flipAnimFlag);
+        // body.DeathAction = () => {}
+        
+        // change stats ( Stats.Death++; .. }
+        
+        
+        Destroy(gameObject);
     }
 }
 

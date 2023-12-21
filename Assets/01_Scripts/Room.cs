@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
@@ -8,6 +9,9 @@ public class Room : MonoBehaviour
     public HashSet<Solid> Solids;
     public HashSet<Actor> Actors;
     [HideInInspector] public Tilemap StaticTilemap;
+
+    // create editor script
+    public Vector3Int RespawnPos;
     
     private void Awake()
     {
@@ -16,6 +20,11 @@ public class Room : MonoBehaviour
         Solids = new HashSet<Solid>();
         Actors = new HashSet<Actor>();
         StaticTilemap = GetComponent<Tilemap>();
+    }
+
+    private void Start()
+    {
+        
     }
 }
 

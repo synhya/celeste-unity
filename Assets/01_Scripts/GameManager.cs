@@ -1,16 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
-public class RoomManager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
-    public static RoomManager Instance =>
-        (instance ??= (new GameObject("Manager")).AddComponent<RoomManager>());
-    private static RoomManager instance = null;
+    public static GameManager I =>
+        (instance ??= (new GameObject("Manager")).AddComponent<GameManager>());
+    private static GameManager instance = null;
     
     public Room CurrentRoom;
+    public GameObject PlayerPrefab;
 
     void Awake() 
     {
@@ -26,5 +28,9 @@ public class RoomManager : MonoBehaviour
     void OnRoomChange(Room nextRoom)
     {
         CurrentRoom = nextRoom;
+    }
+    public void RespawnPlayer()
+    {
+        Instantiate(PlayerPrefab, CurrentRoom.RespawnPos, quaternion.identity);
     }
 } 

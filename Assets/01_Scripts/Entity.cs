@@ -38,8 +38,7 @@ public class Entity : MonoBehaviour
     
     
     protected Vector2 Speed;
-    public Vector2 Remainder;
-
+    protected Vector2 Remainder;
 
 
     protected virtual void Start()
@@ -151,6 +150,37 @@ public class Entity : MonoBehaviour
                     {
                         return true;
                     }
+                }
+            }
+        }
+        return false;
+    }
+    
+    protected bool IsStandingAtStaticTileType(TileType targetType)
+    {
+        var tileRect = new RectInt();
+        var pos = new Vector3Int();
+        
+        var min = GridPosMin;
+        var max = GridPosMax;
+        
+        for(int i = min.x; i <= max.x; i++)
+        {
+            int j = min.y; // for all bottom blocks
+            pos.x = i;
+            pos.y = j;
+            var tile = Room.StaticTilemap.GetTile(pos) as TypeTile;
+            
+            if (tile && tile.Type == targetType)
+            {
+                tileRect = tile.AABB;
+                var tilePosWS = Room.StaticTilemap.GetCellCenterWorld(pos) 
+                                - Vector3.one * TileSize / 2;
+                tileRect.position += Vector2Int.RoundToInt(tilePosWS);
+
+                if (HitBoxWS.Overlaps(tileRect))
+                {
+                    return true;
                 }
             }
         }

@@ -11,7 +11,7 @@ public class Actor : Entity
     
     protected override void FindRoom()
     {
-        Room = RoomManager.Instance.CurrentRoom;
+        Room = GameManager.I.CurrentRoom;
     }
     
     protected override void Start()
