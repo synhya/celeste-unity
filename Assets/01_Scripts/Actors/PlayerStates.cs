@@ -14,7 +14,7 @@ public partial class Player
         for (int i = 0; i < doors.Length; i++)
         {
             if (hitbox.Overlaps(doors[i]))
-                GameManager.I.SwitchRoom(Room.NextRooms[i]);
+                Level.SwitchRoom(Room.NextRooms[i]);
         }
         
         // fall death check 320 * 180

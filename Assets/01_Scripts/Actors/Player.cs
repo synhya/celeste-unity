@@ -46,7 +46,7 @@ public partial class Player : Actor
     
     protected override void FindRoom()
     {
-        Room = GameManager.I.CurrentRoom;
+        Room = Game.G.CurrentLevel.CurrentRoom;
     }
 
     protected override void Start()
@@ -134,7 +134,7 @@ public partial class Player : Actor
     void Die(Vector2 knockBackDir)
     {
         // camera shake
-        mainCam.DOShakePosition(0.5f, 1f);
+        mainCam.DOShakePosition(0.5f, 1.5f);
         
         // spawn dead body (dont set as parent as it will be disabled)
         var body = Instantiate(deadBodyPrefab, transform.position, quaternion.identity)

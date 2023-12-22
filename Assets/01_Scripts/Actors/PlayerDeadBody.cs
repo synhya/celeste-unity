@@ -27,6 +27,7 @@ public class PlayerDeadBody : MonoBehaviour
     [SerializeField] private GameObject deathCircleObj;
 
     private SpriteRenderer sr;
+    private Level level;
     
     public void Init(Vector2 backDir, bool flipX)
     {
@@ -56,8 +57,8 @@ public class PlayerDeadBody : MonoBehaviour
             .InsertCallback(respawnTime, () =>
             {
                 // respawn -> need respawn transform -> each room has respawn point
-                var game = GameManager.I;
-                game.SpawnPlayer();
+                level = Game.G.CurrentLevel;
+                level.SpawnPlayer();
                 
                 Destroy(gameObject);
             });

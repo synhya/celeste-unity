@@ -20,11 +20,11 @@ public class Room : MonoBehaviour
     public RectInt[] Doors;
     [Tooltip("Index should match linked doors")]
     public Room[] NextRooms;
-    
-    
+
+    // level this room is in.
+    [HideInInspector] public Level Level;
     public HashSet<Solid> Solids;
     public HashSet<Actor> Actors;
-    [HideInInspector] public Tilemap StaticTilemap;
     
     public Vector2Int OriginWS => originWs;
     private Vector2Int originWs;
@@ -45,9 +45,6 @@ public class Room : MonoBehaviour
         
         Solids = new HashSet<Solid>();
         Actors = new HashSet<Actor>();
-        
-        StaticTilemap = GetComponent<Tilemap>();
-        StaticTilemap.CompressBounds();
         
         // var cellSize = StaticTilemap.cellSize;
         // var bound = StaticTilemap.cellBounds;

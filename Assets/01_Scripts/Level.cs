@@ -7,32 +7,33 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
-public class GameManager : MonoBehaviour
+public class Level : MonoBehaviour
 {
-    public static GameManager I =>
-        (instance ??= (new GameObject("Manager")).AddComponent<GameManager>());
-    private static GameManager instance = null;
-    
     public GameObject PlayerPrefab;
     [SerializeField] private Room startingRoom;
     
+    /// <summary>
+    /// set on awake
+    /// </summary>
     [HideInInspector] public Room CurrentRoom;
     [HideInInspector] public Player Player;
+    [HideInInspector] public Tilemap Map;
 
     private Camera cam;
 
     void Awake() 
     {
-        if (instance != this)
-        {
-            if (instance == null) instance = this;
-            else Destroy(this);
-        }
-        
-        DontDestroyOnLoad(this);
-        
         CurrentRoom = startingRoom;
         cam = Camera.main;
+        
+        Map = GetComponent<Tilemap>();
+        Map.CompressBounds();
+
+        foreach (Transform child in transform)
+        {
+            if (child.TryGetComponent(out Room room))
+                room.Level = this;
+        }
     }
 
     private void Start()
@@ -49,6 +50,9 @@ public class GameManager : MonoBehaviour
         Player.OnSwitchRoom(nextRoom);
     }
     
+    /// <summary>
+    /// 플레이어는 항상 레벨아래에 위치하기 때문에 스폰도 룸이 아닌 레벨단위가 맞다.
+    /// </summary>
     public void SpawnPlayer()
     {
         Player = Instantiate(PlayerPrefab, (Vector3Int)CurrentRoom.SpawnPos, 

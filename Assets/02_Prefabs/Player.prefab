@@ -46,7 +46,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1fedfe99a894ff0bfa3b84dd875e729, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Room: {fileID: 0}
   HitboxBottomLeftOffset: {x: -3, y: 0}
   HitboxSize: {x: 6, y: 15}
   PositionWS: {x: 95, y: 56}
@@ -56,12 +55,14 @@ MonoBehaviour:
   accelOnAir: 60
   deccel: 50
   maxFall: -180
-  jumpStrength: 180
+  jumpStrength: 200
   gravityValue: 2
   gravityIncreaseThreshold: 10
   deadBodyPrefab: {fileID: 7332204074699942299, guid: a82d9be9b0ab08446a7200708ec87c2c, type: 3}
   runAnimThreshold: 1
   jumpTurnAroundThreshold: 50
+  Dashes: 0
+  DashDir: {x: 0, y: 0}
 --- !u!212 &3451402920003286382
 SpriteRenderer:
   m_ObjectHideFlags: 0

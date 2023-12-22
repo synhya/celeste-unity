@@ -38,6 +38,9 @@ public partial class Player
     public static readonly Color NormalHairColor = new Color(0.67f, 0.2f, 0.2f);
     public static readonly Color UsedHairColor = new Color(0.27f, 0.72f, 1f);
     public static readonly Color FlashHairColor = Color.white;
+
+    private float hairFlashTimer;
+    public Color? OverrideHairColor;
     
     
 }

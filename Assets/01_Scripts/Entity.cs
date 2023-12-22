@@ -9,7 +9,8 @@ using UnityEngine.Tilemaps;
 /// </summary>
 public class Entity : MonoBehaviour
 {
-    [HideInInspector] public Room Room;
+    protected Room Room;
+    protected Level Level;
 
     protected bool Collideable = true;
     protected bool IsSolid;
@@ -22,13 +23,13 @@ public class Entity : MonoBehaviour
     [HideInInspector] public Vector2Int PreviousPos;
     
     public RectInt HitBoxWS => new RectInt(PositionWS + HitboxBottomLeftOffset, HitboxSize);
-    public Vector2Int GridPosMin => (Vector2Int)Room.StaticTilemap.WorldToCell((Vector3Int)HitBoxWS.position);
+    public Vector2Int GridPosMin => (Vector2Int)Level.Map.WorldToCell((Vector3Int)HitBoxWS.position);
 
     public Vector2Int GridPosMax
     {
         get {
             var h = HitBoxWS;
-            return (Vector2Int)Room.StaticTilemap.WorldToCell((Vector3Int)(h.position + h.size));
+            return (Vector2Int)Level.Map.WorldToCell((Vector3Int)(h.position + h.size));
         }
     }
     public int RightWS => HitBoxWS.xMax;
@@ -44,7 +45,7 @@ public class Entity : MonoBehaviour
     protected virtual void Start()
     {
         FindRoom();
-        
+        Level = Room.Level;
         PositionWS = Vector2Int.RoundToInt(transform.position);
     }
 
@@ -141,12 +142,12 @@ public class Entity : MonoBehaviour
             {
                 pos.x = i;
                 pos.y = j;
-                var tile = Room.StaticTilemap.GetTile(pos) as TypeTile;
+                var tile = Level.Map.GetTile(pos) as TypeTile;
                 
                 if (tile && tile.Type == targetType)
                 {
                     tileRect = tile.AABB;
-                    var tilePosWS = Room.StaticTilemap.GetCellCenterWorld(pos) 
+                    var tilePosWS = Level.Map.GetCellCenterWorld(pos) 
                                     - Vector3.one * TileSize / 2;
                     tileRect.position += Vector2Int.RoundToInt(tilePosWS);
 
@@ -173,12 +174,12 @@ public class Entity : MonoBehaviour
             int j = min.y; // for all bottom blocks
             pos.x = i;
             pos.y = j;
-            var tile = Room.StaticTilemap.GetTile(pos) as TypeTile;
+            var tile = Level.Map.GetTile(pos) as TypeTile;
             
             if (tile && tile.Type == targetType)
             {
                 tileRect = tile.AABB;
-                var tilePosWS = Room.StaticTilemap.GetCellCenterWorld(pos) 
+                var tilePosWS = Level.Map.GetCellCenterWorld(pos) 
                                 - Vector3.one * TileSize / 2;
                 tileRect.position += Vector2Int.RoundToInt(tilePosWS);
 
@@ -230,7 +231,7 @@ public class Entity : MonoBehaviour
     /// <returns></returns>
     protected TileType? GetTileFromGridPos(Vector2Int gridPos)
     {
-        var tile = Room.StaticTilemap.GetTile((Vector3Int) gridPos) as TypeTile;
+        var tile = Level.Map.GetTile((Vector3Int) gridPos) as TypeTile;
         // tile.RefreshTile(targetPos, other.Tilemap);
         if (tile)
             return tile.Type;
@@ -240,7 +241,7 @@ public class Entity : MonoBehaviour
     
     protected TileType? GetTileFromWS(Vector2Int posWS)
     {
-        var gridPos = (Vector2Int)Room.StaticTilemap.WorldToCell((Vector3Int)posWS);
+        var gridPos = (Vector2Int)Level.Map.WorldToCell((Vector3Int)posWS);
         
         return GetTileFromGridPos(gridPos);
     }
@@ -248,7 +249,7 @@ public class Entity : MonoBehaviour
     protected TileType? GetTileFromOS(Vector2Int posOS)
     {
         var posWS = PositionWS + posOS;
-        var gridPos = (Vector2Int)Room.StaticTilemap.WorldToCell((Vector3Int)posWS);
+        var gridPos = (Vector2Int)Level.Map.WorldToCell((Vector3Int)posWS);
         
         return GetTileFromGridPos(gridPos);
     }
