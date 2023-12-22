@@ -53,7 +53,6 @@ MonoBehaviour:
   PreviousPos: {x: 0, y: 0}
   Strength: 230
   delayAfterUp: 0.5
-  IsActive: 1
 --- !u!212 &171575298187738610
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -74,7 +73,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 5d2e34046c4bcae46be27c3302040d36, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

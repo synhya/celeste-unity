@@ -27,8 +27,6 @@ public class Room : MonoBehaviour
     [HideInInspector] public Tilemap StaticTilemap;
     
     public Vector2Int OriginWS => originWs;
-    public Vector2Int Size => size;
-    private Vector2Int size;
     private Vector2Int originWs;
 
     #region Validate
@@ -51,12 +49,9 @@ public class Room : MonoBehaviour
         StaticTilemap = GetComponent<Tilemap>();
         StaticTilemap.CompressBounds();
         
-        var cellSize = StaticTilemap.cellSize;
-        var bound = StaticTilemap.cellBounds;
-        size = (Vector2Int)bound.size * (int)cellSize.x;
+        // var cellSize = StaticTilemap.cellSize;
+        // var bound = StaticTilemap.cellBounds;
         originWs = Vector2Int.RoundToInt(transform.position);
-        
-        Debug.Log(size);
 
         for (int i = 0; i < Doors.Length; i++)
         {
