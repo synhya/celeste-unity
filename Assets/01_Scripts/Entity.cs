@@ -9,8 +9,8 @@ using UnityEngine.Tilemaps;
 /// </summary>
 public class Entity : MonoBehaviour
 {
-    public Room Room;
-    
+    [HideInInspector] public Room Room;
+
     protected bool Collideable = true;
     protected bool IsSolid;
     
@@ -68,7 +68,7 @@ public class Entity : MonoBehaviour
 
     
 
-    #region Gizmo
+    #region Editor
 
     private void OnDrawGizmos()
     {
@@ -77,6 +77,10 @@ public class Entity : MonoBehaviour
         //
         // Gizmos.DrawLine(new Vector3(min.x * TileSize, PositionWS.y, 0),
         //     new Vector3(max.x * TileSize, PositionWS.y, 0));
+    }
+
+    private void OnValidate()
+    {
     }
 
     #endregion
@@ -187,9 +191,27 @@ public class Entity : MonoBehaviour
         return false;
     }
 
-    private bool EntityCollision(RectInt hitbox, Entity other)
+    /// <summary>
+    /// Check if there is entity from player position
+    /// </summary>
+    /// <param name="offsetX"></param>
+    /// <param name="offsetY"></param>
+    /// <param name="other"></param>
+    /// <returns></returns>
+    protected bool IsEntityTypeAt(int offsetX, int offsetY, Entity other)
     {
-        if (other != null && other != this && other.Collideable
+        HitboxBottomLeftOffset.x += offsetX;
+        HitboxBottomLeftOffset.y += offsetY;
+        var ret = EntityCollision(HitBoxWS, other, true);
+        HitboxBottomLeftOffset.x -= offsetX;
+        HitboxBottomLeftOffset.y -= offsetY;
+        
+        return ret;
+    }
+    
+    private bool EntityCollision(RectInt hitbox, Entity other, bool ignoreCollideable = false)
+    {
+        if (other != null && other != this && (other.Collideable || ignoreCollideable)
             && other.IsSolid != IsSolid && hitbox.Overlaps(other.HitBoxWS))
         {
             return true;

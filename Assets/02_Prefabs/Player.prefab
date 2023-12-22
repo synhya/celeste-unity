@@ -56,7 +56,7 @@ MonoBehaviour:
   accelOnAir: 60
   deccel: 50
   maxFall: -180
-  jumpStrength: 200
+  jumpStrength: 180
   gravityValue: 2
   gravityIncreaseThreshold: 10
   deadBodyPrefab: {fileID: 7332204074699942299, guid: a82d9be9b0ab08446a7200708ec87c2c, type: 3}

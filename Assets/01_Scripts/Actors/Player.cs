@@ -24,6 +24,7 @@ public partial class Player : Actor
     [Header("Prefabs")]
     [SerializeField] private GameObject deadBodyPrefab;
     
+    private Camera mainCam;
     private SpriteRenderer sr;
 
     private float inputX;
@@ -35,12 +36,18 @@ public partial class Player : Actor
     // state vars
     private bool onGround;
     private bool wasGround;
-    
     private bool isLanding;
     
     private bool jumpConfirmed;
 
-    // state machine 구현해서 death 처리하자!
+    private bool isPaused;
+
+    // 늘어날 수록 복잡해진다. state machine쓰자
+    
+    protected override void FindRoom()
+    {
+        Room = GameManager.I.CurrentRoom;
+    }
 
     protected override void Start()
     {
@@ -49,12 +56,18 @@ public partial class Player : Actor
         InitAnimation();
         
         sr = GetComponent<SpriteRenderer>();
+        mainCam = Camera.main;
+        
         wasGround = true;
     }
 
     private void Update()
     {
-        InputAndStateCheck();
+        if(isPaused) return;
+        
+        InputCheck();
+
+        FigureOutCurrentState();
         
         // move
         if (Abs(Speed.x) > maxRun)
@@ -105,39 +118,11 @@ public partial class Player : Actor
     }
 
 
-    private void InputAndStateCheck()
+    private void InputCheck()
     {
         inputX = Input.GetAxisRaw("Horizontal");
         inputJump = Input.GetKeyDown(KeyCode.C);
         deltaTime = Time.deltaTime;
-        
-        // fall death check 320 * 180
-        if (PositionWS.y < Room.RoomCoordinate.y * 180)
-        {
-            Die(Vector2.up);
-        }
-
-        // spike check
-        if (IsTouchingStaticTileType(TileType.Spike))
-        {
-            var deathDir = -Speed;
-            Die(deathDir.normalized);
-        }
-        
-        var hitbox = HitBoxWS;
-        onGround = false;
-        for (int i = hitbox.xMin; i <= hitbox.xMax; i++)
-        {
-            int j = hitbox.yMin - 1;
-
-            if (GetTileFromWS(new Vector2Int(i, j)) == TileType.Grey)
-            {
-                onGround = true;
-                break;
-            }
-        }
-        
-        // ice check .. etc
         
         // landing frame
         if (onGround && !wasGround)
@@ -148,7 +133,8 @@ public partial class Player : Actor
 
     void Die(Vector2 knockBackDir)
     {
-        // camera shake (cinemachine)
+        // camera shake
+        mainCam.DOShakePosition(0.5f, 1f);
         
         // spawn dead body (dont set as parent as it will be disabled)
         var body = Instantiate(deadBodyPrefab, transform.position, quaternion.identity)
@@ -160,6 +146,23 @@ public partial class Player : Actor
         
         
         Destroy(gameObject);
+    }
+
+    public void OnSwitchRoom(Room nextRoom)
+    {
+        // if going up -> speedup
+        if (Speed.y > 0)
+            Speed.y += nextRoom.EnteringJumpPower;
+        
+        Room = nextRoom;
+        isPaused = true;
+        
+        // adjust camera
+        float x = Room.OriginWS.x + 160;
+        float y = Room.OriginWS.y + 94;
+        mainCam.transform.DOMove(new Vector3(x, y, -10), 1f)
+            .SetEase(Ease.OutCubic)
+            .OnComplete(()=> isPaused = false);
     }
 }
 

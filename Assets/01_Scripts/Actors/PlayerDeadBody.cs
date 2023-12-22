@@ -57,7 +57,7 @@ public class PlayerDeadBody : MonoBehaviour
             {
                 // respawn -> need respawn transform -> each room has respawn point
                 var game = GameManager.I;
-                game.RespawnPlayer();
+                game.SpawnPlayer();
                 
                 Destroy(gameObject);
             });

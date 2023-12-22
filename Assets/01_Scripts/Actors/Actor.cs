@@ -8,12 +8,6 @@ using UnityEngine;
 /// </summary>
 public class Actor : Entity
 {
-    
-    protected override void FindRoom()
-    {
-        Room = GameManager.I.CurrentRoom;
-    }
-    
     protected override void Start()
     {
         base.Start();
