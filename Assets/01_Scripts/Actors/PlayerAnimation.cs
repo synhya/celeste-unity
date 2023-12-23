@@ -5,6 +5,7 @@ using static UnityEngine.Mathf;
 public partial class Player
 {
     private Animator anim;
+    private SpriteRenderer sr;
     
     [Header("Animation Settings")]
     [SerializeField] private float runAnimThreshold = 1f;
@@ -18,6 +19,8 @@ public partial class Player
     private const string StAnimJumpToFall = "Player_JumpToFall";
     private const string StAnimFall = "Player_Fall";
     private const string StAnimLand = "Player_Land";
+    
+    private const string StAnimDash = "Player_Dash";
 
     private readonly int HashIdle = Animator.StringToHash(StAnimIdle);
     private readonly int HashRun = Animator.StringToHash(StAnimRun);
@@ -26,9 +29,13 @@ public partial class Player
     private readonly int HashJump = Animator.StringToHash(StAnimJump);
     private readonly int HashFall = Animator.StringToHash(StAnimFall);
     private readonly int HashLand = Animator.StringToHash(StAnimLand);
-
+    
+    private readonly int HashDash = Animator.StringToHash(StAnimDash);
+    
+    // vars
     private bool flipAnimFlag = false;
-    private bool shouldKeepCurrentAnimation = false;
+    private bool keepCurrentAnim = false;
+    private float landToIdleTimer = 0f;
     private float keepAnimTimer = 0f;
     
     private int curHash;
@@ -36,9 +43,12 @@ public partial class Player
     private string nextAnim;
     
     private bool hasToSwitch;
-
+    
+    private bool facingRight;
+    
     private void InitAnimation()
     {
+        sr = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
     }
 
@@ -46,50 +56,66 @@ public partial class Player
     {
         if (keepAnimTimer > 0f)
         {
-            keepAnimTimer -= Time.deltaTime;
+            keepAnimTimer -= deltaTime;
             return;
         }
         
         // get current state
-        var curState = anim.GetCurrentAnimatorStateInfo(0);
+        var currentAnim = anim.GetCurrentAnimatorStateInfo(0);
+        curHash = currentAnim.shortNameHash;
+        
+        if (curHash == HashLand)
+        {
+            landToIdleTimer = 0.25f;
+        }
+        landToIdleTimer -= deltaTime;
+        
         hasToSwitch = false;
         
-        // figure out what should be current animation based on state
-        if (curState.shortNameHash != HashIdle &&
-            onGround && Abs(Speed.x) <= runAnimThreshold)
-            SetAsNextAnimation(curState.shortNameHash, HashIdle, StAnimIdle);
-        else if (curState.shortNameHash != HashRun &&
-                 onGround && Abs(Speed.x) > runAnimThreshold)
-            SetAsNextAnimation(curState.shortNameHash, HashRun, StAnimRun);
-        
-        
-        // ready jump turnaround fall land
-        #region OnAir
+        #region Normal State Animations
 
-        // else if (curState.shortNameHash != HashReadyJump &&
-        //          jumpConfirmed)
-        // {
-        //     shouldKeepCurrentAnimation = true;
-        //     SwitchAnimation(curState.shortNameHash, HashReadyJump, StAnimReadyJump);
-        // }
-        
-        else if (curState.shortNameHash != HashJump &&
-                 !onGround && Speed.y > jumpTurnAroundThreshold)
-            SetAsNextAnimation(curState.shortNameHash, HashJump, StAnimJump);
-        
-        else if (curState.shortNameHash != HashJumpToFall &&
-                 !onGround && Abs(Speed.y) <= jumpTurnAroundThreshold)
-            SetAsNextAnimation(curState.shortNameHash, HashJump, StAnimJumpToFall);
-        
-        else if (curState.shortNameHash != HashFall &&
-                 !onGround && Speed.y < -jumpTurnAroundThreshold)
-            SetAsNextAnimation(curState.shortNameHash, HashFall, StAnimFall);
-        
-        if (curState.shortNameHash == HashFall &&
-                 !wasGround && onGround)  // 점프 시간재서 일정시간 이상이면 플레이하게 바꾸자.
+        if (sm.State == StateNormal)
         {
-            shouldKeepCurrentAnimation = true;
-            SetAsNextAnimation(curState.shortNameHash, HashLand, StAnimLand);
+            if ((curHash != HashLand && curHash != HashIdle && onGround && Abs(Speed.x) <= runAnimThreshold)
+                 || (curHash == HashLand && currentAnim.normalizedTime > 0.95f))
+                SetAsNextAnimation(HashIdle, StAnimIdle);
+            else if (curHash != HashRun &&
+                     onGround && Abs(Speed.x) > runAnimThreshold)
+                SetAsNextAnimation(HashRun, StAnimRun);
+
+            // else if (curState.shortNameHash != HashReadyJump &&
+            //          jumpConfirmed)
+            // {
+            //     shouldKeepCurrentAnimation = true;
+            //     SwitchAnimation(HashReadyJump, StAnimReadyJump);
+            // }
+        
+            else if (curHash != HashJump &&
+                     !onGround && Speed.y > jumpTurnAroundThreshold)
+                SetAsNextAnimation(HashJump, StAnimJump);
+        
+            else if (curHash != HashJumpToFall &&
+                     !onGround && Abs(Speed.y) <= jumpTurnAroundThreshold)
+                SetAsNextAnimation(HashJump, StAnimJumpToFall);
+        
+            else if (curHash != HashFall &&
+                     !onGround && Speed.y < -jumpTurnAroundThreshold)
+                SetAsNextAnimation(HashFall, StAnimFall);
+        
+            if (curHash == HashFall &&
+                !wasGround && onGround)  // 점프 시간재서 일정시간 이상이면 플레이하게 바꾸자.
+                SetAsNextAnimation(HashLand, StAnimLand);
+        }
+            
+
+        #endregion
+
+        #region Dash State Animations
+
+        else if (sm.State == StateDash)
+        {
+            if(curHash != HashDash)
+                SetAsNextAnimation(HashDash, StAnimDash);
         }
 
         #endregion
@@ -104,20 +130,22 @@ public partial class Player
         
         // after switching animation
         if (Speed.x != 0)
-            sr.flipX = Speed.x < 0 ^ flipAnimFlag;
-        
-        if (shouldKeepCurrentAnimation)
         {
-            shouldKeepCurrentAnimation = false;
-
-            keepAnimTimer = curState.length;
+            facingRight = Speed.x > 0;
+            sr.flipX = !facingRight ^ flipAnimFlag;
+        }
+        
+        
+        if (keepCurrentAnim)
+        {
+            keepCurrentAnim = false;
+            keepAnimTimer = currentAnim.length;
         }
     }
 
-    void SetAsNextAnimation(int curHash, int nextHash ,string nextAnim)
+    void SetAsNextAnimation(int nextHash ,string nextAnim)
     {
         hasToSwitch = true;
-        this.curHash = curHash;
         this.nextHash = nextHash;
         this.nextAnim = nextAnim;
     }
@@ -125,7 +153,11 @@ public partial class Player
     void SwitchAnimation()
     {
         if (curHash == HashIdle)
+        {
             flipAnimFlag = true;
+            sr.flipX = !sr.flipX;
+        }
+            
         else if (nextHash == HashIdle)
         {
             flipAnimFlag = false;

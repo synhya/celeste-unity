@@ -6,15 +6,15 @@ using UnityEngine;
 using UnityEngine.PlayerLoop;
 
 
-public class StateMachine : MonoBehaviour
+public class StateMachine
 {
     private Dictionary<int, StateActions> stateDict;
-    private int currentStateIdx;
+    private int currentStateIdx = -1;
     
     // to avoid null check
     private Func<int> currentUpdateAction = () => 0;
 
-    [HideInInspector] public bool Lock = false;
+    public bool Lock = false;
 
     public int State
     {
@@ -30,46 +30,23 @@ public class StateMachine : MonoBehaviour
         public Action begin;
         public Action end;
         public Func<int> update;
-        public IEnumerator coroutine;
     }
     
-    public static StateMachine AttachStateMachine(GameObject gameObject, int? capacity = null)
-    {
-        var newStateMachine = gameObject.AddComponent<StateMachine>();
-        newStateMachine.hideFlags = HideFlags.HideInInspector;
-        newStateMachine.Initialize(capacity);
-        
-        return newStateMachine;
-    }
-
-    /// <summary>
-    /// set capacity -> faster as no need to reallocate
-    /// https://www.dotnetperls.com/capacity
-    /// </summary>
-    /// <param name="capacity"></param>
-    private void Initialize(int? capacity)
+    public StateMachine(int? capacity = null)
     {
         stateDict = capacity.HasValue ? new Dictionary<int, StateActions>(capacity.Value) : 
             new Dictionary<int, StateActions>();
     }
 
-    public void SetCallbacks(int state, Func<int> update, IEnumerator coroutine, Action begin, Action end)
+    public void SetCallbacks(int state, Func<int> update, Action begin, Action end)
     {
-        RemoveState(state);
-        
-        stateDict.Add(state, new StateActions()
-        {
-            update = update,
-            coroutine = coroutine,
-            begin = begin,
-            end = end
-        });
-    }
-
-    public void RemoveState(int state)
-    {
-        if (stateDict.ContainsKey(state))
-            stateDict.Remove(state);
+        if(!stateDict.TryAdd(state, new StateActions
+           {
+               update = update,
+               begin = begin,
+               end = end
+           })) 
+            Debug.LogError("Adding Same State Twice!");
     }
 
     private void OnStateChange(int newState) 
@@ -82,23 +59,18 @@ public class StateMachine : MonoBehaviour
             if (stateDict.TryGetValue(currentStateIdx, out var prevActions))
             {
                 prevActions.end?.Invoke();
-                
-                // if(prevActions.coroutine != null)
-                //     StopCoroutine(prevActions.coroutine);
             }
             
             stateActions.begin?.Invoke();
             currentUpdateAction = stateActions.update;
-
-            if (stateActions.coroutine != null)
-                StartCoroutine(stateActions.coroutine);
         }
     }
 
-    private void Update()
+    // call on callee
+    public void Update()
     {
         // if different -> state change
-        State = currentUpdateAction.Invoke();
+        State = currentUpdateAction();
     }
 }
 

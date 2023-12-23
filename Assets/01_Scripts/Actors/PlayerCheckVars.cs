@@ -5,7 +5,16 @@ using static UnityEngine.Mathf;
 
 public partial class Player
 {
-    private void UpdateBools()
+    private void CheckInput()
+    {
+        inputX = Input.GetAxisRaw("Horizontal");
+        inputY = Input.GetAxisRaw("Vertical");
+        jumpPressed = Input.GetKeyDown(KeyCode.C);
+        dashPressed = Input.GetKeyDown(KeyCode.X);
+        deltaTime = Time.deltaTime;
+    }
+    
+    private void CheckOverlaps()
     {
         var hitbox = HitBoxWS;
         

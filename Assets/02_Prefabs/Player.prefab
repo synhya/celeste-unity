@@ -46,11 +46,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1fedfe99a894ff0bfa3b84dd875e729, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Room: {fileID: 0}
   HitboxBottomLeftOffset: {x: -3, y: 0}
   HitboxSize: {x: 6, y: 15}
   PositionWS: {x: 95, y: 56}
   PreviousPos: {x: 165, y: 96}
+  deadBodyPrefab: {fileID: 7332204074699942299, guid: a82d9be9b0ab08446a7200708ec87c2c, type: 3}
+  IsPaused: 0
+  runAnimThreshold: 1
+  jumpTurnAroundThreshold: 50
+  DashSpeed: 200
+  MaxDashes: 1
+  Dashes: 0
+  DashDir: {x: 0, y: 0}
   maxRun: 80
   accel: 70
   accelOnAir: 60
@@ -59,11 +66,6 @@ MonoBehaviour:
   jumpStrength: 180
   gravityValue: 2
   gravityIncreaseThreshold: 10
-  deadBodyPrefab: {fileID: 7332204074699942299, guid: a82d9be9b0ab08446a7200708ec87c2c, type: 3}
-  runAnimThreshold: 1
-  jumpTurnAroundThreshold: 50
-  Dashes: 0
-  DashDir: {x: 0, y: 0}
 --- !u!212 &3451402920003286382
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -84,7 +86,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 7c02cf3ae5eaae6478e84268f5852acc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

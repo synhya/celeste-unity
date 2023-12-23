@@ -2802,6 +2802,27 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: red hood itch free Copy-Sheet_128
+      rect:
+        serializedVersion: 2
+        x: 784
+        y: 36
+        width: 112
+        height: 97
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 20cad93f86d7b8a47a7db9f304566aa1
+      internalID: 1843431241
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -2845,6 +2866,8 @@ TextureImporter:
       red hood itch free Copy-Sheet_124: -1151030976
       red hood itch free Copy-Sheet_125: -525123781
       red hood itch free Copy-Sheet_126: 582181261
+      red hood itch free Copy-Sheet_127: 878356098
+      red hood itch free Copy-Sheet_128: 1843431241
       red hood itch free Copy-Sheet_13: -691680018
       red hood itch free Copy-Sheet_14: 2105277169
       red hood itch free Copy-Sheet_15: 291651531
