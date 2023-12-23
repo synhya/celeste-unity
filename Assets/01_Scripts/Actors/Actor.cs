@@ -11,7 +11,7 @@ public class Actor : Entity
     protected override void Start()
     {
         base.Start();
-        Room.Actors.Add(this);
+        Room.OnActorEnter(this);
         IsSolid = false;
     }
 
@@ -27,7 +27,7 @@ public class Actor : Entity
 
             while (move != 0)
             {
-                if(!Collideable || !CheckCollision( sign, 0))
+                if(!CollideCheck( sign, 0))
                 {
                     PositionWS.x += sign;
                     move -= sign;
@@ -55,7 +55,7 @@ public class Actor : Entity
 
             while (move != 0)
             {
-                if(!CheckCollision(0, sign))
+                if(!CollideCheck(0, sign))
                 {
                     PositionWS.y += sign;
                     move -= sign;

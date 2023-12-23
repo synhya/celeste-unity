@@ -24,4 +24,9 @@ public class Game : MonoBehaviour
         // set level when?
         CurrentLevel = startingLevel;
     }
+
+    public void Freeze(float time)
+    {
+        CurrentLevel.FreezeLevel(time);
+    }
 } 

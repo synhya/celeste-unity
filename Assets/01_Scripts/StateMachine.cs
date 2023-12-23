@@ -14,6 +14,8 @@ public class StateMachine : MonoBehaviour
     // to avoid null check
     private Func<int> currentUpdateAction = () => 0;
 
+    [HideInInspector] public bool Lock = false;
+
     public int State
     {
         get => currentStateIdx;

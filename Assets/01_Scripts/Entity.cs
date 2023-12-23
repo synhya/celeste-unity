@@ -22,7 +22,15 @@ public class Entity : MonoBehaviour
     [HideInInspector] public Vector2Int PositionWS;
     [HideInInspector] public Vector2Int PreviousPos;
     
-    public RectInt HitBoxWS => new RectInt(PositionWS + HitboxBottomLeftOffset, HitboxSize);
+    private RectInt varBox = new RectInt();
+    public RectInt HitBoxWS
+    {
+        get {
+            varBox.position = PositionWS + HitboxBottomLeftOffset;
+            varBox.size = HitboxSize;
+            return varBox;
+        }
+    }
     public Vector2Int GridPosMin => (Vector2Int)Level.Map.WorldToCell((Vector3Int)HitBoxWS.position);
 
     public Vector2Int GridPosMax
@@ -88,25 +96,27 @@ public class Entity : MonoBehaviour
 
     #region Collision
 
-    protected bool CheckCollision(int offsetX, int offsetY)
+    protected bool CollideCheck(int offsetX, int offsetY)
     {
         HitboxBottomLeftOffset.x += offsetX;
         HitboxBottomLeftOffset.y += offsetY;
-        var ret = CheckCollision();
+        var ret = CollideCheck();
         HitboxBottomLeftOffset.x -= offsetX;
         HitboxBottomLeftOffset.y -= offsetY;
         
         return ret;
     }
 
-    private bool CheckCollision()
+    private bool CollideCheck()
     {
+        if (!Collideable) return false;
+        
         var hitbox = HitBoxWS;
         
         if (!IsSolid)
         {
             // first check the room tilemap (only for actors)
-            if (IsTouchingStaticTileType(TileType.Grey))
+            if (OverlapTileFlagCheckOS(TileType.Ground, Vector2.zero))
                 return true;
             
             // then check with each solid objects 
@@ -127,14 +137,68 @@ public class Entity : MonoBehaviour
         
         return false;
     }
-    
-    protected bool IsTouchingStaticTileType(TileType targetType)
+
+    #region Tile Collisions
+
+    /// <summary>
+    /// overlap doesn't include "touching"
+    /// </summary>
+    /// <param name="dir">if 0, check for all grids in hitbox(inefficient)</param>
+    /// <returns></returns>
+    protected bool OverlapTileFlagCheckOS(TileType flag, Vector2 dir, out TileType tileType, int offsetX = 0, int offsetY = 0)
+    {
+        HitboxBottomLeftOffset.x -= offsetX;
+        HitboxBottomLeftOffset.y -= offsetY;
+        
+        var bottomLeft = GridPosMin;
+        var topRight = GridPosMax;
+        
+        if (dir.y < 0)
+            topRight.y = bottomLeft.y;
+        else if (dir.y > 0)
+            bottomLeft.y = topRight.y;
+
+        if (dir.x < 0)
+            topRight.x = bottomLeft.x;
+        else if (dir.x > 0)
+            bottomLeft.x = topRight.x;
+
+        var ret = CheckTileFlagInGrid(flag, bottomLeft, topRight, out tileType);
+        
+        HitboxBottomLeftOffset.x += offsetX;
+        HitboxBottomLeftOffset.y += offsetY;
+
+        return ret;
+    }
+    protected bool OverlapTileFlagCheckOS(TileType flag, Vector2 dir, int offsetX = 0, int offsetY = 0)
+    {
+        HitboxBottomLeftOffset.x += offsetX;
+        HitboxBottomLeftOffset.y += offsetY;
+        
+        var bottomLeft = GridPosMin;
+        var topRight = GridPosMax;
+        
+        if (dir.y < 0)
+            topRight.y = bottomLeft.y;
+        else if (dir.y > 0)
+            bottomLeft.y = topRight.y;
+
+        if (dir.x < 0)
+            topRight.x = bottomLeft.x;
+        else if (dir.x > 0)
+            bottomLeft.x = topRight.x;
+
+        var ret = CheckTileFlagInGrid(flag, bottomLeft, topRight);
+        
+        HitboxBottomLeftOffset.x -= offsetX;
+        HitboxBottomLeftOffset.y -= offsetY;
+
+        return ret;
+    }
+    private bool CheckTileFlagInGrid(TileType flag, Vector2Int min, Vector2Int max, out TileType tileType)
     {
         var tileRect = new RectInt();
         var pos = new Vector3Int();
-        
-        var min = GridPosMin;
-        var max = GridPosMax;
         
         for(int i = min.x; i <= max.x; i++)
         {
@@ -144,7 +208,38 @@ public class Entity : MonoBehaviour
                 pos.y = j;
                 var tile = Level.Map.GetTile(pos) as TypeTile;
                 
-                if (tile && tile.Type == targetType)
+                if (tile && tile.Type.HasFlag(flag))
+                {
+                    tileRect = tile.AABB;
+                    var tilePosWS = Level.Map.GetCellCenterWorld(pos) 
+                                    - Vector3.one * TileSize / 2;
+                    tileRect.position += Vector2Int.RoundToInt(tilePosWS);
+
+                    if (HitBoxWS.Overlaps(tileRect))
+                    {
+                        tileType = tile.Type;
+                        return true;
+                    }
+                }
+            }
+        }
+        tileType = TileType.None;
+        return false;
+    }
+    private bool CheckTileFlagInGrid(TileType flag, Vector2Int min, Vector2Int max)
+    {
+        var tileRect = new RectInt();
+        var pos = new Vector3Int();
+        
+        for(int i = min.x; i <= max.x; i++)
+        {
+            for (int j = min.y; j <= max.y; j++)
+            {
+                pos.x = i;
+                pos.y = j;
+                var tile = Level.Map.GetTile(pos) as TypeTile;
+                
+                if (tile && tile.Type.HasFlag(flag))
                 {
                     tileRect = tile.AABB;
                     var tilePosWS = Level.Map.GetCellCenterWorld(pos) 
@@ -161,44 +256,13 @@ public class Entity : MonoBehaviour
         return false;
     }
     
-    protected bool IsStandingAtStaticTileType(TileType targetType)
-    {
-        var tileRect = new RectInt();
-        var pos = new Vector3Int();
-        
-        var min = GridPosMin;
-        var max = GridPosMax;
-        
-        for(int i = min.x; i <= max.x; i++)
-        {
-            int j = min.y; // for all bottom blocks
-            pos.x = i;
-            pos.y = j;
-            var tile = Level.Map.GetTile(pos) as TypeTile;
-            
-            if (tile && tile.Type == targetType)
-            {
-                tileRect = tile.AABB;
-                var tilePosWS = Level.Map.GetCellCenterWorld(pos) 
-                                - Vector3.one * TileSize / 2;
-                tileRect.position += Vector2Int.RoundToInt(tilePosWS);
+    #endregion
 
-                if (HitBoxWS.Overlaps(tileRect))
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+    #region Entity Collisions
 
     /// <summary>
     /// Check if there is entity from player position
     /// </summary>
-    /// <param name="offsetX"></param>
-    /// <param name="offsetY"></param>
-    /// <param name="other"></param>
-    /// <returns></returns>
     protected bool IsEntityTypeAt(int offsetX, int offsetY, Entity other)
     {
         HitboxBottomLeftOffset.x += offsetX;
@@ -219,6 +283,8 @@ public class Entity : MonoBehaviour
         }
         return false;
     }
+
+    #endregion
 
     #endregion
     

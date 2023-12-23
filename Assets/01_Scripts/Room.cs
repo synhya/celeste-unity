@@ -55,6 +55,15 @@ public class Room : MonoBehaviour
             Doors[i].position += originWs;
         }
     }
+    public void OnActorExit(Actor actor)
+    {
+        Actors.Remove(actor);
+    }
+    
+    public void OnActorEnter(Actor actor)
+    {
+        Actors.Add(actor);
+    }
 }
 
 

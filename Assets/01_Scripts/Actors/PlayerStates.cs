@@ -5,7 +5,7 @@ using static UnityEngine.Mathf;
 
 public partial class Player
 {
-    private void FigureOutCurrentState()
+    private void UpdateBools()
     {
         var hitbox = HitBoxWS;
         
@@ -26,25 +26,19 @@ public partial class Player
         }
 
         // spike check
-        if (IsTouchingStaticTileType(TileType.Spike))
+        if (OverlapTileFlagCheckOS(TileType.Obstacle,Vector2.zero, out var obsType))
         {
-            var deathDir = -Speed;
+            var deathDir = Vector2.zero;
+            
+            if (obsType == TileType.SpikeO)
+                deathDir = -Speed;
+            
             Die(deathDir.normalized);
         }
         
         // ground check
-        onGround = false;
-        for (int i = hitbox.xMin + 1; i < hitbox.xMax; i++)
-        {
-            int j = hitbox.yMin - 1;
+        onGround = OverlapTileFlagCheckOS(TileType.Ground, Vector2.down, 0, -1);
 
-            if (GetTileFromWS(new Vector2Int(i, j)) == TileType.Grey)
-            {
-                onGround = true;
-                break;
-            }
-        }
-        
         // spring check (spring is not tile)
         if (!onGround)
         {

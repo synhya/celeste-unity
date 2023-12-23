@@ -24,11 +24,11 @@ public partial class Player : Actor
     [Header("Prefabs")]
     [SerializeField] private GameObject deadBodyPrefab;
     
-    private Camera mainCam;
     private SpriteRenderer sr;
 
     private float inputX;
-    private bool inputJump;
+    private float inputY;
+    private bool jumpPressed;
     private float deltaTime;
 
     private float gravityAccel;
@@ -39,10 +39,13 @@ public partial class Player : Actor
     private bool isLanding;
     
     private bool jumpConfirmed;
-
-    private bool isPaused;
+    
+    [HideInInspector] public bool IsPaused;
 
     // 늘어날 수록 복잡해진다. state machine쓰자
+    public const int StNormal = 0;
+    public const int StClimb = 1;
+    public const int StDash = 2;
     
     protected override void FindRoom()
     {
@@ -56,18 +59,17 @@ public partial class Player : Actor
         InitAnimation();
         
         sr = GetComponent<SpriteRenderer>();
-        mainCam = Camera.main;
         
         wasGround = true;
     }
 
     private void Update()
     {
-        if(isPaused) return;
+        if(IsPaused) return;
         
         InputCheck();
 
-        FigureOutCurrentState();
+        UpdateBools();
         
         // move
         if (Abs(Speed.x) > maxRun)
@@ -76,7 +78,7 @@ public partial class Player : Actor
             Speed.x = MathUtil.Appr(Speed.x, inputX * maxRun, accel);
         
         // confirm jump
-        if (inputJump && onGround)
+        if (jumpPressed && onGround)
             jumpConfirmed = true;
         else
             jumpConfirmed = false;
@@ -121,7 +123,9 @@ public partial class Player : Actor
     private void InputCheck()
     {
         inputX = Input.GetAxisRaw("Horizontal");
-        inputJump = Input.GetKeyDown(KeyCode.C);
+        inputY = Input.GetAxisRaw("Vertical");
+        jumpPressed = Input.GetKeyDown(KeyCode.C);
+        dashPressed = Input.GetKeyDown(KeyCode.X);
         deltaTime = Time.deltaTime;
         
         // landing frame
@@ -134,7 +138,7 @@ public partial class Player : Actor
     void Die(Vector2 knockBackDir)
     {
         // camera shake
-        mainCam.DOShakePosition(0.5f, 1.5f);
+        Level.Shake(0.5f, 1.5f);
         
         // spawn dead body (dont set as parent as it will be disabled)
         var body = Instantiate(deadBodyPrefab, transform.position, quaternion.identity)
@@ -153,16 +157,10 @@ public partial class Player : Actor
         // if going up -> speedup
         if (Speed.y > 0)
             Speed.y += nextRoom.EnteringJumpPower;
-        
+
+        Room.OnActorExit(this);
         Room = nextRoom;
-        isPaused = true;
-        
-        // adjust camera
-        float x = Room.OriginWS.x + 160;
-        float y = Room.OriginWS.y + 94;
-        mainCam.transform.DOMove(new Vector3(x, y, -10), 1f)
-            .SetEase(Ease.OutCubic)
-            .OnComplete(()=> isPaused = false);
+        Room.OnActorEnter(this);
     }
 }
 

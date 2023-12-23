@@ -39,6 +39,7 @@ public class Level : MonoBehaviour
     private void Start()
     {
         SpawnPlayer();
+        
         float x = startingRoom.OriginWS.x + 160;
         float y = startingRoom.OriginWS.y + 94;
         cam.transform.position = new Vector3(x, y, -10);
@@ -47,6 +48,7 @@ public class Level : MonoBehaviour
     public void SwitchRoom(Room nextRoom)
     {
         CurrentRoom = nextRoom;
+        FreezeLevel(1f);
         Player.OnSwitchRoom(nextRoom);
     }
     
@@ -57,5 +59,28 @@ public class Level : MonoBehaviour
     {
         Player = Instantiate(PlayerPrefab, (Vector3Int)CurrentRoom.SpawnPos, 
             quaternion.identity).GetComponent<Player>();
+    }
+    
+    public void FreezeLevel(float time)
+    {
+        Player.IsPaused = true;
+        
+        // adjust camera
+        float x = CurrentRoom.OriginWS.x + 160;
+        float y = CurrentRoom.OriginWS.y + 94;
+        cam.transform.DOMove(new Vector3(x, y, -10), time)
+            .SetEase(Ease.OutCubic)
+            .OnComplete(()=> Player.IsPaused = false);
+    }
+
+    public void Shake(float duration, float strength)
+    {
+        cam.DOShakePosition(duration, strength);
+    }
+    
+    public void DirectionalShake(Vector2 dashDir, float duration, float strength)
+    {
+        // TODO: shake to direction
+        cam.DOShakePosition(duration, strength);
     }
 } 
