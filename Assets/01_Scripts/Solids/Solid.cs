@@ -13,7 +13,6 @@ public class Solid : Entity
     {
         base.Start();
         Room.Solids.Add(this);
-        IsSolid = true;
     }
 
     public void Move(float x, float y)
@@ -42,7 +41,7 @@ public class Solid : Entity
                 {
                     foreach (var actor in Room.Actors)
                     {
-                        if (OverlapCheck(actor))
+                        if (CollideEntity(actor))
                         {
                             // Push right
                             actor.MoveX(this.RightWS - actor.LeftWS, actor.Squish);
@@ -60,7 +59,47 @@ public class Solid : Entity
                 {
                     foreach (var actor in Room.Actors)
                     {
-                        if (OverlapCheck(actor))
+                        if (CollideEntity(actor))
+                        {
+                            // Push left
+                            actor.MoveX(this.LeftWS - actor.RightWS, actor.Squish);
+                        }
+                        else if (riding.Contains(actor))
+                        {
+                            // Carry left
+                            actor.MoveX(moveX, null);
+                        }
+                    }
+                }
+            }
+    
+            if (moveX != 0)
+            {
+                Remainder.x -= moveX;
+                PositionWS.x += moveX;
+                if (moveX > 0)
+                {
+                    foreach (var actor in Room.Actors)
+                    {
+                        if (CollideEntity(actor))
+                        {
+                            // Push right
+                            actor.MoveX(this.RightWS - actor.LeftWS, actor.Squish);
+                        }
+                        else if (riding.Contains(actor))
+                        {
+                            // Carry right
+                            // there is no danger of squishing here
+                            // nothing happens if actor hits wall!
+                            actor.MoveX(moveX, null);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var actor in Room.Actors)
+                    {
+                        if (CollideEntity(actor))
                         {
                             // Push left
                             actor.MoveX(this.LeftWS - actor.RightWS, actor.Squish);
@@ -75,8 +114,6 @@ public class Solid : Entity
             }
         }
         
-        // do same for the y-axis
-    
         //then turn collider on
         Collideable = true;
     }
@@ -89,6 +126,8 @@ public class Solid : Entity
     {
         return null;
     }
+
+    public virtual void OnTouchingActor() { }
 }
 
 

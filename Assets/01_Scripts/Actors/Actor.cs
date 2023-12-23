@@ -12,7 +12,6 @@ public class Actor : Entity
     {
         base.Start();
         Room.OnActorEnter(this);
-        IsSolid = false;
     }
 
     public void MoveX(float amount, Action onCollide)
@@ -72,5 +71,69 @@ public class Actor : Entity
 
     public virtual bool IsRiding(Solid[] solid) { return true; }
     public virtual void Squish() { }
+
+    #region Collisions
+
+    protected bool CollideCheck<T>(int offsetX, int offsetY) where T : Solid
+    {
+        if (!Collideable) return false;
+        
+        HitboxBottomLeftOffset.x += offsetX;
+        HitboxBottomLeftOffset.y += offsetY;
+
+        bool ret = false;
+        
+        foreach (var solid in Room.Solids)
+        {
+            if (solid is T)
+            {
+                if (CollideEntity(solid))
+                {
+                    solid.OnTouchingActor();
+                    ret = true;
+                    break;
+                }
+            }
+        }
+        
+        HitboxBottomLeftOffset.x -= offsetX;
+        HitboxBottomLeftOffset.y -= offsetY;
+        
+        return ret;
+    }
     
+    private bool CollideCheck(int offsetX, int offsetY)
+    {
+        var ret = OverlapTileFlagCheckOS(TileType.Ground, new Vector2(offsetX, offsetY), out var type, offsetX, offsetY);
+        if (type.HasFlag(TileType.HalfGround) && 
+            (Speed.y > 0 || OverlapTileFlagCheckOS(TileType.HalfGround, Vector2.zero)))
+            ret = false;
+
+        if (!ret)
+        {
+            HitboxBottomLeftOffset.x += offsetX;
+            HitboxBottomLeftOffset.y += offsetY;
+            ret = CollideSolidsCheck();
+            HitboxBottomLeftOffset.x -= offsetX;
+            HitboxBottomLeftOffset.y -= offsetY;
+        }
+        
+        return ret;
+    }
+    
+    private bool CollideSolidsCheck()
+    {
+        if (!Collideable) return false;
+            
+        // then check with each solid objects 
+        foreach (var other in Room.Solids)
+        {
+            if (CollideEntity(other))
+                return true;
+        }
+        
+        return false;
+    }
+
+    #endregion
 }

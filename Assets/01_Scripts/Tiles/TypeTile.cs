@@ -37,8 +37,9 @@ public class TypeTile : RuleTile
     [Header("Custom Settings")]
     
     public TileType Type = TileType.Snow;
-    [FormerlySerializedAs("RuleEffected")]
-    public bool EffectedByOtherRuleTile = true;
+    
+    
+    public TileType[] EffectedFlags = Array.Empty<TileType>();
     
     [Tooltip("0,0 ~ 8,8")]
     public RectInt AABB = new RectInt(0, 0, 8, 8);
@@ -59,19 +60,35 @@ public class TypeTile : RuleTile
         {
             case TilingRule.Neighbor.This:
             {
-                return other is TypeTile
-                       && (other as TypeTile).Type.HasFlag(TileType.Ground) 
-                       && Type.HasFlag(TileType.Ground) && 
-                       ((other as TypeTile).EffectedByOtherRuleTile && EffectedByOtherRuleTile ||
-                       (other as TypeTile).Type == this.Type);
+                if (other is TypeTile)
+                {
+                    var o = other as TypeTile;
+                    
+                    for (int i = 0; i < EffectedFlags.Length; i++)
+                    {
+                        if (o.Type.HasFlag(EffectedFlags[i]))
+                            return true;
+                    }
+
+                    return o.Type == Type;
+                }
+                return false;
             }
             case TilingRule.Neighbor.NotThis:
             {
-                return !(other is TypeTile
-                         && (other as TypeTile).Type.HasFlag(TileType.Ground)
-                         && Type.HasFlag(TileType.Ground) && 
-                         ((other as TypeTile).EffectedByOtherRuleTile && EffectedByOtherRuleTile ||
-                          (other as TypeTile).Type == this.Type));
+                if (other is TypeTile)
+                {
+                    var o = other as TypeTile;
+
+                    for (int i = 0; i < EffectedFlags.Length; i++)
+                    {
+                        if (o.Type.HasFlag(EffectedFlags[i]))
+                            return false;
+                    }
+
+                    return o.Type != Type;
+                }
+                return true;
             }
         }
 

@@ -1,15 +1,12 @@
 ﻿#ifndef PixelPerfectOutline
 #define PixelPerfectOutline
 
-TEXTURE2D(_MainTex);
-SAMPLER(sampler_MainTex);
-float4 _MainTex_TexelSize;
 
 float4 _OutlineColor;
 float _Radius;
 
 
-float CalculateOutline(float4 texColor, float2 uv)
+float CalculateOutline(float4 texColor, float2 uv, Texture2D tex, SamplerState st, float4 texelSize)
 {
 	float na = 0;
 	float r = _Radius;
@@ -20,8 +17,8 @@ float CalculateOutline(float4 texColor, float2 uv)
 		{
 			if(nx * nx + ny * ny <= r) // r * r is ugly
 				{
-				float4 nc = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv +
-					float2(_MainTex_TexelSize.x * nx, _MainTex_TexelSize.y * ny));
+				float4 nc = SAMPLE_TEXTURE2D(tex, st, uv +
+					float2(texelSize.x * nx, texelSize.y * ny));
 				na += ceil(nc.a); 
 				// if that texture is filled with color
 				// na increases

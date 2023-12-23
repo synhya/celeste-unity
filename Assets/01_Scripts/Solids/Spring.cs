@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class Spring : Solid
 {
-    // maybe change values based on different spring colors
-    public float Strength = 80f;
-    
     private Animator anim;
     
     // const
@@ -23,12 +20,9 @@ public class Spring : Solid
     {
         base.Start();
         anim = GetComponent<Animator>();
-        
-        // spring should not be collideable 
-        Collideable = false;
     }
-    
-    public void ActivateSpring()
+
+    public override void OnTouchingActor()
     {
         onPlay = true;
         anim.Play(StAnimSpringUp, 0, 0);

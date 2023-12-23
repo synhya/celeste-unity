@@ -121,6 +121,11 @@ public partial class Player : Actor
         Destroy(gameObject);
     }
 
+    public override void Squish()
+    {
+        Die(Vector2.up);
+    }
+
     public void OnSwitchRoom(Room nextRoom)
     {
         // if going up -> speedup

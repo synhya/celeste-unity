@@ -46,7 +46,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AliveTime: 1
-  EndColor: {r: 0, g: 0.83843994, b: 1, a: 0}
+  StartColor: {r: 0.46274513, g: 0.909804, b: 1, a: 1}
+  EndColor: {r: 0, g: 0.4829449, b: 0.5754717, a: 0}
+  StartIntensity: 1.03
+  EndIntensity: 0.4
 --- !u!212 &7342079456134722979
 SpriteRenderer:
   m_ObjectHideFlags: 0

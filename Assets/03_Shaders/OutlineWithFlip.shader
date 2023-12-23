@@ -65,12 +65,15 @@ Shader "Custom/OutlineWithFlip"
 
             #include "Packages/com.unity.render-pipelines.universal/Shaders/2D/Include/LightingUtility.hlsl"
             #include "PixelPerfectOutline.hlsl"
-            
+
+            TEXTURE2D(_MainTex);
+            SAMPLER(sampler_MainTex);
             TEXTURE2D(_MaskTex);
             SAMPLER(sampler_MaskTex);
             half4 _MainTex_ST;
             float4 _Color;
             half4 _RendererColor;
+            float4 _MainTex_TexelSize;
 
             #if USE_SHAPE_LIGHT_TYPE_0
             SHAPE_LIGHT(0)
@@ -119,7 +122,7 @@ Shader "Custom/OutlineWithFlip"
 
                 half4 finColor = i.color * SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv); // CombinedShapeLightShared(surfaceData, inputData);
                 
-                return lerp(finColor, _OutlineColor, CalculateOutline(finColor, i.uv)); 
+                return lerp(finColor, _OutlineColor, CalculateOutline(finColor, i.uv, _MainTex, sampler_MainTex, _MainTex_TexelSize)); 
             }
             ENDHLSL
         }
@@ -216,10 +219,13 @@ Shader "Custom/OutlineWithFlip"
                 #endif
                 UNITY_VERTEX_OUTPUT_STEREO
             };
-            
+
+            TEXTURE2D(_MainTex);
+            SAMPLER(sampler_MainTex);
             float4 _MainTex_ST;
             float4 _Color;
             half4 _RendererColor;
+            float4 _MainTex_TexelSize;
 
             Varyings UnlitVertex(Attributes attributes)
             {
@@ -255,7 +261,7 @@ Shader "Custom/OutlineWithFlip"
                 }
                 #endif
                 
-                return lerp(mainTex, _OutlineColor, CalculateOutline(mainTex, i.uv)); 
+                return lerp(mainTex, _OutlineColor, CalculateOutline(mainTex, i.uv, _MainTex, sampler_MainTex, _MainTex_TexelSize)); 
             }
             ENDHLSL
         }

@@ -157,7 +157,7 @@ public partial class Player
          var trail = Instantiate(playerTrailPrefab, transform.position, quaternion.identity)
             .GetComponent<PlayerTrail>();
          
-         trail.Init(facingRight);
+         trail.Init(facingRight, sr.sprite);
     }
 
     #endregion

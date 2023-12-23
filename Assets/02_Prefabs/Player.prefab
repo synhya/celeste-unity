@@ -54,11 +54,11 @@ MonoBehaviour:
   IsPaused: 0
   runAnimThreshold: 1
   jumpTurnAroundThreshold: 50
+  SpringYPower: 220
   DashSpeed: 180
   DashTrailTimeArray:
-  - 0.1
   - 0.07
-  - 0.05
+  - 0.055
   - 0.04
   - 0.03
   - 0.02
@@ -71,7 +71,7 @@ MonoBehaviour:
   accel: 70
   accelOnAir: 60
   deccel: 50
-  maxFall: -180
+  maxFall: -160
   jumpStrength: 180
   gravityValue: 2
   gravityIncreaseThreshold: 10

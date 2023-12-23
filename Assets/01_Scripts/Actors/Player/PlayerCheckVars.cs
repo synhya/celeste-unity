@@ -5,6 +5,9 @@ using static UnityEngine.Mathf;
 
 public partial class Player
 {
+    [Header("Interaction Settings")]
+    [SerializeField] private float SpringYPower = 220f;
+    
     private void CheckInput()
     {
         inputX = Input.GetAxisRaw("Horizontal");
@@ -46,25 +49,19 @@ public partial class Player
         }
         
         // ground check
-        onGround = OverlapTileFlagCheckOS(TileType.Ground, Vector2.down, 0, -1);
+        onGround = (OverlapTileFlagCheckOS(TileType.Ground, Vector2.down, 0, -1) &&
+                    !OverlapTileFlagCheckOS(TileType.HalfGround, Vector2.zero));
 
         // spring check (spring is not tile)
         if (!onGround)
         {
-            foreach (var solid in Room.Solids)
+            int offsetX = Speed.x != 0f ? (int)Sign(Speed.x) : 0;
+            int offsetY = Speed.y >= 0f ? 0 : -1;
+            
+            if (CollideCheck<Spring>(offsetX, offsetY))
             {
-                if (solid is Spring)
-                {
-                    var spr = solid as Spring;
-                    int offsetX = Speed.x != 0f ? (int)Sign(Speed.x) : 0;
-                    int offsetY = Speed.y >= 0f ? 0 : -1;
-                    if (IsEntityTypeAt(offsetX, offsetY, spr))
-                    {
-                        spr.ActivateSpring();
-                        RefillDash();
-                        Speed.y = spr.Strength;
-                    }
-                }
+                RefillDash();
+                Speed.y = SpringYPower;
             }
         }
         

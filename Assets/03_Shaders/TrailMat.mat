@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: HdrMat
+  m_Name: TrailMat
   m_Shader: {fileID: 4800000, guid: 24d42ffa591a9424aae64e5f9479357b, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -43,9 +43,11 @@ Material:
     m_Floats:
     - _EnableExternalAlpha: 0
     - _Intensity: 1.69
+    - _Radius: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
+    - _OutlineColor: {r: 1, g: 1, b: 1, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
-    - _TrailColor: {r: 0.46855342, g: 0.69212747, b: 1, a: 1}
+    - _TrailColor: {r: 0.2877358, g: 0.5850888, b: 1, a: 1}
   m_BuildTextureStacks: []

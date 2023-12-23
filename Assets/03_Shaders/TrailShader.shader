@@ -1,4 +1,4 @@
-Shader "Custom/Hdr"
+Shader "Custom/Trail"
 {
     Properties
     {
@@ -6,6 +6,10 @@ Shader "Custom/Hdr"
         _MaskTex("Mask", 2D) = "white" {}
         _NormalMap("Normal Map", 2D) = "bump" {}
         
+        _OutlineColor("OutlineColor", Color) = (0.27, 0.97, 1, 1)
+        _Radius("Radius", float) = 1
+        
+        _TrailColor("TrailColor", Color) = (0.27, 0.97, 1, 1)
         _Intensity("Intensity", float) = 0
 
         // Legacy properties. They're here so that materials using this shader can gracefully fallback to the legacy sprite shader.
@@ -63,6 +67,7 @@ Shader "Custom/Hdr"
             };
 
             #include "Packages/com.unity.render-pipelines.universal/Shaders/2D/Include/LightingUtility.hlsl"
+            #include "PixelPerfectOutline.hlsl"
 
             TEXTURE2D(_MainTex);
             TEXTURE2D(_MaskTex);
@@ -71,7 +76,10 @@ Shader "Custom/Hdr"
             half4 _MainTex_ST;
             float4 _Color;
             half4 _RendererColor;
-            
+
+            float4 _MainTex_TexelSize;
+
+            float4 _TrailColor;
             float _Intensity;
 
             #if USE_SHAPE_LIGHT_TYPE_0
@@ -119,9 +127,13 @@ Shader "Custom/Hdr"
                 InitializeSurfaceData(main.rgb, main.a, mask, surfaceData);
                 InitializeInputData(i.uv, i.lightingUV, inputData);
 
-                half4 finColor = i.color * SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv); // CombinedShapeLightShared(surfaceData, inputData);
-                
-                return half4(finColor.xyz * (1 + _Intensity), finColor.a); 
+                half4 mainTex = half4(_TrailColor.xyz, SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv).a); // CombinedShapeLightShared(surfaceData, inputData);
+
+                const float lerpValue = CalculateOutline(mainTex, i.uv, _MainTex, sampler_MainTex, _MainTex_TexelSize);
+                mainTex = half4(lerp(mainTex, _OutlineColor, lerpValue));
+                mainTex.xyz *= (1 + _Intensity);
+                mainTex.a *= _TrailColor.a;
+                return mainTex;
             }
             ENDHLSL
         }
@@ -195,6 +207,7 @@ Shader "Custom/Hdr"
 
             HLSLPROGRAM
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "PixelPerfectOutline.hlsl"
             
             #pragma vertex UnlitVertex
             #pragma fragment UnlitFragment
@@ -223,7 +236,10 @@ Shader "Custom/Hdr"
             float4 _MainTex_ST;
             float4 _Color;
             half4 _RendererColor;
+
+            float4 _MainTex_TexelSize;
             
+            float4 _TrailColor;
             float _Intensity;
 
             Varyings UnlitVertex(Attributes attributes)
@@ -243,24 +259,13 @@ Shader "Custom/Hdr"
 
             float4 UnlitFragment(Varyings i) : SV_Target
             {
-                float4 mainTex = i.color * SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv);
+                float4 mainTex = float4(_TrailColor.xyz, SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv).a);
 
-                #if defined(DEBUG_DISPLAY)
-                SurfaceData2D surfaceData;
-                InputData2D inputData;
-                half4 debugColor = 0;
-
-                InitializeSurfaceData(mainTex.rgb, mainTex.a, surfaceData);
-                InitializeInputData(i.uv, inputData);
-                SETUP_DEBUG_DATA_2D(inputData, i.positionWS);
-
-                if(CanDebugOverrideOutputColor(surfaceData, inputData, debugColor))
-                {
-                    return debugColor;
-                }
-                #endif
-                
-                return float4(mainTex.xyz * (1 + _Intensity), mainTex.a); 
+                const float lerpValue = CalculateOutline(mainTex, i.uv, _MainTex, sampler_MainTex, _MainTex_TexelSize);
+                mainTex = float4(lerp(mainTex, _OutlineColor, lerpValue));
+                mainTex.xyz *= (1 + _Intensity);
+                mainTex.a *= _TrailColor.a;
+                return mainTex;
             }
             ENDHLSL
         }
