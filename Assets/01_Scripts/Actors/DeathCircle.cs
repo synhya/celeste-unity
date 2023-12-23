@@ -24,6 +24,8 @@ public class DeathCircle : MonoBehaviour
     private Color lerpColor2;
 
     private bool didStartShrink;
+
+    public float CircleAnimTime => moveTime * 0.4f + spinTime;
     
     public void Init(Vector2 moveDir, Color color1, Color color2)
     {

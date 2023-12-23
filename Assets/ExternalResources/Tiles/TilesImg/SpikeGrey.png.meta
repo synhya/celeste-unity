@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 80f2dc4c3eac91d4c8590c98914a8442
+guid: a690a79ecdce4fb47a0bc83d6dfcd8ea
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -71,7 +71,7 @@ TextureImporter:
     buildTarget: DefaultTexturePlatform
     maxTextureSize: 2048
     resizeAlgorithm: 0
-    textureFormat: -1
+    textureFormat: 4
     textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
@@ -123,7 +123,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: tileset8x8_0
+      name: SpikeGrey_0
       rect:
         serializedVersion: 2
         x: 0
@@ -137,14 +137,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b7fdd59efd4d9054e80932e29cd3b19c
-      internalID: 798316127
+      spriteID: e2bdf176ddbbdb5428b96fb49d233599
+      internalID: 1958121968
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: tileset8x8_1
+      name: SpikeGrey_1
       rect:
         serializedVersion: 2
         x: 8
@@ -158,14 +158,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2a297ab8712a2f048a7f6288cfeaf2ab
-      internalID: -89264239
+      spriteID: 01631a47b80bba64f990f9112adacaa0
+      internalID: 445807906
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: tileset8x8_2
+      name: SpikeGrey_2
       rect:
         serializedVersion: 2
         x: 16
@@ -173,14 +173,14 @@ TextureImporter:
         width: 8
         height: 8
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3886e6b90390f3240a1d2a51cc45fe7e
-      internalID: -1891356221
+      spriteID: 8e32143d9cac32141bcbe683ecec21e9
+      internalID: -1358119742
       vertices: []
       indices: 
       edges: []
@@ -196,9 +196,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      tileset8x8_0: 798316127
-      tileset8x8_1: -89264239
-      tileset8x8_2: -1891356221
+      SpikeGrey_0: 1958121968
+      SpikeGrey_1: 445807906
+      SpikeGrey_2: -1358119742
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

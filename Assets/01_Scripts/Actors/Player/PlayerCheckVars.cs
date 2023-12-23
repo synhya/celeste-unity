@@ -39,7 +39,7 @@ public partial class Player
         {
             var deathDir = Vector2.zero;
             
-            if (obsType == TileType.SpikeO)
+            if (obsType == TileType.Spike)
                 deathDir = -Speed;
             
             Die(deathDir.normalized);
@@ -61,6 +61,7 @@ public partial class Player
                     if (IsEntityTypeAt(offsetX, offsetY, spr))
                     {
                         spr.ActivateSpring();
+                        RefillDash();
                         Speed.y = spr.Strength;
                     }
                 }

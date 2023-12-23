@@ -1,13 +1,16 @@
 ﻿
 using System;
 using System.Collections;
+using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 using static UnityEngine.Mathf;
 
 public partial class Player
 {
     [Header("Dash Settings")]
-    public float DashSpeed = 220f;
+    [SerializeField] private float DashSpeed = 220f;
     private const float EndDashSpeed = 160f; // end speed?
     private const float EndDashUpMult = .75f;
     private const float DashTime = .15f;
@@ -17,6 +20,10 @@ public partial class Player
     private const int DashCornerCorrection = 4;
     private const int DashVFloorSnapDist = 3; // vertical snap
     private const float DashAttackTime = .3f; // Attack? => brake hidden wall
+
+
+    [SerializeField] private float[] DashTrailTimeArray;
+    [SerializeField] private GameObject playerTrailPrefab;
     
 
     // vars    
@@ -36,6 +43,7 @@ public partial class Player
     private int lastDashes;
 
     private float dashTrailTimer;
+    private int trailsLeft = 0;
 
     // use shader?
     public static readonly Color NormalHairColor = new Color(0.67f, 0.2f, 0.2f);
@@ -88,7 +96,9 @@ public partial class Player
         dashTimer = DashTime;
         dashCoolDownTimer = DashCoolDown;
         dashRefillCooldownTimer = DashRefillCooldown;
-        dashTrailTimer = 0;
+        
+        dashTrailTimer = DashTrailTimeArray[0];
+        trailsLeft = DashTrailTimeArray.Length;
         
         Level.Shake(0.3f, 1f);
         
@@ -112,15 +122,7 @@ public partial class Player
         if (dashTimer <= 0f) return StateNormal;
         dashTimer -= deltaTime;
         
-        //Trail
-        if (dashTrailTimer > 0)
-        {
-            dashTrailTimer -= deltaTime;
-            if (dashTrailTimer <= 0)
-                CreateTrail();
-        }
         
-        //
         if (DashDir.y == 0)
         {
             //JumpThru Correction
@@ -152,9 +154,10 @@ public partial class Player
     
     private void CreateTrail()
     {
-        
-        //오늘 여기까지!~
-        // TrailManager.Add(this, wasDashB ? NormalHairColor : UsedHairColor);
+         var trail = Instantiate(playerTrailPrefab, transform.position, quaternion.identity)
+            .GetComponent<PlayerTrail>();
+         
+         trail.Init(facingRight);
     }
 
     #endregion

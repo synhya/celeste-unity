@@ -2823,6 +2823,27 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: red hood itch free Copy-Sheet_127
+      rect:
+        serializedVersion: 2
+        x: 900
+        y: 36
+        width: 112
+        height: 97
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1ff47b71cefca354db78cabd4df718a5
+      internalID: 878356098
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []

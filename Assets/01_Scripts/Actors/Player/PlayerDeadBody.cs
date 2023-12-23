@@ -31,12 +31,13 @@ public class PlayerDeadBody : MonoBehaviour
     
     public void Init(Vector2 backDir, bool flipX)
     {
-        sr = GetComponent<SpriteRenderer>();
+        sr = GetComponentInChildren<SpriteRenderer>();
         sr.color = LerpColor1;
         sr.flipX = !flipX; // dead sprite is opposite direction.
         
         var seq = DOTween.Sequence();
-        var t = transform;
+        var t = sr.transform;
+        float cTime = 0;
 
         seq.Append(t.DOScale(Vector3.one * 0.5f, KnockBackTime))
             .Join(t.DOJump(t.position + ((Vector3)backDir * KnockBackAmount), KnockBackStrength, 
@@ -49,14 +50,19 @@ public class PlayerDeadBody : MonoBehaviour
                     var angle = dir / 4f * PI;
                     var moveDir = new Vector2(Cos(angle), Sin(angle));
                     
-                    var deadCircle = Instantiate(deathCircleObj, t.position + Vector3.up * circleYPosOffset,quaternion.identity)
-                        .GetComponent<DeathCircle>();
+                    var deadCircle = Instantiate(deathCircleObj, transform).GetComponent<DeathCircle>();
+                        
+                    deadCircle.transform.position = t.position + Vector3.up * circleYPosOffset;
                     deadCircle.Init(moveDir, LerpColor1, LerpColor2);
+
+                    if(dir == 0) 
+                        cTime = deadCircle.CircleAnimTime;
                 }
             })
-            .InsertCallback(respawnTime, () =>
+            .InsertCallback(Max(respawnTime, cTime), () =>
             {
-                // respawn -> need respawn transform -> each room has respawn point
+                // 나중에 서클 돌아오는 모션 추가
+                
                 level = Game.G.CurrentLevel;
                 level.SpawnPlayer();
                 

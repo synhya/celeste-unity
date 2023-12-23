@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21354fc05ccb4ca9baf7756b7e6a8afe, type: 3}
   m_Name: SpikeTileUp
   m_EditorClassIdentifier: 
-  m_DefaultSprite: {fileID: -89264239, guid: 80f2dc4c3eac91d4c8590c98914a8442, type: 3}
+  m_DefaultSprite: {fileID: 445807906, guid: a690a79ecdce4fb47a0bc83d6dfcd8ea, type: 3}
   m_DefaultGameObject: {fileID: 0}
   m_DefaultColliderType: 1
   m_TilingRules: []
-  Type: 65
+  Type: 8421376
+  EffectedByOtherRuleTile: 1
   AABB:
     x: 0
     y: 0

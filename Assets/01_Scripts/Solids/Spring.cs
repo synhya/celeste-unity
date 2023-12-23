@@ -6,7 +6,6 @@ public class Spring : Solid
 {
     // maybe change values based on different spring colors
     public float Strength = 80f;
-    [SerializeField] private float delayAfterUp = 0.5f;
     
     private Animator anim;
     
@@ -32,7 +31,7 @@ public class Spring : Solid
     public void ActivateSpring()
     {
         onPlay = true;
-        anim.Play(StAnimSpringUp, 0);
+        anim.Play(StAnimSpringUp, 0, 0);
     }
 
     private void Update()
@@ -42,7 +41,7 @@ public class Spring : Solid
             onPlay = false;
             isPlayingUp = true;
             isPlayingDown = false;
-            timer = anim.GetCurrentAnimatorStateInfo(0).length + delayAfterUp;
+            timer = anim.GetCurrentAnimatorStateInfo(0).length;
         }
 
         // playing

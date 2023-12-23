@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Linq;
 using System.Net.Http.Headers;
 using DG.Tweening;
 using Unity.Mathematics;
@@ -61,12 +62,25 @@ public partial class Player : Actor
         CheckInput();
         CheckOverlaps();
         
+        // Update for dashes
         if (dashCoolDownTimer > 0)
             dashCoolDownTimer -= deltaTime;
         if (dashRefillCooldownTimer > 0)
             dashRefillCooldownTimer -= deltaTime;
         else if (onGround)
             RefillDash();
+
+        if (trailsLeft > 0)
+        {
+            if (dashTrailTimer <= 0)
+            {
+                CreateTrail();
+                trailsLeft -= 1;
+                dashTrailTimer = trailsLeft > 0 ? DashTrailTimeArray[^trailsLeft] : 0;
+            } else 
+                dashTrailTimer -= deltaTime;
+        }
+        
         
         // StateMachine.Update
         sm.Update();
@@ -112,6 +126,7 @@ public partial class Player : Actor
         // if going up -> speedup
         if (Speed.y > 0)
             Speed.y += nextRoom.EnteringJumpPower;
+        RefillDash();
 
         Room.OnActorExit(this);
         Room = nextRoom;
