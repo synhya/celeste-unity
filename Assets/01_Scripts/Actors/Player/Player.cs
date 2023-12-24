@@ -13,19 +13,14 @@ public partial class Player : Actor
     [Header("Prefabs")]
     [SerializeField] private GameObject deadBodyPrefab;
 
-    private float inputX;
-    private float inputY;
-    private bool jumpPressed;
-    private float deltaTime;
-
     private float gravityAccel;
     
     // state vars
     private bool onGround;
     private bool wasGround;
     private bool isLanding;
-    
-    private bool jumpConfirmed;
+    private bool isTakingOff;
+    private int wallDir;
     
     [HideInInspector] public bool IsPaused;
 
@@ -35,6 +30,9 @@ public partial class Player : Actor
     public const int StateNormal = 0;
     public const int StateClimb = 1;
     public const int StateDash = 2;
+    
+    // particles
+    private SmokeManager s = SmokeManager.Instance;
     
     protected override void FindRoom()
     {
@@ -62,7 +60,7 @@ public partial class Player : Actor
         CheckInput();
         CheckOverlaps();
         
-        // Update for dashes
+        // Update for Dash State vars
         if (dashCoolDownTimer > 0)
             dashCoolDownTimer -= deltaTime;
         if (dashRefillCooldownTimer > 0)
@@ -80,6 +78,16 @@ public partial class Player : Actor
             } else 
                 dashTrailTimer -= deltaTime;
         }
+        
+        // landing and taking-off
+        if(isLanding || isAtJumpingFrame) CreatePopSmoke(0, 0);
+
+        if (isTakingOff && Speed.y <= 0f) coyoteTimer = CoyoteTime;
+        if (coyoteTimer > 0f) coyoteTimer -= deltaTime;
+        
+        // Walljump var
+        if (wallXMoveLimitTimer > 0f)
+            wallXMoveLimitTimer -= deltaTime;
         
         
         // StateMachine.Update
@@ -124,6 +132,11 @@ public partial class Player : Actor
     public override void Squish()
     {
         Die(Vector2.up);
+    }
+
+    private void CreatePopSmoke(int offsetX, int offsetY)
+    {
+        s.CreatePopSmoke(PositionWS + new Vector2Int(offsetX, offsetY));
     }
 
     public void OnSwitchRoom(Room nextRoom)

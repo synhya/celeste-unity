@@ -11,6 +11,7 @@ public partial class Player
 {
     [Header("Dash Settings")]
     [SerializeField] private float DashSpeed = 220f;
+    [SerializeField] private float DashYRatio = 0.6f;
     private const float EndDashSpeed = 160f; // end speed?
     private const float EndDashUpMult = .75f;
     private const float DashTime = .15f;
@@ -107,7 +108,9 @@ public partial class Player
         if (DashDir.magnitude < 1) 
             DashDir = Vector2.right * (facingRight ? 1 : -1);
         
-        var newSpeed = DashSpeed * DashDir;
+        var newSpeed = DashDir;
+        newSpeed.x *= DashSpeed;
+        newSpeed.y *= DashSpeed * DashYRatio;
         if (Math.Sign(Speed.x) == Math.Sign(newSpeed.x) && Abs(Speed.x) > Abs(newSpeed.x))
             newSpeed.x = Speed.x;
         Speed = newSpeed;

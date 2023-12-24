@@ -1,6 +1,7 @@
 ﻿
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
 using static UnityEngine.Mathf;
 
 public partial class Player
@@ -8,13 +9,57 @@ public partial class Player
     [Header("Interaction Settings")]
     [SerializeField] private float SpringYPower = 220f;
     
+    [Header("Input Settings")]
+    [SerializeField] private float ShortJumpThreshold = 0.1f;
+    [SerializeField] private float JumpBufferTime = 0.1f;
+    
+    // vars
+    private float inputX;
+    private float inputY;
+    private bool shortJumpPressed;
+    private bool longJumpPressed;
+    private float jumpPressTimer;
+    private float deltaTime;
+    
+    private bool checkJumpPressTime;
+    private float jumpBufferTimer;
+
     private void CheckInput()
     {
+        deltaTime = Time.deltaTime;
+        
         inputX = Input.GetAxisRaw("Horizontal");
         inputY = Input.GetAxisRaw("Vertical");
-        jumpPressed = Input.GetKeyDown(KeyCode.C);
+        
+        // check jump
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            checkJumpPressTime = true;
+            jumpPressTimer = ShortJumpThreshold;
+        }
+        if (checkJumpPressTime)
+        {
+            if (jumpPressTimer > 0f)
+            {
+                jumpPressTimer -= deltaTime;
+                if (Input.GetKeyUp(KeyCode.C))
+                {
+                    shortJumpPressed = true;
+                    checkJumpPressTime = false;
+                    jumpBufferTimer = JumpBufferTime;
+                }
+            }
+            else if (Input.GetKey(KeyCode.C))
+            {
+                longJumpPressed = true;
+                checkJumpPressTime = false;
+                jumpBufferTimer = JumpBufferTime;
+            }
+        }
+        if (jumpBufferTimer > 0f)
+            jumpBufferTimer -= deltaTime;
+
         dashPressed = Input.GetKeyDown(KeyCode.X);
-        deltaTime = Time.deltaTime;
     }
     
     private void CheckOverlaps()
@@ -51,6 +96,20 @@ public partial class Player
         // ground check
         onGround = (OverlapTileFlagCheckOS(TileType.Ground, Vector2.down, 0, -1) &&
                     !OverlapTileFlagCheckOS(TileType.HalfGround, Vector2.zero));
+        
+        // landing check
+        isLanding = onGround && !wasGround;
+        isTakingOff = wasGround && !onGround;
+
+        wallDir = 0;
+        // wall check
+        if (!onGround)
+        {
+            if (OverlapTileFlagCheckOS(TileType.Ground, Vector2.right, 1, 0))
+                wallDir = 1;
+            else if (OverlapTileFlagCheckOS(TileType.Ground, Vector2.left, -1, 0))
+                wallDir = -1;
+        }
 
         // spring check (spring is not tile)
         if (!onGround)

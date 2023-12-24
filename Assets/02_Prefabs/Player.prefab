@@ -26,13 +26,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7743163333377343640}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 96, y: 56, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3301081140301246350
 MonoBehaviour:
@@ -48,33 +48,40 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HitboxBottomLeftOffset: {x: -3, y: 0}
   HitboxSize: {x: 6, y: 15}
-  PositionWS: {x: 95, y: 56}
+  PositionWS: {x: 157, y: 96}
   PreviousPos: {x: 165, y: 96}
   deadBodyPrefab: {fileID: 7332204074699942299, guid: a82d9be9b0ab08446a7200708ec87c2c, type: 3}
   IsPaused: 0
   runAnimThreshold: 1
   jumpTurnAroundThreshold: 50
   SpringYPower: 220
-  DashSpeed: 180
+  ShortJumpThreshold: 0.1
+  JumpBufferTime: 0.1
+  DashSpeed: 150
+  DashYRatio: 0.6
   DashTrailTimeArray:
-  - 0.07
-  - 0.055
-  - 0.04
-  - 0.03
-  - 0.02
-  - 0.01
+  - 0.005
+  - 0.045
+  - 0.045
+  - 0.06
+  - 0.08
   playerTrailPrefab: {fileID: 5490173074874586281, guid: ee7d0947f13b4f8419ac65aa8aceebff, type: 3}
   MaxDashes: 1
   Dashes: 0
   DashDir: {x: 0, y: 0}
-  maxRun: 80
-  accel: 70
-  accelOnAir: 60
-  deccel: 50
+  maxRun: 70
+  accel: 60
+  accelOnAir: 50
+  deccel: 5
   maxFall: -160
-  jumpStrength: 180
-  gravityValue: 2
+  longJumpStrength: 150
+  shortJumpStrength: 120
+  gravityValue: 1.8
   gravityIncreaseThreshold: 10
+  CoyoteTime: 0.15
+  maxSlideFall: -60
+  WallJumpSpeed: {x: 220, y: 150}
+  WallXMoveLimitTime: 0.5
 --- !u!212 &3451402920003286382
 SpriteRenderer:
   m_ObjectHideFlags: 0

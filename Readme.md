@@ -10,3 +10,4 @@ Platformer based on Celeste
 ## Articles And Scripts
 - [CelestePlayer](https://github.com/NoelFB/Celeste/tree/master/Source/Player)
 - [Tiles](https://aran.ink/posts/celeste-tilesets)
+- [PixelPerfectLine](https://www.youtube.com/watch?v=nlzvesTsSrI)

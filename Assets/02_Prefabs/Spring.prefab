@@ -46,13 +46,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c08bc0f4ee4c409eb37ac35b774c1c60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Room: {fileID: 0}
-  HitboxBottomLeftOffset: {x: -7, y: 0}
-  HitboxSize: {x: 14, y: 2}
+  HitboxBottomLeftOffset: {x: -8, y: 0}
+  HitboxSize: {x: 16, y: 2}
   PositionWS: {x: 360, y: 224}
   PreviousPos: {x: 0, y: 0}
-  Strength: 230
-  delayAfterUp: 0.5
 --- !u!212 &171575298187738610
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -93,7 +90,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: -1
+  m_SortingOrder: 0
   m_Sprite: {fileID: -793874265, guid: 34912c8a47d594f48a4b0faa9f1f3baf, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

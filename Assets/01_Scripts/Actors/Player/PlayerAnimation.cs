@@ -21,6 +21,7 @@ public partial class Player
     private const string StAnimLand = "Player_Land";
     
     private const string StAnimDash = "Player_Dash";
+    private const string StAnimWallSlide = "Player_WallSlide";
 
     private readonly int HashIdle = Animator.StringToHash(StAnimIdle);
     private readonly int HashRun = Animator.StringToHash(StAnimRun);
@@ -31,11 +32,11 @@ public partial class Player
     private readonly int HashLand = Animator.StringToHash(StAnimLand);
     
     private readonly int HashDash = Animator.StringToHash(StAnimDash);
+    private readonly int HashWallSlide = Animator.StringToHash(StAnimWallSlide);
     
     // vars
     private bool flipAnimFlag = false;
     private bool keepCurrentAnim = false;
-    private float landToIdleTimer = 0f;
     private float keepAnimTimer = 0f;
     
     private int curHash;
@@ -50,6 +51,7 @@ public partial class Player
     {
         sr = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
+        facingRight = true;
     }
 
     private void SetAnimation()
@@ -64,47 +66,49 @@ public partial class Player
         var currentAnim = anim.GetCurrentAnimatorStateInfo(0);
         curHash = currentAnim.shortNameHash;
         
-        if (curHash == HashLand)
-        {
-            landToIdleTimer = 0.25f;
-        }
-        landToIdleTimer -= deltaTime;
-        
         hasToSwitch = false;
         
         #region Normal State Animations
 
         if (sm.State == StateNormal)
         {
-            if ((curHash != HashLand && curHash != HashIdle && onGround && Abs(Speed.x) <= runAnimThreshold)
-                 || (curHash == HashLand && currentAnim.normalizedTime > 0.95f))
-                SetAsNextAnimation(HashIdle, StAnimIdle);
-            else if (curHash != HashRun &&
-                     onGround && Abs(Speed.x) > runAnimThreshold)
-                SetAsNextAnimation(HashRun, StAnimRun);
-
-            // else if (curState.shortNameHash != HashReadyJump &&
-            //          jumpConfirmed)
-            // {
-            //     shouldKeepCurrentAnimation = true;
-            //     SwitchAnimation(HashReadyJump, StAnimReadyJump);
-            // }
+            if (wallDir != 0 && Speed.y < 0f)
+            {
+                if(curHash != HashWallSlide)
+                    SetAsNextAnimation(HashWallSlide, StAnimWallSlide);
+            }
+            else
+            {
+                if ((curHash != HashLand && curHash != HashIdle && onGround && Abs(Speed.x) <= runAnimThreshold)
+                    || (curHash == HashLand && currentAnim.normalizedTime > 0.95f))
+                    SetAsNextAnimation(HashIdle, StAnimIdle);
+                else if (curHash != HashRun &&
+                         onGround && Abs(Speed.x) > runAnimThreshold)
+                    SetAsNextAnimation(HashRun, StAnimRun);
+            
+                // else if (curState.shortNameHash != HashReadyJump &&
+                //          jumpConfirmed)
+                // {
+                //     shouldKeepCurrentAnimation = true;
+                //     SwitchAnimation(HashReadyJump, StAnimReadyJump);
+                // }
         
-            else if (curHash != HashJump &&
-                     !onGround && Speed.y > jumpTurnAroundThreshold)
-                SetAsNextAnimation(HashJump, StAnimJump);
+                else if (curHash != HashJump &&
+                         !onGround && Speed.y > jumpTurnAroundThreshold)
+                    SetAsNextAnimation(HashJump, StAnimJump);
         
-            else if (curHash != HashJumpToFall &&
-                     !onGround && Abs(Speed.y) <= jumpTurnAroundThreshold)
-                SetAsNextAnimation(HashJump, StAnimJumpToFall);
+                else if (curHash != HashJumpToFall &&
+                         !onGround && Abs(Speed.y) <= jumpTurnAroundThreshold)
+                    SetAsNextAnimation(HashJump, StAnimJumpToFall);
         
-            else if (curHash != HashFall &&
-                     !onGround && Speed.y < -jumpTurnAroundThreshold)
-                SetAsNextAnimation(HashFall, StAnimFall);
+                else if (curHash != HashFall &&
+                         !onGround && Speed.y < -jumpTurnAroundThreshold)
+                    SetAsNextAnimation(HashFall, StAnimFall);
         
-            if (curHash == HashFall &&
-                !wasGround && onGround)  // 점프 시간재서 일정시간 이상이면 플레이하게 바꾸자.
-                SetAsNextAnimation(HashLand, StAnimLand);
+                if (curHash == HashFall &&
+                    !wasGround && onGround)  // 점프 시간재서 일정시간 이상이면 플레이하게 바꾸자.
+                    SetAsNextAnimation(HashLand, StAnimLand);
+            }
         }
             
 
@@ -152,13 +156,13 @@ public partial class Player
 
     void SwitchAnimation()
     {
-        if (curHash == HashIdle)
+        if (curHash == HashIdle || curHash == HashWallSlide)
         {
             flipAnimFlag = true;
             sr.flipX = !sr.flipX;
         }
             
-        else if (nextHash == HashIdle)
+        else if (nextHash == HashIdle || curHash == HashWallSlide)
         {
             flipAnimFlag = false;
             sr.flipX = !sr.flipX;
