@@ -16,7 +16,7 @@ public partial class Player
     // vars
     private float inputX;
     private float inputY;
-    private bool shortJumpPressed;
+    private bool jumpPressed;
     private bool longJumpPressed;
     private float jumpPressTimer;
     private float deltaTime;
@@ -30,36 +30,9 @@ public partial class Player
         
         inputX = Input.GetAxisRaw("Horizontal");
         inputY = Input.GetAxisRaw("Vertical");
-        
-        // check jump
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            checkJumpPressTime = true;
-            jumpPressTimer = ShortJumpThreshold;
-        }
-        if (checkJumpPressTime)
-        {
-            if (jumpPressTimer > 0f)
-            {
-                jumpPressTimer -= deltaTime;
-                if (Input.GetKeyUp(KeyCode.C))
-                {
-                    shortJumpPressed = true;
-                    checkJumpPressTime = false;
-                    jumpBufferTimer = JumpBufferTime;
-                }
-            }
-            else if (Input.GetKey(KeyCode.C))
-            {
-                longJumpPressed = true;
-                checkJumpPressTime = false;
-                jumpBufferTimer = JumpBufferTime;
-            }
-        }
-        if (jumpBufferTimer > 0f)
-            jumpBufferTimer -= deltaTime;
-
+        jumpPressed = Input.GetKeyDown(KeyCode.C);
         dashPressed = Input.GetKeyDown(KeyCode.X);
+        
     }
     
     private void CheckOverlaps()
@@ -101,8 +74,9 @@ public partial class Player
         isLanding = onGround && !wasGround;
         isTakingOff = wasGround && !onGround;
 
-        wallDir = 0;
+        
         // wall check
+        wallDir = 0;
         if (!onGround)
         {
             if (OverlapTileFlagCheckOS(TileType.Ground, Vector2.right, 1, 0))

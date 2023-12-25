@@ -55,32 +55,15 @@ public partial class Player
         else
             Speed.x = MathUtil.Appr(Speed.x, xDir * maxRun, onGround ? accel : accelOnAir);
         
-        // ground jump
-        isAtJumpingFrame = false;
-        if (onGround || coyoteTimer > 0f)
-        {
-            if(shortJumpPressed) 
-            {
-                Speed.y = shortJumpStrength;
-                shortJumpPressed = false;
-                isAtJumpingFrame = true;
-            }
-            else if (longJumpPressed)
-            {
-                Speed.y = longJumpStrength;
-                longJumpPressed = false;
-                isAtJumpingFrame = true;
-            }
-        }
         // wall jump
-        else if (wallDir != 0)
+        if (wallDir != 0)
         {
-            if (shortJumpPressed || longJumpPressed)
+            if (jumpPressed || longJumpPressed)
             {
                 Speed = WallJumpSpeed;
                 Speed.x *= -wallDir;
                 longJumpPressed = false;
-                shortJumpPressed = false;
+                jumpPressed = false;
                 
                 // 벽방향의 움직임을 잠시 제한해야한다.
                 wallXMoveLimitTimer = WallXMoveLimitTime;
@@ -89,20 +72,29 @@ public partial class Player
         if (jumpBufferTimer <= 0f)
         {
             longJumpPressed = false;
-            shortJumpPressed = false;
+            jumpPressed = false;
         }
-            
         
-        // gravity
-        gravityAccel = gravityValue;
-        
-        // at the top of jump
-        if (Abs(Speed.y) <= gravityIncreaseThreshold)
-            gravityAccel *= 0.5f;
-
-        if (!onGround)
+        //Vertical
         {
-            Speed.y = MathUtil.Appr(Speed.y, wallDir == 0 ? maxFall : maxSlideFall, gravityAccel);
+            // ground jump
+            isAtJumpingFrame = false;
+            if (coyoteTimer > 0f)
+            {
+                Jump();
+            }
+            
+            // gravity
+            gravityAccel = gravityValue;
+        
+            // at the top of jump
+            if (Abs(Speed.y) <= gravityIncreaseThreshold)
+                gravityAccel *= 0.5f;
+
+            if (!onGround)
+            {
+                Speed.y = MathUtil.Appr(Speed.y, wallDir == 0 ? maxFall : maxSlideFall, gravityAccel);
+            }
         }
 
         return StateNormal;
@@ -110,7 +102,28 @@ public partial class Player
 
     private void Jump()
     {
-        
+        // if (checkJumpPressTime)
+        // {
+        //     if (jumpPressTimer > 0f)
+        //     {
+        //         jumpPressTimer -= deltaTime;
+        //         if (Input.GetKeyUp(KeyCode.C))
+        //         {
+        //             shortJumpPressed = true;
+        //             checkJumpPressTime = false;
+        //             jumpBufferTimer = JumpBufferTime;
+        //         }
+        //     }
+        //     else if (Input.GetKey(KeyCode.C))
+        //     {
+        //         longJumpPressed = true;
+        //         checkJumpPressTime = false;
+        //         jumpBufferTimer = JumpBufferTime;
+        //     }
+        // }
+        if (jumpBufferTimer > 0f)
+            jumpBufferTimer -= deltaTime;
+
     }
     
     private void SuperJump()

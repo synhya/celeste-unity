@@ -82,8 +82,9 @@ public partial class Player : Actor
         // landing and taking-off
         if(isLanding || isAtJumpingFrame) CreatePopSmoke(0, 0);
 
-        if (isTakingOff && Speed.y <= 0f) coyoteTimer = CoyoteTime;
         if (coyoteTimer > 0f) coyoteTimer -= deltaTime;
+        if (onGround) coyoteTimer = CoyoteTime;
+        
         
         // Walljump var
         if (wallXMoveLimitTimer > 0f)
