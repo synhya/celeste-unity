@@ -92,6 +92,8 @@ public partial class Player
 
     private void DashBegin()
     {
+        wallSlideTimer = WallSlideTime;
+        
         dashStartedOnGround = onGround;
 
         dashTimer = DashTime;
@@ -101,12 +103,12 @@ public partial class Player
         dashTrailTimer = DashTrailTimeArray[0];
         trailsLeft = DashTrailTimeArray.Length;
         
-        Level.Shake(0.3f, 1f);
+        level.Shake(0.3f, 1f);
         
         // set direction and speed
         DashDir = new Vector2(inputX, inputY).normalized;
         if (DashDir.magnitude < 1) 
-            DashDir = Vector2.right * (facingRight ? 1 : -1);
+            DashDir = Vector2.right * (int)facing;
         
         var newSpeed = DashDir;
         newSpeed.x *= DashSpeed;
@@ -160,7 +162,7 @@ public partial class Player
          var trail = Instantiate(playerTrailPrefab, transform.position, quaternion.identity)
             .GetComponent<PlayerTrail>();
          
-         trail.Init(facingRight, sr.sprite);
+         trail.Init(facing == Facing.Right, sr.sprite);
     }
 
     #endregion

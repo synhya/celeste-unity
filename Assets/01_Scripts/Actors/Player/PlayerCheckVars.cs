@@ -1,38 +1,46 @@
 ﻿
-using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
 using static UnityEngine.Mathf;
 
+// funcs in this part is called every frame
 public partial class Player
 {
     [Header("Interaction Settings")]
     [SerializeField] private float SpringYPower = 220f;
     
-    [Header("Input Settings")]
-    [SerializeField] private float ShortJumpThreshold = 0.1f;
-    [SerializeField] private float JumpBufferTime = 0.1f;
-    
+
     // vars
-    private float inputX;
-    private float inputY;
+    private int inputX;
+    private int inputY;
     private bool jumpPressed;
-    private bool longJumpPressed;
-    private float jumpPressTimer;
+    private bool jumpPressing;
     private float deltaTime;
-    
-    private bool checkJumpPressTime;
-    private float jumpBufferTimer;
+
 
     private void CheckInput()
     {
         deltaTime = Time.deltaTime;
+
+        if (forceMoveXTimer > 0)
+        {
+            forceMoveXTimer -= deltaTime;
+            inputX = forceMoveX;
+        }
+        else
+        {
+            inputX = (int)Input.GetAxisRaw("Horizontal");
+        }
         
-        inputX = Input.GetAxisRaw("Horizontal");
-        inputY = Input.GetAxisRaw("Vertical");
+        
+        inputY = (int)Input.GetAxisRaw("Vertical");
         jumpPressed = Input.GetKeyDown(KeyCode.C);
-        dashPressed = Input.GetKeyDown(KeyCode.X);
+        if (jumpPressed)
+        {
+            jumpBufferTimer = JumpBufferTime;
+        }
         
+        dashPressed = Input.GetKeyDown(KeyCode.X);
+        jumpPressing = Input.GetKey(KeyCode.C);
     }
     
     private void CheckOverlaps()
@@ -44,26 +52,30 @@ public partial class Player
         for (int i = 0; i < doors.Length; i++)
         {
             if (hitbox.Overlaps(doors[i]))
-                Level.SwitchRoom(Room.NextRooms[i]);
-        }
-        
-        // fall death check 320 * 180
-        if (PositionWS.y < Room.OriginWS.y && Speed.y < 0f)
-        {
-            // should also check if there is another room!
-            
-            Die(Vector2.up);
+                level.SwitchRoom(Room.NextRooms[i]);
         }
 
-        // spike check
-        if (OverlapTileFlagCheckOS(TileType.Obstacle,Vector2.zero, out var obsType))
+        if (invinsibleTimer > 0f) invinsibleTimer -= deltaTime;
+        else
         {
-            var deathDir = Vector2.zero;
+            // fall death check 320 * 180
+            if (PositionWS.y < Room.OriginWS.y && Speed.y < 0f)
+            {
+                // should also check if there is another room!
             
-            if (obsType == TileType.Spike)
-                deathDir = -Speed;
+                Die(Vector2.up);
+            }
+
+            // spike check
+            if (OverlapTileFlagCheckOS(TileType.Obstacle,Vector2.zero, out var obsType))
+            {
+                var deathDir = Vector2.zero;
             
-            Die(deathDir.normalized);
+                if (obsType == TileType.Spike)
+                    deathDir = -Speed;
+            
+                Die(deathDir.normalized);
+            }
         }
         
         // ground check
@@ -73,17 +85,6 @@ public partial class Player
         // landing check
         isLanding = onGround && !wasGround;
         isTakingOff = wasGround && !onGround;
-
-        
-        // wall check
-        wallDir = 0;
-        if (!onGround)
-        {
-            if (OverlapTileFlagCheckOS(TileType.Ground, Vector2.right, 1, 0))
-                wallDir = 1;
-            else if (OverlapTileFlagCheckOS(TileType.Ground, Vector2.left, -1, 0))
-                wallDir = -1;
-        }
 
         // spring check (spring is not tile)
         if (!onGround)
@@ -99,6 +100,23 @@ public partial class Player
         }
         
         // ice check .. etc
+    }
+    
+    void Die(Vector2 knockBackDir)
+    {
+        // camera shake
+        level.Shake(0.5f, 1.5f);
+        
+        // spawn dead body (dont set as parent as it will be disabled)
+        var body = Instantiate(deadBodyPrefab, transform.position, Quaternion.identity)
+            .GetComponent<PlayerDeadBody>();
+        body.Init(knockBackDir, sr.flipX ^ flipAnimFlag);
+        // body.DeathAction = () => {}
+        
+        // change stats ( Stats.Death++; .. }
+        
+        
+        Destroy(gameObject);
     }
 }
 

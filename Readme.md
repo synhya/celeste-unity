@@ -11,3 +11,4 @@ Platformer based on Celeste
 - [CelestePlayer](https://github.com/NoelFB/Celeste/tree/master/Source/Player)
 - [Tiles](https://aran.ink/posts/celeste-tilesets)
 - [PixelPerfectLine](https://www.youtube.com/watch?v=nlzvesTsSrI)
+- [JumpGraceTime](http://kpulv.com/123/Platforming_Ledge_Forgiveness/)

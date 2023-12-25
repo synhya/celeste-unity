@@ -19,6 +19,8 @@ public class Level : MonoBehaviour
     [HideInInspector] public Player Player;
     [HideInInspector] public Tilemap Map;
 
+    public bool InSpace = false;
+    
     private Camera cam;
 
     void Awake() 
@@ -49,7 +51,7 @@ public class Level : MonoBehaviour
     {
         CurrentRoom = nextRoom;
         FreezeLevel(1f);
-        Player.OnSwitchRoom(nextRoom);
+        Player.OnSwitchRoomStart(nextRoom);
     }
     
     /// <summary>
@@ -70,7 +72,7 @@ public class Level : MonoBehaviour
         float y = CurrentRoom.OriginWS.y + 94;
         cam.transform.DOMove(new Vector3(x, y, -10), time)
             .SetEase(Ease.OutCubic)
-            .OnComplete(()=> Player.IsPaused = false);
+            .OnComplete(() => Player.OnSwitchRoomEnd());
     }
 
     public void Shake(float duration, float strength)

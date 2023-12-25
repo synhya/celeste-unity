@@ -7,11 +7,22 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Serialization;
 using static UnityEngine.Mathf;
+enum Facing
+{
+    Right = 1,
+    Left = -1,
+}
 
 public partial class Player : Actor
 {
+    private Level level;
+    
     [Header("Prefabs")]
     [SerializeField] private GameObject deadBodyPrefab;
+
+
+    private const float InvinsibleTimeOnSwitch = 0.5f;
+    private float invinsibleTimer;
 
     private float gravityAccel;
     
@@ -20,7 +31,9 @@ public partial class Player : Actor
     private bool wasGround;
     private bool isLanding;
     private bool isTakingOff;
-    private int wallDir;
+    private int wallSlideDir;
+    
+    private Facing facing;
     
     [HideInInspector] public bool IsPaused;
 
@@ -28,8 +41,7 @@ public partial class Player : Actor
     private StateMachine sm;
     
     public const int StateNormal = 0;
-    public const int StateClimb = 1;
-    public const int StateDash = 2;
+    public const int StateDash = 1;
     
     // particles
     private SmokeManager s = SmokeManager.Instance;
@@ -37,6 +49,7 @@ public partial class Player : Actor
     protected override void FindRoom()
     {
         Room = Game.G.CurrentLevel.CurrentRoom;
+        level = Room.Level;
     }
 
     protected override void Start()
@@ -46,11 +59,12 @@ public partial class Player : Actor
         InitAnimation();
         
         sm = new StateMachine(3);
-        sm.SetCallbacks(StateNormal, NormalUpdate, null, null);
+        sm.SetCallbacks(StateNormal, NormalUpdate, NormalBegin, null);
         sm.SetCallbacks(StateDash, DashUpdate, DashBegin, DashEnd);
         sm.State = StateNormal;
         
         wasGround = true;
+        facing = Facing.Right;
     }
 
     private void Update()
@@ -60,35 +74,52 @@ public partial class Player : Actor
         CheckInput();
         CheckOverlaps();
         
-        // Update for Dash State vars
-        if (dashCoolDownTimer > 0)
-            dashCoolDownTimer -= deltaTime;
-        if (dashRefillCooldownTimer > 0)
-            dashRefillCooldownTimer -= deltaTime;
-        else if (onGround)
-            RefillDash();
-
-        if (trailsLeft > 0)
+        //Vars
         {
-            if (dashTrailTimer <= 0)
-            {
-                CreateTrail();
-                trailsLeft -= 1;
-                dashTrailTimer = trailsLeft > 0 ? DashTrailTimeArray[^trailsLeft] : 0;
-            } else 
-                dashTrailTimer -= deltaTime;
-        }
-        
-        // landing and taking-off
-        if(isLanding || isAtJumpingFrame) CreatePopSmoke(0, 0);
+            // landing and taking-off
+            if(isLanding) CreatePopSmoke(0, 0);
 
-        if (coyoteTimer > 0f) coyoteTimer -= deltaTime;
-        if (onGround) coyoteTimer = CoyoteTime;
+            if (jumpBufferTimer > 0f) jumpBufferTimer -= deltaTime;
         
-        
-        // Walljump var
-        if (wallXMoveLimitTimer > 0f)
-            wallXMoveLimitTimer -= deltaTime;
+            //Wall Slide
+            if (wallSlideDir != 0)
+            {
+                wallSlideTimer = Math.Max(wallSlideTimer - deltaTime, 0);
+                wallSlideDir = 0;
+            }
+            if(onGround) 
+                wallSlideTimer = WallSlideTime;
+            
+            //Jump Grace
+            if (onGround) jumpGraceTimer = JumpGraceTime;
+            else if (jumpGraceTimer > 0f) jumpGraceTimer -= deltaTime;
+            
+            // Dashes
+            {
+                if (dashCoolDownTimer > 0)
+                    dashCoolDownTimer -= deltaTime;
+                if (dashRefillCooldownTimer > 0)
+                    dashRefillCooldownTimer -= deltaTime;
+                else if (onGround)
+                    RefillDash();
+
+                if (trailsLeft > 0)
+                {
+                    if (dashTrailTimer <= 0)
+                    {
+                        CreateTrail();
+                        trailsLeft -= 1;
+                        dashTrailTimer = trailsLeft > 0 ? DashTrailTimeArray[^trailsLeft] : 0;
+                    } else 
+                        dashTrailTimer -= deltaTime;
+                }
+            }
+            
+            //Var Jump
+            if (varJumpTimer > 0f) varJumpTimer -= deltaTime;
+            
+            
+        }
         
         
         // StateMachine.Update
@@ -113,23 +144,6 @@ public partial class Player : Actor
         wasGround = onGround;
     }
 
-    void Die(Vector2 knockBackDir)
-    {
-        // camera shake
-        Level.Shake(0.5f, 1.5f);
-        
-        // spawn dead body (dont set as parent as it will be disabled)
-        var body = Instantiate(deadBodyPrefab, transform.position, quaternion.identity)
-            .GetComponent<PlayerDeadBody>();
-        body.Init(knockBackDir, sr.flipX ^ flipAnimFlag);
-        // body.DeathAction = () => {}
-        
-        // change stats ( Stats.Death++; .. }
-        
-        
-        Destroy(gameObject);
-    }
-
     public override void Squish()
     {
         Die(Vector2.up);
@@ -140,8 +154,10 @@ public partial class Player : Actor
         s.CreatePopSmoke(PositionWS + new Vector2Int(offsetX, offsetY));
     }
 
-    public void OnSwitchRoom(Room nextRoom)
+    public void OnSwitchRoomStart(Room nextRoom)
     {
+        
+        
         // if going up -> speedup
         if (Speed.y > 0)
             Speed.y += nextRoom.EnteringJumpPower;
@@ -150,6 +166,11 @@ public partial class Player : Actor
         Room.OnActorExit(this);
         Room = nextRoom;
         Room.OnActorEnter(this);
+    }
+    public void OnSwitchRoomEnd()
+    {
+        IsPaused = false;
+        invinsibleTimer = InvinsibleTimeOnSwitch;
     }
 }
 

@@ -45,13 +45,10 @@ public partial class Player
     
     private bool hasToSwitch;
     
-    private bool facingRight;
-    
     private void InitAnimation()
     {
         sr = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
-        facingRight = true;
     }
 
     private void SetAnimation()
@@ -72,7 +69,7 @@ public partial class Player
 
         if (sm.State == StateNormal)
         {
-            if (wallDir != 0 && Speed.y < 0f)
+            if (wallSlideDir != 0)
             {
                 if(curHash != HashWallSlide)
                     SetAsNextAnimation(HashWallSlide, StAnimWallSlide);
@@ -135,8 +132,8 @@ public partial class Player
         // after switching animation
         if (Speed.x != 0)
         {
-            facingRight = Speed.x > 0;
-            sr.flipX = !facingRight ^ flipAnimFlag;
+            facing = Speed.x > 0 ? Facing.Right : Facing.Left;
+            sr.flipX = (facing == Facing.Left) ^ flipAnimFlag;
         }
         
         

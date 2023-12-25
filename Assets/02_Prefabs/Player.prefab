@@ -54,11 +54,9 @@ MonoBehaviour:
   IsPaused: 0
   runAnimThreshold: 1
   jumpTurnAroundThreshold: 50
-  SpringYPower: 220
-  ShortJumpThreshold: 0.1
-  JumpBufferTime: 0.1
+  SpringYPower: 300
   DashSpeed: 150
-  DashYRatio: 0.6
+  DashYRatio: 1
   DashTrailTimeArray:
   - 0.005
   - 0.045
@@ -69,19 +67,24 @@ MonoBehaviour:
   MaxDashes: 1
   Dashes: 0
   DashDir: {x: 0, y: 0}
-  maxRun: 70
-  accel: 60
-  accelOnAir: 50
-  deccel: 5
-  maxFall: -160
-  longJumpStrength: 150
-  shortJumpStrength: 120
-  gravityValue: 1.8
-  gravityIncreaseThreshold: 10
-  CoyoteTime: 0.15
-  maxSlideFall: -60
+  MaxRun: 90
+  RunAccel: 1000
+  AirMult: 0.65
+  RunReduce: 400
+  JumpHBoost: 40
+  WallJumpHBoost: 130
+  JumpSpeed: 105
+  VarJumpTime: 0.2
+  JumpBufferTime: 0.1
+  JumpGraceTime: 0.15
+  MaxFall: -160
+  FastMaxFall: -240
+  MaxFallAccel: 300
+  Gravity: 900
+  WallSlideStartMaxFall: -20
   WallJumpSpeed: {x: 220, y: 150}
   WallXMoveLimitTime: 0.5
+  WallSlideTime: 1.2
 --- !u!212 &3451402920003286382
 SpriteRenderer:
   m_ObjectHideFlags: 0

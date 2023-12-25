@@ -10,7 +10,7 @@ using UnityEngine.Tilemaps;
 public abstract class Entity : MonoBehaviour
 {
     protected Room Room;
-    protected Level Level;
+    private Tilemap tileMap;
 
     protected bool Collideable = true;
     
@@ -30,13 +30,13 @@ public abstract class Entity : MonoBehaviour
             return varBox;
         }
     }
-    private Vector2Int GridPosMin => (Vector2Int)Level.Map.WorldToCell((Vector3Int)HitBoxWS.position);
+    private Vector2Int GridPosMin => (Vector2Int)tileMap.WorldToCell((Vector3Int)HitBoxWS.position);
 
     private Vector2Int GridPosMax
     {
         get {
             var h = HitBoxWS;
-            return (Vector2Int)Level.Map.WorldToCell((Vector3Int)(h.position + h.size));
+            return (Vector2Int)tileMap.WorldToCell((Vector3Int)(h.position + h.size));
         }
     }
     
@@ -53,7 +53,7 @@ public abstract class Entity : MonoBehaviour
     protected virtual void Start()
     {
         FindRoom();
-        Level = Room.Level;
+        tileMap = Room.Level.Map; 
         PositionWS = Vector2Int.RoundToInt(transform.position);
     }
 
@@ -101,14 +101,14 @@ public abstract class Entity : MonoBehaviour
         var topRight = GridPosMax;
         
         if (dir.y < 0)
-            topRight.y = bottomLeft.y;
+            topRight.y = bottomLeft.y - offsetY;
         else if (dir.y > 0)
-            bottomLeft.y = topRight.y;
+            bottomLeft.y = topRight.y - offsetY;
 
         if (dir.x < 0)
-            topRight.x = bottomLeft.x;
+            topRight.x = bottomLeft.x - offsetX;
         else if (dir.x > 0)
-            bottomLeft.x = topRight.x;
+            bottomLeft.x = topRight.x - offsetX;
 
         var ret = CheckTileFlagInGrid(flag, bottomLeft, topRight, out tileType);
         
@@ -126,14 +126,14 @@ public abstract class Entity : MonoBehaviour
         var topRight = GridPosMax;
         
         if (dir.y < 0)
-            topRight.y = bottomLeft.y;
+            topRight.y = bottomLeft.y - offsetY;
         else if (dir.y > 0)
-            bottomLeft.y = topRight.y;
+            bottomLeft.y = topRight.y - offsetY;
 
         if (dir.x < 0)
-            topRight.x = bottomLeft.x;
+            topRight.x = bottomLeft.x - offsetX;
         else if (dir.x > 0)
-            bottomLeft.x = topRight.x;
+            bottomLeft.x = topRight.x - offsetX;
 
         var ret = CheckTileFlagInGrid(flag, bottomLeft, topRight);
         
@@ -153,12 +153,12 @@ public abstract class Entity : MonoBehaviour
             {
                 pos.x = i;
                 pos.y = j;
-                var tile = Level.Map.GetTile(pos) as TypeTile;
+                var tile = tileMap.GetTile(pos) as TypeTile;
                 
                 if (tile && tile.Type.HasFlag(flag))
                 {
                     tileRect = tile.AABB;
-                    var tilePosWS = Level.Map.GetCellCenterWorld(pos) 
+                    var tilePosWS = tileMap.GetCellCenterWorld(pos) 
                                     - Vector3.one * TileSize / 2;
                     tileRect.position += Vector2Int.RoundToInt(tilePosWS);
 
@@ -184,12 +184,12 @@ public abstract class Entity : MonoBehaviour
             {
                 pos.x = i;
                 pos.y = j;
-                var tile = Level.Map.GetTile(pos) as TypeTile;
+                var tile = tileMap.GetTile(pos) as TypeTile;
                 
                 if (tile && tile.Type.HasFlag(flag))
                 {
                     tileRect = tile.AABB;
-                    var tilePosWS = Level.Map.GetCellCenterWorld(pos) 
+                    var tilePosWS = tileMap.GetCellCenterWorld(pos) 
                                     - Vector3.one * TileSize / 2;
                     tileRect.position += Vector2Int.RoundToInt(tilePosWS);
 

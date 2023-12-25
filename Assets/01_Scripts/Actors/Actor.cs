@@ -74,6 +74,9 @@ public class Actor : Entity
 
     #region Collisions
 
+    /// <summary>
+    /// collision check with specific solid class
+    /// </summary>
     protected bool CollideCheck<T>(int offsetX, int offsetY) where T : Solid
     {
         if (!Collideable) return false;
@@ -101,8 +104,17 @@ public class Actor : Entity
         
         return ret;
     }
+
+    // left to implement
+    protected T CollideFirst<T>(int offsetX, int offsetY) where T : Solid
+    {
+        return null;
+    }
     
-    private bool CollideCheck(int offsetX, int offsetY)
+    /// <summary>
+    /// collision check with ground type tiles, every solid 
+    /// </summary>
+    protected bool CollideCheck(int offsetX, int offsetY)
     {
         var ret = OverlapTileFlagCheckOS(TileType.Ground, new Vector2(offsetX, offsetY), out var type, offsetX, offsetY);
         if (type.HasFlag(TileType.HalfGround) && 

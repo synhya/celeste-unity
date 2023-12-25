@@ -6,34 +6,51 @@ using static UnityEngine.Mathf;
 public partial class Player
 {
     [Header("Run settings")]
-    [SerializeField] private float maxRun = 4f;
-    [SerializeField] private float accel = 2.6f;
-    [SerializeField] private float accelOnAir = 2.4f;
-    [SerializeField] private float deccel = 1.8f;
+    [SerializeField] private float MaxRun = 90f;
+    [SerializeField] private float RunAccel = 1000f;
+    [SerializeField] private float AirMult = 0.65F;
+    [SerializeField] private float RunReduce = 400f;
     
-    [Header("Jump/Fall settings")]
-    [SerializeField] private float maxFall = -180f;
-    [FormerlySerializedAs("jumpStrength")]
-    [SerializeField] private float longJumpStrength = 180f;
-    [SerializeField] private float shortJumpStrength = 130f;
-    [SerializeField] private float gravityValue = 9.8f;
-    [SerializeField] private float gravityIncreaseThreshold = 1f;
-    [SerializeField] private float CoyoteTime = 0.2f;
+    [Header("Jump settings")]
+    [SerializeField] private float JumpHBoost = 40f;
+    [SerializeField] private float WallJumpHBoost = 130f;
+    [SerializeField] private float JumpSpeed = 105f;
+    [SerializeField] private float VarJumpTime = 0.2f;
+    [SerializeField] private float JumpBufferTime = 0.1f;
+    [SerializeField] private float JumpGraceTime = 0.15f;
+    
+    [Header("Fall settings")]
+    [SerializeField] private float MaxFall = -160f;
+    [SerializeField] private float FastMaxFall = -240f;
+    [SerializeField] private float MaxFallAccel = 300f;
+    
+    [SerializeField] private float Gravity = 900f;
 
     [Header("WallSlide settings")]
-    [SerializeField] private float maxSlideFall = -100f;
+    [SerializeField] private float WallSlideStartMaxFall = -20f;
     [SerializeField] private Vector2 WallJumpSpeed = new Vector2(180, 180);
-    [SerializeField] private float WallXMoveLimitTime = 0.2f;
-    
-    // vars
-    private float jumpGraceTimer;
-    private float wallSlideTimer;
-    private int wallSlideDir;
-    private float wallXMoveLimitTimer;
-    private float coyoteTimer;
-    
-    private bool isAtJumpingFrame;
+    [SerializeField] private float WallJumpForceTime = 0.16f;
+    [SerializeField] private float WallSlideTime = 1.2f;
 
+    private const int WallJumpCheckDist = 3;
+    // vars
+    private float maxFall;
+    
+    private float jumpBufferTimer;
+    private float jumpGraceTimer;
+    private float varJumpTimer;
+    private float varJumpSpeed;
+    
+    private float wallSlideTimer;
+
+    private int forceMoveX;
+    private float forceMoveXTimer;
+
+    private void NormalBegin()
+    {
+        maxFall = MaxFall;
+    }
+    
     public int NormalUpdate()
     {
         if (CanDash)
@@ -41,94 +58,165 @@ public partial class Player
             Speed += LiftBoost;                   
             return StartDash();
         }
+        
+        // Running and Friction
+        {
+            float mult = onGround ? 1 : AirMult;
+            // if (onGround && level.CoreMode == Session.CoreModes.Cold) mult *= .3f;
 
-        var xDir = inputX;
-        if (wallXMoveLimitTimer > 0f && xDir != 0 && Math.Sign(xDir) != Math.Sign(Speed.x))
-        {
-            xDir = 0;
-        }
-            
-        
-        // moveX
-        if (Abs(Speed.x) > maxRun)
-            Speed.x = MathUtil.Appr(Speed.x, Sign(Speed.x) * maxRun, deccel);
-        else
-            Speed.x = MathUtil.Appr(Speed.x, xDir * maxRun, onGround ? accel : accelOnAir);
-        
-        // wall jump
-        if (wallDir != 0)
-        {
-            if (jumpPressed || longJumpPressed)
-            {
-                Speed = WallJumpSpeed;
-                Speed.x *= -wallDir;
-                longJumpPressed = false;
-                jumpPressed = false;
-                
-                // 벽방향의 움직임을 잠시 제한해야한다.
-                wallXMoveLimitTimer = WallXMoveLimitTime;
-            }
-        }
-        if (jumpBufferTimer <= 0f)
-        {
-            longJumpPressed = false;
-            jumpPressed = false;
+            float max = MaxRun;
+            if (Abs(Speed.x) > max && (int)Sign(Speed.x) == inputX)
+                Speed.x = MoveTowards(Speed.x, max * inputX, RunReduce * mult * deltaTime);
+            else
+                Speed.x = MoveTowards(Speed.x, max * inputX, RunAccel * mult * deltaTime);
         }
         
         //Vertical
         {
-            // ground jump
-            isAtJumpingFrame = false;
-            if (coyoteTimer > 0f)
+            //Calculate current max fall speed
             {
-                Jump();
+                float mf = MaxFall;
+                float fmf = FastMaxFall;
+                
+                //Fast Fall
+                if (inputY == -1 && Speed.y >= mf)
+                {
+                    maxFall = MoveTowards(maxFall, fmf, MaxFallAccel * deltaTime);
+
+                    float half = mf + (fmf - mf) * .5f;
+                    if (Speed.y >= half)
+                    {
+                        // sprite scale effect
+                    }
+                }
+                else
+                {
+                    maxFall = MoveTowards(maxFall, mf, MaxFallAccel * deltaTime);
+                }
             }
             
-            // gravity
-            gravityAccel = gravityValue;
-        
-            // at the top of jump
-            if (Abs(Speed.y) <= gravityIncreaseThreshold)
-                gravityAccel *= 0.5f;
-
+            //Gravity
             if (!onGround)
             {
-                Speed.y = MathUtil.Appr(Speed.y, wallDir == 0 ? maxFall : maxSlideFall, gravityAccel);
+                var max = MaxFall;
+
+                //Wall Slide
+                if (inputX == (int)facing)
+                {
+                    if (Speed.y <= 0f && wallSlideTimer > 0f && CollideCheck(inputX, 0))
+                        wallSlideDir = (int)facing;
+
+                    if (wallSlideDir != 0)
+                    {
+                        max = Lerp(MaxFall, WallSlideStartMaxFall, wallSlideTimer / WallSlideTime);
+                    }
+                }
+
+                Speed.y = MoveTowards(Speed.y, max, Gravity * deltaTime);
+            }
+            
+            //Variable Jumping
+            if (varJumpTimer > 0f)
+            {
+                if (jumpPressing)
+                    Speed.y = Max(Speed.y, varJumpSpeed);
+                else
+                    varJumpTimer = 0f;
+            }
+            
+            //Jumping
+            if (jumpBufferTimer > 0f)
+            {
+                if (jumpGraceTimer > 0f)
+                {
+                    Jump();
+                }
+                else // else if (CanUnDuck) 
+                {
+                    if (CollideCheck(1 * WallJumpCheckDist, 0))
+                    {
+                        WallJump(-1);
+                    }
+                    else if (CollideCheck(-1 * WallJumpCheckDist, 0))
+                    {
+                        WallJump(1);
+                    }
+                }
             }
         }
 
         return StateNormal;
     }
 
+
+
     private void Jump()
     {
-        // if (checkJumpPressTime)
-        // {
-        //     if (jumpPressTimer > 0f)
-        //     {
-        //         jumpPressTimer -= deltaTime;
-        //         if (Input.GetKeyUp(KeyCode.C))
-        //         {
-        //             shortJumpPressed = true;
-        //             checkJumpPressTime = false;
-        //             jumpBufferTimer = JumpBufferTime;
-        //         }
-        //     }
-        //     else if (Input.GetKey(KeyCode.C))
-        //     {
-        //         longJumpPressed = true;
-        //         checkJumpPressTime = false;
-        //         jumpBufferTimer = JumpBufferTime;
-        //     }
-        // }
-        if (jumpBufferTimer > 0f)
-            jumpBufferTimer -= deltaTime;
+        jumpGraceTimer = 0;
+        jumpBufferTimer = 0;
 
-    }
-    
-    private void SuperJump()
-    {
+        varJumpTimer = VarJumpTime;
+        // dashAttackTimer = 0;
+        wallSlideTimer = WallSlideTime;
+        // wallBoostTimer = 0;
+
+        Speed.x += JumpHBoost * inputX;
+        Speed.y = JumpSpeed;
+        Speed += LiftBoost;
+        varJumpSpeed = Speed.y;
         
+        // play sfx
+        // if (playSfx)
+        // {
+        //     if (launched)
+        //         Play(Sfxs.char_mad_jump_assisted);
+        //
+        //     if (dreamJump)
+        //         Play(Sfxs.char_mad_jump_dreamblock);
+        //     else
+        //         Play(Sfxs.char_mad_jump);
+        // }
+
+        // transform.localScale = new Vector3(.6f, 1.4f, 1f); -> rollback when landing
+        
+        // play patrticles
+        // Dust.Burst(BottomCenter, Vector2.up, 4);
+        
+        SaveData.Instance.TotalJumps++;
+    }
+
+    private void WallJump(int dir)
+    {
+        jumpGraceTimer = 0;
+        jumpBufferTimer = 0;
+        
+        varJumpTimer = VarJumpTime;
+        // dashAttackTimer = 0;
+        wallSlideTimer = WallSlideTime;
+        // wallBoostTimer = 0;
+        if (inputX != 0)
+        {
+            forceMoveX = dir;
+            forceMoveXTimer = WallJumpForceTime;
+        }
+        
+        //Get list of wall jumped off of
+        // -> 움직이는 플렛폼의 스피드를 이어받아야 할 경우ㅡ
+        
+        
+        Speed.x += WallJumpHBoost * dir;
+        Speed.y = JumpSpeed;
+        Speed += LiftBoost;
+        varJumpSpeed = Speed.y;
+        
+        
+        // play patrticles
+        // if(dir == -1)
+        // Dust.Burst(Center + Vector2.UnitX * 3, Vector2.UpLeft, 4);
+        // else
+        // Dust.Burst(Center + Vector2.UnitX * -3, Vector2.UpRight, 4);
+        
+        SaveData.Instance.TotalWallJumps++;
     }
 }
 
