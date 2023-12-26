@@ -39,7 +39,8 @@ public abstract class Entity : MonoBehaviour
             return (Vector2Int)tileMap.WorldToCell((Vector3Int)(h.position + h.size));
         }
     }
-    
+
+    public Vector2 CenterWS => PositionWS + Vector2.up * (HitboxSize.y * 0.5f);
     public int RightWS => HitBoxWS.xMax;
     public int LeftWS => HitBoxWS.xMin;
 

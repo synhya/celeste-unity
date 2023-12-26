@@ -104,7 +104,14 @@ public partial class Player
                 if (inputX == (int)facing)
                 {
                     if (Speed.y <= 0f && wallSlideTimer > 0f && CollideCheck(inputX, 0))
+                    {
                         wallSlideDir = (int)facing;
+                        if (wallSlideTimer > 0.5f)
+                        {
+                            dust.Burst(PositionWS, new Vector2(-wallSlideDir, 0), 0.3f);
+                        }
+                    }
+                        
 
                     if (wallSlideDir != 0)
                     {
@@ -180,7 +187,7 @@ public partial class Player
         // transform.localScale = new Vector3(.6f, 1.4f, 1f); -> rollback when landing
         
         // play patrticles
-        // Dust.Burst(BottomCenter, Vector2.up, 4);
+        dust.Burst(PositionWS, Vector2.up, 1);
         
         SaveData.Instance.TotalJumps++;
     }
@@ -211,10 +218,10 @@ public partial class Player
         
         
         // play patrticles
-        // if(dir == -1)
-        // Dust.Burst(Center + Vector2.UnitX * 3, Vector2.UpLeft, 4);
-        // else
-        // Dust.Burst(Center + Vector2.UnitX * -3, Vector2.UpRight, 4);
+        if(dir == -1)
+            dust.Burst(CenterWS + Vector2.right * 3, new Vector2(-1, 1), 1);
+        else
+            dust.Burst(CenterWS + Vector2.right * -3, new Vector2(1, 1), 1);
         
         SaveData.Instance.TotalWallJumps++;
     }

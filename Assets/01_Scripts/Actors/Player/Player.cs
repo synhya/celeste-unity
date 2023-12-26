@@ -17,9 +17,8 @@ public partial class Player : Actor
 {
     private Level level;
     
-    [Header("Prefabs")]
+    [Header("OtherObjs")]
     [SerializeField] private GameObject deadBodyPrefab;
-
 
     private const float InvinsibleTimeOnSwitch = 0.5f;
     private float invinsibleTimer;
@@ -39,12 +38,10 @@ public partial class Player : Actor
 
     // State Machine
     private StateMachine sm;
+    private DustVisualization dust;
     
     public const int StateNormal = 0;
     public const int StateDash = 1;
-    
-    // particles
-    private SmokeManager s = SmokeManager.Instance;
     
     protected override void FindRoom()
     {
@@ -63,6 +60,8 @@ public partial class Player : Actor
         sm.SetCallbacks(StateDash, DashUpdate, DashBegin, DashEnd);
         sm.State = StateNormal;
         
+        dust = EffectManager.Instance.Dust;
+        
         wasGround = true;
         facing = Facing.Right;
     }
@@ -77,7 +76,7 @@ public partial class Player : Actor
         //Vars
         {
             // landing and taking-off
-            if(isLanding) CreatePopSmoke(0, 0);
+            if(isLanding) dust.Burst(PositionWS, Vector2.up, 1.5f);
 
             if (jumpBufferTimer > 0f) jumpBufferTimer -= deltaTime;
         
@@ -148,11 +147,7 @@ public partial class Player : Actor
     {
         Die(Vector2.up);
     }
-
-    private void CreatePopSmoke(int offsetX, int offsetY)
-    {
-        s.CreatePopSmoke(PositionWS + new Vector2Int(offsetX, offsetY));
-    }
+    
 
     public void OnSwitchRoomStart(Room nextRoom)
     {

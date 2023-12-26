@@ -32,7 +32,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3301081140301246350
 MonoBehaviour:
@@ -48,9 +48,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HitboxBottomLeftOffset: {x: -3, y: 0}
   HitboxSize: {x: 6, y: 15}
-  PositionWS: {x: 157, y: 96}
+  PositionWS: {x: 96, y: 56}
   PreviousPos: {x: 165, y: 96}
   deadBodyPrefab: {fileID: 7332204074699942299, guid: a82d9be9b0ab08446a7200708ec87c2c, type: 3}
+  dust: {fileID: 0}
   IsPaused: 0
   runAnimThreshold: 1
   jumpTurnAroundThreshold: 50
@@ -83,7 +84,7 @@ MonoBehaviour:
   Gravity: 900
   WallSlideStartMaxFall: -20
   WallJumpSpeed: {x: 220, y: 150}
-  WallXMoveLimitTime: 0.5
+  WallJumpForceTime: 0.16
   WallSlideTime: 1.2
 --- !u!212 &3451402920003286382
 SpriteRenderer:
@@ -125,7 +126,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: -1
   m_Sprite: {fileID: 934854594, guid: dcf4f8c0197e0134985bb403a7908248, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
