@@ -40,7 +40,16 @@ public abstract class Entity : MonoBehaviour
         }
     }
 
+    #region Pos Shortcut
+
     public Vector2 CenterWS => PositionWS + Vector2.up * (HitboxSize.y * 0.5f);
+    public Vector2 CenterRightWS => CenterWS + Vector2.right * (HitboxSize.x * 0.5f);
+    public Vector2 CenterLeftWS => CenterWS - Vector2.right * (HitboxSize.x * 0.5f);
+    public Vector2 BottonRightWS => PositionWS + Vector2.right * (HitboxSize.x * 0.5f);
+    public Vector2 BottonLeftWS => PositionWS - Vector2.right * (HitboxSize.x * 0.5f);    
+
+    #endregion
+
     public int RightWS => HitBoxWS.xMax;
     public int LeftWS => HitBoxWS.xMin;
 

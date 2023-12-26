@@ -76,7 +76,7 @@ public partial class Player : Actor
         //Vars
         {
             // landing and taking-off
-            if(isLanding) dust.Burst(PositionWS, Vector2.up, 1.5f);
+            if(isLanding) dust.Burst(PositionWS + Vector2.up, new Vector2(5, 3) ,Vector2.up, 1.5f);
 
             if (jumpBufferTimer > 0f) jumpBufferTimer -= deltaTime;
         
@@ -88,6 +88,7 @@ public partial class Player : Actor
             }
             if(onGround) 
                 wallSlideTimer = WallSlideTime;
+            if (wallSlideParticleTimer > 0f) wallSlideParticleTimer -= deltaTime;
             
             //Jump Grace
             if (onGround) jumpGraceTimer = JumpGraceTime;

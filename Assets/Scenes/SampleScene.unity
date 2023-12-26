@@ -6804,12 +6804,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   initializeShader: {fileID: 7200000, guid: ab485f808a33940408b01a7ec1e59e7a, type: 3}
   instancedMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
-  instanceCount: 246
-  rect:
-    x: -5
-    y: 0
-    width: 10
-    height: 4
+  instanceCount: 200
 --- !u!4 &1015341668
 Transform:
   m_ObjectHideFlags: 0

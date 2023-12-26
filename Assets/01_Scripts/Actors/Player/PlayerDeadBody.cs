@@ -28,6 +28,8 @@ public class PlayerDeadBody : MonoBehaviour
 
     private SpriteRenderer sr;
     private Level level;
+
+    private DeathCircle[] circles;
     
     public void Init(Vector2 backDir, bool flipX)
     {
@@ -37,7 +39,8 @@ public class PlayerDeadBody : MonoBehaviour
         
         var seq = DOTween.Sequence();
         var t = sr.transform;
-        float cTime = 0;
+
+        circles = new DeathCircle[8];
 
         seq.Append(t.DOScale(Vector3.one * 0.5f, KnockBackTime))
             .Join(t.DOJump(t.position + ((Vector3)backDir * KnockBackAmount), KnockBackStrength, 
@@ -50,18 +53,17 @@ public class PlayerDeadBody : MonoBehaviour
                     var angle = dir / 4f * PI;
                     var moveDir = new Vector2(Cos(angle), Sin(angle));
                     
-                    var deadCircle = Instantiate(deathCircleObj, transform).GetComponent<DeathCircle>();
+                    circles[dir] = Instantiate(deathCircleObj, transform).GetComponent<DeathCircle>();
                         
-                    deadCircle.transform.position = t.position + Vector3.up * circleYPosOffset;
-                    deadCircle.Init(moveDir, LerpColor1, LerpColor2);
-
-                    if(dir == 0) 
-                        cTime = deadCircle.CircleAnimTime;
+                    circles[dir].transform.position = t.position + Vector3.up * circleYPosOffset;
+                    circles[dir].Init(moveDir, LerpColor1, LerpColor2);
+                    
                 }
             })
-            .InsertCallback(Max(respawnTime, cTime), () =>
+            .InsertCallback(Max(respawnTime, circles[0].CircleAnimTime), () =>
             {
                 // 나중에 서클 돌아오는 모션 추가
+                // circles.. Loop backward
                 
                 level = Game.G.CurrentLevel;
                 level.SpawnPlayer();
