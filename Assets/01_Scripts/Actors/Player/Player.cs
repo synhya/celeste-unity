@@ -38,7 +38,7 @@ public partial class Player : Actor
 
     // State Machine
     private StateMachine sm;
-    private DustVisualization dust;
+    private DustVisualization Dust => EffectManager.Instance.GetDust();
     
     public const int StateNormal = 0;
     public const int StateDash = 1;
@@ -59,9 +59,7 @@ public partial class Player : Actor
         sm.SetCallbacks(StateNormal, NormalUpdate, NormalBegin, null);
         sm.SetCallbacks(StateDash, DashUpdate, DashBegin, DashEnd);
         sm.State = StateNormal;
-        
-        dust = EffectManager.Instance.Dust;
-        
+
         wasGround = true;
         facing = Facing.Right;
     }
@@ -76,7 +74,7 @@ public partial class Player : Actor
         //Vars
         {
             // landing and taking-off
-            if(isLanding) dust.Burst(PositionWS + Vector2.up, new Vector2(5, 3) ,Vector2.up, 1.5f);
+            if(isLanding) Dust.Burst(PositionWS + Vector2.up, new Vector2(5, 3) ,Vector2.up, 1.5f);
 
             if (jumpBufferTimer > 0f) jumpBufferTimer -= deltaTime;
         

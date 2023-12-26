@@ -29,6 +29,11 @@ Shader "Hidden/Dust"
 
         StructuredBuffer<float3> _InstanceBuffer;
 
+        float nrand(float2 uv)
+        {
+            return frac(sin(dot(uv, float2(12.9898, 78.233))) * 43758.5453);
+        }
+
         Varyings vert (Attributes input, uint id : SV_InstanceID)
         {
             Varyings output;
@@ -45,10 +50,11 @@ Shader "Hidden/Dust"
         {
             // UNITY_SETUP_INSTANCE_ID(input);
             // UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
-
+            float ranVal = nrand(_InstanceBuffer[input.id].xy);
+            float3 finColor = 0.8 + ranVal * 0.2;
             clip(float4(1,1,1,_InstanceBuffer[input.id].z));
             
-            return float4(1,1,1,1);
+            return float4(finColor.xyz, 1);
         }
         ENDHLSL
 

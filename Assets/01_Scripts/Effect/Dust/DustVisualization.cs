@@ -1,20 +1,26 @@
+using System;
 using UnityEngine;
+using UnityEngine.Pool;
 using UnityEngine.Rendering;
 using UnityEngine.Serialization;
 using static System.Runtime.InteropServices.Marshal;
+using Random = UnityEngine.Random;
 
-public class DustVisualization : MonoBehaviour
+public class DustVisualization : MonoBehaviour, IPoolable
 {
-    [FormerlySerializedAs("initializeShader")]
     [SerializeField] private ComputeShader dustCompute;
     [SerializeField] private Mesh instancedMesh;
-    [SerializeField] private int instanceCount;
-    
-    private Bounds bounds;
     private Material instancedMaterial;
+    [SerializeField] private int instanceCount = 50;
+    [SerializeField][Range(0, 1)] private float boxierValueX;
+    [SerializeField][Range(0, 1)] private float boxierValueY;
+
+    private Bounds bounds;
 
     private ComputeBuffer instancedBuffer;
     private ComputeBuffer randBuffer;
+    private float[] showRectRand;
+    
     private ComputeBuffer argsBuffer;
     private uint[] args = new uint[5] { 0, 0, 0, 0, 0 };
     
@@ -22,46 +28,54 @@ public class DustVisualization : MonoBehaviour
     private static readonly int InstancedBuffer = Shader.PropertyToID("_InstanceBuffer");
     
     private float aliveTimer;
-    private float[] showRectRand;
-
+    private float totalAliveTime;
+    private Vector2 speed;
+    private Vector4 rectInfo;
+    // for pooling
+    private IObjectPool<GameObject> pool;
+    private bool doBurst = false;
+    
     /// <summary>
     /// posWS bottom left side of rect
     /// </summary>
     public void Burst(Vector2 posCenter, Vector2 extent, Vector2 dir, float totalTime)
     {
-        Debug.Log("S");
-        aliveTimer = totalTime - Time.deltaTime;
+        totalAliveTime = totalTime;
+        aliveTimer = totalAliveTime;
+        
+        doBurst = true;
+        speed = dir * 8;
+        
+        rectInfo = new Vector4(-extent.x,-extent.y, extent.x * 2, extent.y * 2); 
         
         // decide random here!
         for (int i = 0; i < instanceCount; i++)
             showRectRand[i] = Random.value;
-        
-        // set buffer and dispatch(initialize)
-        var rectInfo = new Vector4(-extent.x,-extent.y, extent.x * 2, extent.y * 2); 
-            
-        dustCompute.SetVector("_Rect", rectInfo);
         randBuffer.SetData(showRectRand);
-        dustCompute.SetBuffer(0,"_ShowRectRand", randBuffer);
-        dustCompute.SetFloat("_TotalTime", totalTime);
-        dustCompute.SetFloat("_LeftTime", aliveTimer);
-        dustCompute.SetVector("_Dir", dir * 8);
         
-        dustCompute.Dispatch(0, Mathf.CeilToInt(instanceCount / 256.0f), 1, 1);
+        dustCompute.SetVector("_Rect", rectInfo);
+        dustCompute.SetBuffer(0,"_ShowRectRand", randBuffer);
+        dustCompute.SetFloat("_TotalTime", totalAliveTime);
+        dustCompute.SetVector("_Dir", speed);
+        dustCompute.SetVector("_BoxierValue", new Vector2(boxierValueX, boxierValueY));
+        
         bounds = new Bounds(posCenter, Vector2.one * 100f);
     }
 
-    private void Start()
+    public void Init(IObjectPool<GameObject> pool)
     {
-        if (!instancedMaterial) instancedMaterial = CoreUtils.CreateEngineMaterial("Hidden/Dust");
+        this.pool = pool;
+        this.pool.Release(gameObject);
         
-        // randomArray
-        showRectRand = new float[instanceCount];
+        dustCompute = Instantiate(dustCompute);
+        instancedMaterial = CoreUtils.CreateEngineMaterial("Hidden/Dust");
         
-        // instance setting
         instancedBuffer = new ComputeBuffer(instanceCount, SizeOf(typeof(Vector3)));
         randBuffer = new ComputeBuffer(instanceCount, sizeof(float));
+        showRectRand = new float[instanceCount];
+        
         dustCompute.SetBuffer(0, Instances, instancedBuffer);
-
+        
         // args setting
         argsBuffer = new ComputeBuffer(1, 5 * sizeof(uint), ComputeBufferType.IndirectArguments);
         args[0] = (uint)instancedMesh.GetIndexCount(0);
@@ -77,20 +91,24 @@ public class DustVisualization : MonoBehaviour
     {
         if (aliveTimer > 0f)
         {
-            // set left time every frame
+            aliveTimer -= Time.deltaTime;
             dustCompute.SetFloat("_LeftTime", aliveTimer);
             dustCompute.Dispatch(0, Mathf.CeilToInt(instanceCount / 256.0f), 1, 1);
-
-            aliveTimer -= Time.deltaTime;
+            
             Graphics.DrawMeshInstancedIndirect(instancedMesh, 0, instancedMaterial, bounds, argsBuffer);
+        } 
+        
+        else if (doBurst)
+        {
+            pool?.Release(gameObject);
         }
     }
 
-    private void OnDisable()
+    private void OnDestroy()
     {
         argsBuffer?.Release();
         instancedBuffer?.Release();
         randBuffer?.Release();
-        if (instancedMaterial) CoreUtils.Destroy(instancedMaterial);
+        CoreUtils.Destroy(instancedMaterial);
     }
 } 

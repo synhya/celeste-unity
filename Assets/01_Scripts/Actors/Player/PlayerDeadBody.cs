@@ -41,6 +41,7 @@ public class PlayerDeadBody : MonoBehaviour
         var t = sr.transform;
 
         circles = new DeathCircle[8];
+        float cTime = 0f;
 
         seq.Append(t.DOScale(Vector3.one * 0.5f, KnockBackTime))
             .Join(t.DOJump(t.position + ((Vector3)backDir * KnockBackAmount), KnockBackStrength, 
@@ -57,10 +58,12 @@ public class PlayerDeadBody : MonoBehaviour
                         
                     circles[dir].transform.position = t.position + Vector3.up * circleYPosOffset;
                     circles[dir].Init(moveDir, LerpColor1, LerpColor2);
-                    
+
+                    if (dir == 0)
+                        cTime = circles[0].CircleAnimTime;
                 }
             })
-            .InsertCallback(Max(respawnTime, circles[0].CircleAnimTime), () =>
+            .InsertCallback(Max(respawnTime, cTime), () =>
             {
                 // 나중에 서클 돌아오는 모션 추가
                 // circles.. Loop backward

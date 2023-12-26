@@ -112,13 +112,13 @@ public partial class Player
                             if (wallSlideDir == 1 && wallSlideParticleTimer <= 0f)
                             {
                                 wallSlideParticleTimer = 0.4f;
-                                dust.Burst(BottonRightWS + Vector2.up * 2,
+                                Dust.Burst(BottonRightWS + Vector2.up * 2,
                                     new Vector2(2, 5), new Vector2(-1f, 1f), 0.6f);
                             }
                             else if (wallSlideParticleTimer <= 0f)
                             {
                                 wallSlideParticleTimer = 0.4f;
-                                dust.Burst(BottonLeftWS + Vector2.up * 2,
+                                Dust.Burst(BottonLeftWS + Vector2.up * 2,
                                     new Vector2(2, 5), new Vector2(1f, 1f), 0.6f);
                             }
                         }
@@ -199,7 +199,7 @@ public partial class Player
         // transform.localScale = new Vector3(.6f, 1.4f, 1f); -> rollback when landing
         
         // play patrticles
-        dust.Burst(PositionWS + Vector2.up, new Vector2(4, 2), 
+        Dust.Burst(PositionWS + Vector2.up, new Vector2(4, 2), 
             Vector2.up + Vector2.right * inputX, 1);
         
         SaveData.Instance.TotalJumps++;
@@ -232,10 +232,10 @@ public partial class Player
         
         // play patrticles
         if (dir == -1)
-            dust.Burst(CenterRightWS + Vector2.left,
+            Dust.Burst(CenterRightWS + Vector2.left,
                 new Vector2(2,3), new Vector2(dir, 1), 1f);
         else
-            dust.Burst(CenterLeftWS + Vector2.right,
+            Dust.Burst(CenterLeftWS + Vector2.right,
                 new Vector2(2,3), new Vector2(dir, 1), 1f);
         
         SaveData.Instance.TotalWallJumps++;
