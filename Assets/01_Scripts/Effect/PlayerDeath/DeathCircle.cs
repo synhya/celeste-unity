@@ -72,6 +72,7 @@ public class DeathCircle : MonoBehaviour, IPoolable
                 Game.G.CurrentLevel.SpawnPlayer();
             }
             t.SetParent(originalParent);
+            seq.Kill();
             pool.Release(this);
         });
     }

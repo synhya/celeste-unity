@@ -39,6 +39,7 @@ public partial class Player : Actor
     // State Machine
     private StateMachine sm;
     private DustVisualization Dust => EffectManager.Instance.GetDust();
+    private DashLineVisualization DashLine => EffectManager.Instance.GetDashLine();
     
     public const int StateNormal = 0;
     public const int StateDash = 1;
@@ -66,7 +67,7 @@ public partial class Player : Actor
 
     private void Update()
     {
-        if(IsPaused) return;
+        if(Game.IsPaused) return;
         
         CheckInput();
         CheckOverlaps();
@@ -142,7 +143,7 @@ public partial class Player : Actor
         wasGround = onGround;
     }
 
-    public override void Squish()
+    public override void Squish(CollisionData data)
     {
         Die(Vector2.up);
     }
@@ -150,8 +151,6 @@ public partial class Player : Actor
 
     public void OnSwitchRoomStart(Room nextRoom)
     {
-        
-        
         // if going up -> speedup
         if (Speed.y > 0)
             Speed.y += nextRoom.EnteringJumpPower;
@@ -163,7 +162,6 @@ public partial class Player : Actor
     }
     public void OnSwitchRoomEnd()
     {
-        IsPaused = false;
         invinsibleTimer = InvinsibleTimeOnSwitch;
     }
 }

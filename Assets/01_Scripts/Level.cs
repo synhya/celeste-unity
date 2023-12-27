@@ -50,8 +50,9 @@ public class Level : MonoBehaviour
     public void SwitchRoom(Room nextRoom)
     {
         CurrentRoom = nextRoom;
-        FreezeLevel(1f);
         Player.OnSwitchRoomStart(nextRoom);
+        
+        FreezeLevel(1f);
     }
     
     /// <summary>
@@ -65,14 +66,18 @@ public class Level : MonoBehaviour
     
     public void FreezeLevel(float time)
     {
-        Player.IsPaused = true;
+        Game.Pause();
         
         // adjust camera
         float x = CurrentRoom.OriginWS.x + 160;
         float y = CurrentRoom.OriginWS.y + 94;
         cam.transform.DOMove(new Vector3(x, y, -10), time)
             .SetEase(Ease.OutCubic)
-            .OnComplete(() => Player.OnSwitchRoomEnd());
+            .OnComplete(() =>
+            {
+                Game.Resume();
+                Player.OnSwitchRoomEnd();
+            });
     }
 
     public void Shake(float duration, float strength)

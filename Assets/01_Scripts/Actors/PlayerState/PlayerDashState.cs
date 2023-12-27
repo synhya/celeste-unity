@@ -116,6 +116,9 @@ public partial class Player
         if (Math.Sign(Speed.x) == Math.Sign(newSpeed.x) && Abs(Speed.x) > Abs(newSpeed.x))
             newSpeed.x = Speed.x;
         Speed = newSpeed;
+        
+        // create line
+        DashLine.Cast(CenterWS, DashDir);
     }
 
     private void DashEnd()
@@ -166,7 +169,7 @@ public partial class Player
     }
 
     #endregion
-    private void RefillDash()
+    public void RefillDash()
     {
         Dashes = MaxDashes; // one for now.
     }

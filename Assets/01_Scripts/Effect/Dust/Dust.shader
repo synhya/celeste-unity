@@ -27,34 +27,38 @@ Shader "Hidden/Dust"
             // UNITY_VERTEX_OUTPUT_STEREO
         };
 
-        StructuredBuffer<float3> _InstanceBuffer;
-
         float nrand(float2 uv)
         {
-            return frac(sin(dot(uv, float2(12.9898, 78.233))) * 43758.5453);
+	        return frac(sin(dot(uv, float2(12.9898, 78.233))) * 43758.5453);
         }
+
+
+        StructuredBuffer<float3> _InstancesBuffer;
 
         Varyings vert (Attributes input, uint id : SV_InstanceID)
         {
             Varyings output;
-            const float3 offset = float3(_InstanceBuffer[id].xy, 0);
+            const float3 offset = float3(_InstancesBuffer[id].xy, 0);
 
             VertexPositionInputs positionInputs = GetVertexPositionInputs(input.positionOS.xyz + offset);
 
             output.positionCS = TransformWorldToHClip(positionInputs.positionWS);
             output.id = id;
+            
             return output;
         }
-
+        
         float4 frag (Varyings input) : SV_Target
         {
             // UNITY_SETUP_INSTANCE_ID(input);
             // UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
-            float ranVal = nrand(_InstanceBuffer[input.id].xy);
-            float3 finColor = 0.8 + ranVal * 0.2;
-            clip(float4(1,1,1,_InstanceBuffer[input.id].z));
             
-            return float4(finColor.xyz, 1);
+            float ranVal = nrand(_InstancesBuffer[input.id].xy);
+            float4 finColor = 0.8 + ranVal * 0.2;
+            finColor.a = _InstancesBuffer[input.id].z;
+            clip(finColor);
+            
+            return finColor;
         }
         ENDHLSL
 

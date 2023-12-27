@@ -44,6 +44,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b37eaf1452ffafb48925dca0d805fd90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initializeShader: {fileID: 7200000, guid: 808695277a0db6141a7fb1fdf4d2a500, type: 3}
+  dashLineCompute: {fileID: 7200000, guid: 808695277a0db6141a7fb1fdf4d2a500, type: 3}
   instancedMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
-  instanceCount: 30
+  instanceCount: 28
+  maxLifeTime: 1
+  centerBackOffset: 5

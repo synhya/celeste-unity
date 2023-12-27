@@ -40,7 +40,7 @@ public class PlayerDeadBody : MonoBehaviour
         var seq = DOTween.Sequence();
         seq.Append(sr.DOColor(LerpColor2, 0.5f).SetLoops(CeilToInt(BackTime / 0.5f), LoopType.Yoyo))
             .Join(srT.DOScale(Vector3.one * 0.5f, BackTime))
-            .Join(t.DOMoveX(backDir.x * BackAmount.x, BackTime, true).SetRelative())
+            .Join(t.DOMoveX(backDir.x * BackAmount.x, BackTime, true).SetRelative().SetEase(Ease.InCubic))
             .Join(t.DOMoveY(backDir.y * BackAmount.y, BackTime, true).SetRelative().SetEase(Ease.OutCubic))
             .InsertCallback(BackTime, () =>
             {

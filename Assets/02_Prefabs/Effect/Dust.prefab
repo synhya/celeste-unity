@@ -46,7 +46,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dustCompute: {fileID: 7200000, guid: ab485f808a33940408b01a7ec1e59e7a, type: 3}
   instancedMesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
-  instancedMaterial: {fileID: 2100000, guid: 184edfd149fefd3429159ea7b41a5818, type: 2}
   instanceCount: 50
-  boxierValueX: 0.325
-  boxierValueY: 0.331
+  boxierValueX: 0.331
+  boxierValueY: 0.349

@@ -2,7 +2,7 @@
 using System;
 using UnityEngine;
 
-public class Spring : Solid
+public class Spring : Trigger
 {
     private Animator anim;
     
@@ -19,13 +19,28 @@ public class Spring : Solid
     protected override void Start()
     {
         base.Start();
+        
         anim = GetComponent<Animator>();
     }
-
-    public override void OnTouchingActor()
+    
+    public override void OnEnter(Entity other)
     {
+        if (other is Player)
+        {
+            var p = other as Player;
+            p.OnBoost();
+        }
+        
         onPlay = true;
         anim.Play(StAnimSpringUp, 0, 0);
+    }
+    public override void OnStay(Entity other)
+    {
+        
+    }
+    public override void OnLeave(Entity other)
+    {
+        
     }
 
     private void Update()
@@ -52,7 +67,7 @@ public class Spring : Solid
         {
             isPlayingDown = false;
         }
-            
+        
     }
 }
 

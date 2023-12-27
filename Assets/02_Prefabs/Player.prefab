@@ -51,11 +51,10 @@ MonoBehaviour:
   PositionWS: {x: 96, y: 56}
   PreviousPos: {x: 165, y: 96}
   deadBodyPrefab: {fileID: 7332204074699942299, guid: a82d9be9b0ab08446a7200708ec87c2c, type: 3}
-  dust: {fileID: 0}
   IsPaused: 0
   runAnimThreshold: 1
   jumpTurnAroundThreshold: 50
-  SpringYPower: 300
+  boostPower: 220
   DashSpeed: 150
   DashYRatio: 1
   DashTrailTimeArray:

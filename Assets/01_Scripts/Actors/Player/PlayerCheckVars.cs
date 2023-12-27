@@ -1,13 +1,15 @@
 ﻿
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using static UnityEngine.Mathf;
 
 // funcs in this part is called every frame
 public partial class Player
 {
+    [FormerlySerializedAs("SpringYPower")]
     [Header("Interaction Settings")]
-    [SerializeField] private float SpringYPower = 220f;
-    
+    [SerializeField] private float boostPower = 220f;
 
     // vars
     private int inputX;
@@ -67,7 +69,7 @@ public partial class Player
             }
 
             // spike check
-            if (OverlapTileFlagCheckOS(TileType.Obstacle,Vector2.zero, out var obsType))
+            if (OverlapTileFlagCheckOS(TileType.Obstacle, Vector2Int.zero, out var obsType))
             {
                 var deathDir = Vector2.zero;
             
@@ -79,27 +81,40 @@ public partial class Player
         }
         
         // ground check
-        onGround = (OverlapTileFlagCheckOS(TileType.Ground, Vector2.down, 0, -1) &&
-                    !OverlapTileFlagCheckOS(TileType.HalfGround, Vector2.zero));
+        onGround = CollideCheck(Vector2Int.down);
+            // (OverlapTileFlagCheckOS(TileType.Ground, Vector2Int.down) &&
+            // !OverlapTileFlagCheckOS(TileType.HalfGround, Vector2Int.zero));
         
         // landing check
         isLanding = onGround && !wasGround;
         isTakingOff = wasGround && !onGround;
 
-        // spring check (spring is not tile)
-        if (!onGround)
+        // trigger check 
+        foreach (Trigger trigger in Room.Triggers)// change to Tracker.GetEntities<Trigger>()
         {
-            int offsetX = Speed.x != 0f ? (int)Sign(Speed.x) : 0;
-            int offsetY = Speed.y >= 0f ? 0 : -1;
-            
-            if (CollideCheck<Spring>(offsetX, offsetY))
+            if (CollideCheck(trigger))
             {
-                RefillDash();
-                Speed.y = SpringYPower;
+                if (!trigger.Triggered)
+                {
+                    trigger.Triggered = true;
+                    trigger.OnEnter(this);
+                }
+                trigger.OnStay(this);
+            }
+            else if (trigger.Triggered)
+            {
+                trigger.Triggered = false;
+                trigger.OnLeave(this);
             }
         }
         
         // ice check .. etc
+    }
+
+    public void OnBoost()
+    {
+        RefillDash();
+        Speed.y = jumpBufferTimer > 0f ? boostPower * 1.4f : boostPower;
     }
     
     void Die(Vector2 knockBackDir)

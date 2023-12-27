@@ -23,8 +23,10 @@ public class Room : MonoBehaviour
 
     // level this room is in.
     [HideInInspector] public Level Level;
+    
     public HashSet<Solid> Solids;
     public HashSet<Actor> Actors;
+    public HashSet<Trigger> Triggers;
     
     public Vector2Int OriginWS => originWs;
     private Vector2Int originWs;
@@ -45,6 +47,7 @@ public class Room : MonoBehaviour
         
         Solids = new HashSet<Solid>();
         Actors = new HashSet<Actor>();
+        Triggers = new HashSet<Trigger>();
         
         // var cellSize = StaticTilemap.cellSize;
         // var bound = StaticTilemap.cellBounds;

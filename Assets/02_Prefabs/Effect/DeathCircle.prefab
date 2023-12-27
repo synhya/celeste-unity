@@ -45,8 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20795cbf2e2d45bf9ec738f3b36e7942, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetScale: 0.53
-  targetMoveSpeed: 15
+  targetScale: 0.45
+  targetMoveSpeed: 10
   moveTime: 1.2
   angleSpeed: 120
   shrinkTime: 0.8

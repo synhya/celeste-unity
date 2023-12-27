@@ -41,7 +41,7 @@ public class Solid : Entity
                 {
                     foreach (var actor in Room.Actors)
                     {
-                        if (CollideEntity(actor))
+                        if (CollideCheck(actor))
                         {
                             // Push right
                             actor.MoveX(this.RightWS - actor.LeftWS, actor.Squish);
@@ -59,7 +59,7 @@ public class Solid : Entity
                 {
                     foreach (var actor in Room.Actors)
                     {
-                        if (CollideEntity(actor))
+                        if (CollideCheck(actor))
                         {
                             // Push left
                             actor.MoveX(this.LeftWS - actor.RightWS, actor.Squish);
@@ -81,7 +81,7 @@ public class Solid : Entity
                 {
                     foreach (var actor in Room.Actors)
                     {
-                        if (CollideEntity(actor))
+                        if (CollideCheck(actor))
                         {
                             // Push right
                             actor.MoveX(this.RightWS - actor.LeftWS, actor.Squish);
@@ -99,7 +99,7 @@ public class Solid : Entity
                 {
                     foreach (var actor in Room.Actors)
                     {
-                        if (CollideEntity(actor))
+                        if (CollideCheck(actor))
                         {
                             // Push left
                             actor.MoveX(this.LeftWS - actor.RightWS, actor.Squish);
@@ -127,7 +127,7 @@ public class Solid : Entity
         return null;
     }
 
-    public virtual void OnTouchingActor() { }
+    public virtual void OnTouchingActor(Actor actor) { }
 }
 
 

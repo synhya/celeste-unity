@@ -104,7 +104,7 @@ public partial class Player
                 //Wall Slide
                 if (inputX == (int)facing)
                 {
-                    if (Speed.y <= 0f && wallSlideTimer > 0f && CollideCheck(inputX, 0))
+                    if (Speed.y <= 0f && wallSlideTimer > 0f && CollideCheck(Vector2Int.right * inputX))
                     {
                         wallSlideDir = (int)facing;
                         if (wallSlideTimer > 0.5f)
@@ -152,11 +152,11 @@ public partial class Player
                 }
                 else // else if (CanUnDuck) 
                 {
-                    if (CollideCheck(1 * WallJumpCheckDist, 0))
+                    if (CollideCheck(Vector2Int.right * WallJumpCheckDist))
                     {
                         WallJump(-1);
                     }
-                    else if (CollideCheck(-1 * WallJumpCheckDist, 0))
+                    else if (CollideCheck(Vector2Int.left * WallJumpCheckDist))
                     {
                         WallJump(1);
                     }

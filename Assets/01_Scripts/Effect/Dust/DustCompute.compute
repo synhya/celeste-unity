@@ -1,10 +1,9 @@
 // Each #kernel tells which function to compile; you can have many kernels
-#pragma kernel CSMain
+#pragma kernel CSDust
 
 RWStructuredBuffer<float3> _Instances;
 
-// 0 ~ 1사이의 랜덤값이다 
-StructuredBuffer<float> _ShowRectRand;
+StructuredBuffer<float> _RandBuffer;
 float4 _Rect; // xy -> pos , zw -> size
 
 // 남은 시간을 받아와서
@@ -16,24 +15,20 @@ float2 _BoxierValue; // from 0 to 1
 
 float2 _Dir;
 
-float nrand(float2 uv)
-{
-    return frac(sin(dot(uv, float2(12.9898, 78.233))) * 43758.5453);
-}
-
 uint2 to2D(float id)
 {
     return uint2(id % _Rect.z, id / _Rect.z);
 }
 
 [numthreads(256,1,1)]
-void CSMain (uint3 id : SV_DispatchThreadID)
+void CSDust (uint3 id : SV_DispatchThreadID)
 {
     float2 posOS = float2(to2D(id.x));
     float extentX = _Rect.z * 0.5;
     float passedTime = _TotalTime - _LeftTime;
     
-    float clip = _ShowRectRand[id.x] - smoothstep(0, _TotalTime, passedTime)
+    float clip = _RandBuffer[id.x]
+        - smoothstep(0, _TotalTime, passedTime)
         - smoothstep(0, _Rect.w , posOS.y * (1 - _BoxierValue.y))
         - smoothstep(0, extentX, abs(posOS.x - extentX) * (1 - _BoxierValue.x));
     

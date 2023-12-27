@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 public class Game : MonoBehaviour
@@ -10,6 +11,15 @@ public class Game : MonoBehaviour
 
     [SerializeField] private Level startingLevel;
     [HideInInspector] public Level CurrentLevel;
+
+    public static bool IsPaused
+    {
+        get;
+        private set;
+    }
+
+    public static void Pause() => IsPaused = true;
+    public static void Resume() => IsPaused = false;
 
     void Awake() 
     {
