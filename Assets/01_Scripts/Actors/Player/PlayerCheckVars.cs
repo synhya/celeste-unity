@@ -71,7 +71,7 @@ public partial class Player
             {
                 var deathDir = Vector2.zero;
             
-                if (obsType == TileType.Spike)
+                if (obsType.HasFlag(TileType.Spike))
                     deathDir = -Speed;
             
                 Die(deathDir.normalized);
@@ -108,7 +108,7 @@ public partial class Player
         level.Shake(0.5f, 1.5f);
         
         // spawn dead body (dont set as parent as it will be disabled)
-        var body = Instantiate(deadBodyPrefab, transform.position, Quaternion.identity)
+        var body = Instantiate(deadBodyPrefab, CenterWS, Quaternion.identity)
             .GetComponent<PlayerDeadBody>();
         body.Init(knockBackDir, sr.flipX ^ flipAnimFlag);
         // body.DeathAction = () => {}

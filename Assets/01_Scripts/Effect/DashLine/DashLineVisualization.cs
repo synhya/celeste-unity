@@ -35,14 +35,14 @@ public class DashLineVisualization : MonoBehaviour, IPoolable
 
     private void OnEnable()
     {
-        if (!instancedMaterial) instancedMaterial = CoreUtils.CreateEngineMaterial("Hidden/DashLineVisualization");
+        if (!instancedMaterial) instancedMaterial = CoreUtils.CreateEngineMaterial("Hidden/DashLine");
         
         bounds = new Bounds(transform.position, Vector3.one * 100f);
 
         // instance setting
         instancedBuffer = new ComputeBuffer(instanceCount, SizeOf(typeof(InstanceData)));
         initializeShader.SetBuffer(0, Instances, instancedBuffer);
-        initializeShader.Dispatch(0, Mathf.CeilToInt(instanceCount / 256.0f), 1, 1);
+        // initializeShader.Dispatch(0, Mathf.CeilToInt(instanceCount / 256.0f), 1, 1);
         
         
         // args setting

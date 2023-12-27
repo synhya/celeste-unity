@@ -13,72 +13,51 @@ using static UnityEngine.Mathf;
 public class PlayerDeadBody : MonoBehaviour
 {
     [Header("Knockback Anim Settings")]
-    public float KnockBackAmount = 3f;
-    public float KnockBackTime = 2f;
-    public float KnockBackStrength = 2f;
+    public Vector2 BackAmount = Vector2.one;
+    public float BackTime = 0.5f;
     
     [Header("Color Settings")]
     public Color LerpColor1 = Color.white;
     public Color LerpColor2 = Color.red;
-
-    [Header("Other Settings")]
-    [SerializeField] private float respawnTime = 8f;
-    [SerializeField] private float circleYPosOffset = 2.5f;
-    [SerializeField] private GameObject deathCircleObj;
+    
+    private float circlePosOffsetY;
 
     private SpriteRenderer sr;
-    private Level level;
-
-    private DeathCircle[] circles;
     
+    private readonly EffectManager em = EffectManager.Instance;
+    
+    // 최적화 필요.
     public void Init(Vector2 backDir, bool flipX)
     {
         sr = GetComponentInChildren<SpriteRenderer>();
         sr.color = LerpColor1;
         sr.flipX = !flipX; // dead sprite is opposite direction.
+
+        var t = transform;
+        var srT = sr.transform;
+        circlePosOffsetY = -srT.localPosition.y;
         
         var seq = DOTween.Sequence();
-        var t = sr.transform;
-
-        circles = new DeathCircle[8];
-        float cTime = 0f;
-
-        seq.Append(t.DOScale(Vector3.one * 0.5f, KnockBackTime))
-            .Join(t.DOJump(t.position + ((Vector3)backDir * KnockBackAmount), KnockBackStrength, 
-                1, KnockBackTime).SetEase(Ease.OutCubic))
-            .InsertCallback(KnockBackTime, () =>
+        seq.Append(sr.DOColor(LerpColor2, 0.5f).SetLoops(CeilToInt(BackTime / 0.5f), LoopType.Yoyo))
+            .Join(srT.DOScale(Vector3.one * 0.5f, BackTime))
+            .Join(t.DOMoveX(backDir.x * BackAmount.x, BackTime, true).SetRelative())
+            .Join(t.DOMoveY(backDir.y * BackAmount.y, BackTime, true).SetRelative().SetEase(Ease.OutCubic))
+            .InsertCallback(BackTime, () =>
             {
                 sr.enabled = false;
                 for (var dir = 0; dir <= 7; dir++)
                 {
                     var angle = dir / 4f * PI;
                     var moveDir = new Vector2(Cos(angle), Sin(angle));
-                    
-                    circles[dir] = Instantiate(deathCircleObj, transform).GetComponent<DeathCircle>();
-                        
-                    circles[dir].transform.position = t.position + Vector3.up * circleYPosOffset;
-                    circles[dir].Play(moveDir, LerpColor1, LerpColor2);
 
-                    if (dir == 0)
-                        cTime = circles[0].CircleAnimTime;
+                    var circle = em.GetCircle();
+                    circle.Play(transform, circlePosOffsetY, moveDir, LerpColor1, LerpColor2);
                 }
             })
-            .InsertCallback(Max(respawnTime, cTime), () =>
+            .InsertCallback(6f, () =>
             {
-                // 나중에 서클 돌아오는 모션 추가
-                // circles.. Loop backward
-                
-                level = Game.G.CurrentLevel;
-                level.SpawnPlayer();
-                
                 Destroy(gameObject);
             });
-    }
-    private void Update()
-    {
-        // lerp color
-        sr.color = Color.Lerp(LerpColor1, LerpColor2, 
-            PingPong(Time.time * 2f, 1));
     }
 }
 
