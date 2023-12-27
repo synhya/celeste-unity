@@ -57,7 +57,7 @@ public class PlayerDeadBody : MonoBehaviour
                     circles[dir] = Instantiate(deathCircleObj, transform).GetComponent<DeathCircle>();
                         
                     circles[dir].transform.position = t.position + Vector3.up * circleYPosOffset;
-                    circles[dir].Init(moveDir, LerpColor1, LerpColor2);
+                    circles[dir].Play(moveDir, LerpColor1, LerpColor2);
 
                     if (dir == 0)
                         cTime = circles[0].CircleAnimTime;

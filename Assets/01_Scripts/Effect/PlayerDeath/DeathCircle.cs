@@ -1,8 +1,9 @@
 ﻿
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Pool;
 
-public class DeathCircle : MonoBehaviour
+public class DeathCircle : MonoBehaviour, IPoolable
 {
     [Header("Spread Settings")]
     [SerializeField] private float targetScale = 0.53f;
@@ -16,10 +17,11 @@ public class DeathCircle : MonoBehaviour
     [Header("Shrink Settings")]
     [SerializeField][Range(0, 1)] private float shrinkRatio = 0.6f;
 
+    private SpriteRenderer sr;
+    private IObjectPool<DeathCircle> pool;
+    
     private Vector3 pivotPos;
     private float timer = -99f;
-    private SpriteRenderer sr;
-
     private Color lerpColor1;
     private Color lerpColor2;
 
@@ -27,21 +29,25 @@ public class DeathCircle : MonoBehaviour
 
     public float CircleAnimTime => moveTime * 0.4f + spinTime;
     
-    public void Init(Vector2 moveDir, Color color1, Color color2)
+    public void Init<T>(IObjectPool<T> pool) where T : MonoBehaviour
     {
-        // spawned at player position
         sr = GetComponent<SpriteRenderer>();
+        this.pool = pool as IObjectPool<DeathCircle>;
+    }
+    
+    public void Play(Vector2 moveDir, Color color1, Color color2)
+    {
         lerpColor1 = color1;
         lerpColor2 = color2;
         
-        pivotPos = transform.position;
         var t = transform;
+        pivotPos = t.position;
         
         // play anim and set scale
         var seq = DOTween.Sequence();
 
         seq.Append(t.DOScale(targetScale, moveTime))
-            .Join(t.DOMove(t.position + (Vector3)moveDir * (targetMoveSpeed * moveTime), moveTime))
+            .Join(t.DOMove(pivotPos + (Vector3)moveDir * (targetMoveSpeed * moveTime), moveTime))
             .InsertCallback(moveTime * 0.4f,
                 () => timer = spinTime);
     }

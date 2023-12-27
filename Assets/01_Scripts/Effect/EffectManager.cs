@@ -10,15 +10,15 @@ public class EffectManager : MonoBehaviour
 {
     public static EffectManager Instance => instance;
     private static EffectManager instance = null;
+    
+    private DeadCirclePool dCirclePool;
+    private DustPool dustPool;
+    private DashLinePool dashLinePool;
 
-
-    [FormerlySerializedAs("GameObjectPool")]
-    public GameObjectPool DustPool;
-    private DustVisualization dust;
-
-    public GameObjectPool DashLinePool;
-    private DashLineVisualization dashLine;
-
+    public DustVisualization GetDust() => dustPool.Pool.Get();
+    public DashLineVisualization GetDashLine() => dashLinePool.Pool.Get();
+    public DeathCircle GetCircle() => dCirclePool.Pool.Get();
+    
     void Awake() 
     {
         if (instance != this)
@@ -28,10 +28,9 @@ public class EffectManager : MonoBehaviour
         }
         
         DontDestroyOnLoad(this);
-    }
 
-    public DustVisualization GetDust()
-    {
-        return DustPool.Pool.Get().GetComponent<DustVisualization>();
+        dCirclePool = GetComponent<DeadCirclePool>();
+        dustPool = GetComponent<DustPool>();
+        dashLinePool = GetComponent<DashLinePool>();
     }
 } 

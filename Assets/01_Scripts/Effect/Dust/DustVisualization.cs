@@ -32,7 +32,7 @@ public class DustVisualization : MonoBehaviour, IPoolable
     private Vector2 speed;
     private Vector4 rectInfo;
     // for pooling
-    private IObjectPool<GameObject> pool;
+    private IObjectPool<DustVisualization> pool;
     private bool doBurst = false;
     
     /// <summary>
@@ -61,11 +61,9 @@ public class DustVisualization : MonoBehaviour, IPoolable
         
         bounds = new Bounds(posCenter, Vector2.one * 100f);
     }
-
-    public void Init(IObjectPool<GameObject> pool)
+    public void Init<T>(IObjectPool<T> pool) where T : MonoBehaviour
     {
-        this.pool = pool;
-        this.pool.Release(gameObject);
+        this.pool = pool as IObjectPool<DustVisualization>;
         
         dustCompute = Instantiate(dustCompute);
         instancedMaterial = CoreUtils.CreateEngineMaterial("Hidden/Dust");
@@ -97,10 +95,9 @@ public class DustVisualization : MonoBehaviour, IPoolable
             
             Graphics.DrawMeshInstancedIndirect(instancedMesh, 0, instancedMaterial, bounds, argsBuffer);
         } 
-        
         else if (doBurst)
         {
-            pool?.Release(gameObject);
+            pool?.Release(this);
         }
     }
 

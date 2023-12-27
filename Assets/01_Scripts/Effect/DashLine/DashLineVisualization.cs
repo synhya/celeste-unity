@@ -4,7 +4,7 @@ using UnityEngine.Rendering;
 using static System.Runtime.InteropServices.Marshal;
 
 // [ExecuteInEditMode]
-public class DashLineVisualization : MonoBehaviour
+public class DashLineVisualization : MonoBehaviour, IPoolable
 {
     [SerializeField] private ComputeShader initializeShader;
     [SerializeField] private Mesh instancedMesh;
@@ -25,12 +25,11 @@ public class DashLineVisualization : MonoBehaviour
         public Vector3 position;
     }
 
-    private IObjectPool<GameObject> pool;
+    private IObjectPool<DashLineVisualization> pool;
     
-    public void Init(IObjectPool<GameObject> pool)
+    public void Init<T>(IObjectPool<T> pool) where T : MonoBehaviour
     {
-        this.pool = pool;
-        this.pool.Release(gameObject);
+        this.pool = pool as IObjectPool<DashLineVisualization>;
         
     }
 
