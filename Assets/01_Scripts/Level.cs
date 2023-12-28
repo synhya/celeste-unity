@@ -20,6 +20,8 @@ public class Level : MonoBehaviour
     [HideInInspector] public Tilemap Map;
 
     public bool InSpace = false;
+    private const float RoomSwitchTime = 0.8f;
+    public HashSet<Actor> AllActors;
     
     private Camera cam;
 
@@ -30,18 +32,15 @@ public class Level : MonoBehaviour
         
         Map = GetComponent<Tilemap>();
         Map.CompressBounds();
-
-        foreach (Transform child in transform)
-        {
-            if (child.TryGetComponent(out Room room))
-                room.Level = this;
-        }
+        
+        AllActors = new HashSet<Actor>();
     }
 
     private void Start()
     {
         SpawnPlayer();
         
+        startingRoom.gameObject.SetActive(true);
         float x = startingRoom.OriginWS.x + 160;
         float y = startingRoom.OriginWS.y + 94;
         cam.transform.position = new Vector3(x, y, -10);
@@ -49,10 +48,13 @@ public class Level : MonoBehaviour
 
     public void SwitchRoom(Room nextRoom)
     {
+        CurrentRoom.gameObject.SetActive(false);
+        nextRoom.gameObject.SetActive(true);
+        
         CurrentRoom = nextRoom;
         Player.OnSwitchRoomStart(nextRoom);
         
-        FreezeLevel(1f);
+        FreezeLevel(RoomSwitchTime);
     }
     
     /// <summary>

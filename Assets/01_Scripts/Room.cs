@@ -13,6 +13,8 @@ public class Room : MonoBehaviour
     public float EnteringJumpPower = 50f;
     [FormerlySerializedAs("RespawnPos")]
     public Vector2Int SpawnPos;
+    [Tooltip("In case room is too large")]
+    public bool CamHasToFollowPlayer = false;
     
     [Header("Link Settings")]
     // doors can be in bottom.
@@ -20,12 +22,8 @@ public class Room : MonoBehaviour
     public RectInt[] Doors;
     [Tooltip("Index should match linked doors")]
     public Room[] NextRooms;
-
-    // level this room is in.
-    [HideInInspector] public Level Level;
     
     public HashSet<Solid> Solids;
-    public HashSet<Actor> Actors;
     public HashSet<Trigger> Triggers;
     
     public Vector2Int OriginWS => originWs;
@@ -46,7 +44,6 @@ public class Room : MonoBehaviour
         // Solids, Actors(except player?), Tilemap will be set in start method of each class
         
         Solids = new HashSet<Solid>();
-        Actors = new HashSet<Actor>();
         Triggers = new HashSet<Trigger>();
         
         // var cellSize = StaticTilemap.cellSize;
@@ -57,15 +54,6 @@ public class Room : MonoBehaviour
         {
             Doors[i].position += originWs;
         }
-    }
-    public void OnActorExit(Actor actor)
-    {
-        Actors.Remove(actor);
-    }
-    
-    public void OnActorEnter(Actor actor)
-    {
-        Actors.Add(actor);
     }
 }
 

@@ -54,8 +54,8 @@ MonoBehaviour:
   IsPaused: 0
   runAnimThreshold: 1
   jumpTurnAroundThreshold: 50
-  boostPower: 220
-  DashSpeed: 150
+  boostPower: 300
+  DashSpeed: 180
   DashYRatio: 1
   DashTrailTimeArray:
   - 0.005

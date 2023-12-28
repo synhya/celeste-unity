@@ -43,12 +43,6 @@ public partial class Player : Actor
     
     public const int StateNormal = 0;
     public const int StateDash = 1;
-    
-    protected override void FindRoom()
-    {
-        Room = Game.G.CurrentLevel.CurrentRoom;
-        level = Room.Level;
-    }
 
     protected override void Start()
     {
@@ -155,14 +149,16 @@ public partial class Player : Actor
         if (Speed.y > 0)
             Speed.y += nextRoom.EnteringJumpPower;
         RefillDash();
-
-        Room.OnActorExit(this);
-        Room = nextRoom;
-        Room.OnActorEnter(this);
     }
     public void OnSwitchRoomEnd()
     {
         invinsibleTimer = InvinsibleTimeOnSwitch;
+    }
+    public void OnAddStrawberry(int id)
+    {
+        // other things to do.
+        
+        SaveData.Instance.Strawberries.Add(id);
     }
 }
 

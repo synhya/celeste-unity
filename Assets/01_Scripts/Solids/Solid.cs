@@ -12,7 +12,8 @@ public class Solid : Entity
     protected override void Start()
     {
         base.Start();
-        Room.Solids.Add(this);
+        var room = GetComponentInParent<Room>();
+        room.Solids.Add(this);
     }
 
     public void Move(float x, float y)
@@ -39,9 +40,9 @@ public class Solid : Entity
                 PositionWS.x += moveX;
                 if (moveX > 0)
                 {
-                    foreach (var actor in Room.Actors)
+                    foreach (var actor in Level.AllActors)
                     {
-                        if (CollideCheck(actor))
+                        if (OverlapCheck(actor))
                         {
                             // Push right
                             actor.MoveX(this.RightWS - actor.LeftWS, actor.Squish);
@@ -57,9 +58,9 @@ public class Solid : Entity
                 }
                 else
                 {
-                    foreach (var actor in Room.Actors)
+                    foreach (var actor in Level.AllActors)
                     {
-                        if (CollideCheck(actor))
+                        if (OverlapCheck(actor))
                         {
                             // Push left
                             actor.MoveX(this.LeftWS - actor.RightWS, actor.Squish);
@@ -79,9 +80,9 @@ public class Solid : Entity
                 PositionWS.x += moveX;
                 if (moveX > 0)
                 {
-                    foreach (var actor in Room.Actors)
+                    foreach (var actor in Level.AllActors)
                     {
-                        if (CollideCheck(actor))
+                        if (OverlapCheck(actor))
                         {
                             // Push right
                             actor.MoveX(this.RightWS - actor.LeftWS, actor.Squish);
@@ -97,9 +98,9 @@ public class Solid : Entity
                 }
                 else
                 {
-                    foreach (var actor in Room.Actors)
+                    foreach (var actor in Level.AllActors)
                     {
-                        if (CollideCheck(actor))
+                        if (OverlapCheck(actor))
                         {
                             // Push left
                             actor.MoveX(this.LeftWS - actor.RightWS, actor.Squish);
@@ -120,14 +121,13 @@ public class Solid : Entity
 
     private bool OverlapCheck(Actor actor)
     {
+        // CollideCheck()
         throw new NotImplementedException();
     }
     private List<Actor> GetAllRidingActors()
     {
         return null;
     }
-
-    public virtual void OnTouchingActor(Actor actor) { }
 }
 
 

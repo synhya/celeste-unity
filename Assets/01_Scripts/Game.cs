@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Game : MonoBehaviour
 {
-    public static Game G =>
+    public static Game I =>
         (instance ??= (new GameObject("Manager")).AddComponent<Game>());
     private static Game instance = null;
 

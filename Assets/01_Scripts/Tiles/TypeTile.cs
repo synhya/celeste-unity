@@ -13,7 +13,7 @@ public enum TileType
     // ground (collide-able)  
     Snow = 1 << 0,
     Sand = 1 << 1,
-    Ice= 1 << 2, 
+    Brick= 1 << 2, 
     Metal = 1 << 3, 
     Wood = 1 << 4, 
     

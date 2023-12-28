@@ -9,7 +9,7 @@ public partial class Player
 {
     [FormerlySerializedAs("SpringYPower")]
     [Header("Interaction Settings")]
-    [SerializeField] private float boostPower = 220f;
+    [SerializeField] private float boostPower = 300f;
 
     // vars
     private int inputX;
@@ -114,7 +114,7 @@ public partial class Player
     public void OnBoost()
     {
         RefillDash();
-        Speed.y = jumpBufferTimer > 0f ? boostPower * 1.4f : boostPower;
+        Speed.y = boostPower;
     }
     
     void Die(Vector2 knockBackDir)

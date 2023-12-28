@@ -1,4 +1,8 @@
 ﻿
+// Entity 종류들. 
+// Trigger, Killbox, Platform, WallBooster, JumpThru, SwapBlock, FlyFeather
+//  They all have CollideCheck
+
 public abstract class Trigger : Entity
 {
     public bool Triggered;
@@ -6,7 +10,8 @@ public abstract class Trigger : Entity
     protected override void Start()
     {
         base.Start();
-        Room.Triggers.Add(this);
+        var room = GetComponentInParent<Room>();
+        room.Triggers.Add(this);
     }
 
     public abstract void OnEnter(Entity other);

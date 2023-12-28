@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 34912c8a47d594f48a4b0faa9f1f3baf
+guid: 5acdf8e0a31fb5c4d84ed4173889804c
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -119,17 +119,30 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Spring-Sheet_0
+      name: platform_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 16
-        height: 16
+        width: 22
+        height: 15
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -137,20 +150,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0722e20a9ed66de44885aae9aac742f8
-      internalID: -793874265
+      spriteID: 36a03d904c1f40743b0a4d974f2849bd
+      internalID: -1247586896
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Spring-Sheet_1
+      name: platform_1
       rect:
         serializedVersion: 2
-        x: 16
+        x: 22
         y: 0
-        width: 16
-        height: 16
+        width: 22
+        height: 15
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -158,20 +171,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4cb9ee5a461fcf24682bdac7ff82a32c
-      internalID: 1536230177
+      spriteID: f4456478daa7f5542b29581bd0f0810a
+      internalID: -975341159
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Spring-Sheet_2
+      name: platform_2
       rect:
         serializedVersion: 2
-        x: 32
+        x: 44
         y: 0
-        width: 16
-        height: 16
+        width: 22
+        height: 15
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -179,20 +192,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c3d81c34308863b489a1d4fb7dd12c63
-      internalID: -1213652152
+      spriteID: 4672a4f7ead644f4ca29fd9536a00ce8
+      internalID: 19254053
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Spring-Sheet_3
+      name: platform_3
       rect:
         serializedVersion: 2
-        x: 48
+        x: 66
         y: 0
-        width: 16
-        height: 16
+        width: 22
+        height: 15
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -200,20 +213,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: fe43dec4566f124469f58a6ddaffeab8
-      internalID: 50706453
+      spriteID: 37b2d0d25f4bf6d4184d5201fb5ee03c
+      internalID: -1940308928
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Spring-Sheet_4
+      name: platform_4
       rect:
         serializedVersion: 2
-        x: 64
+        x: 88
         y: 0
-        width: 16
-        height: 16
+        width: 22
+        height: 15
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -221,20 +234,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3490f9720db35ce40b86cfb9f074dfd5
-      internalID: -1667311056
+      spriteID: 90f733cce27b80f49ab32016aa08fb4f
+      internalID: 419378196
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Spring-Sheet_5
+      name: platform_5
       rect:
         serializedVersion: 2
-        x: 80
+        x: 110
         y: 0
-        width: 16
-        height: 16
+        width: 22
+        height: 15
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -242,8 +255,50 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3131c1148988de445b01135cbbf9060a
-      internalID: -1977874523
+      spriteID: 3416fea5261003946a81e05782eaaef4
+      internalID: 820571923
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: platform_6
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 0
+        width: 22
+        height: 15
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2b21223e5abe70d4fb8042f9b29dc3d3
+      internalID: -546634745
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: platform_7
+      rect:
+        serializedVersion: 2
+        x: 154
+        y: 0
+        width: 22
+        height: 15
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8f34ceb388fefaa44a468474a3f21fc6
+      internalID: 908454110
       vertices: []
       indices: 
       edges: []
@@ -259,12 +314,14 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Spring-Sheet_0: -793874265
-      Spring-Sheet_1: 1536230177
-      Spring-Sheet_2: -1213652152
-      Spring-Sheet_3: 50706453
-      Spring-Sheet_4: -1667311056
-      Spring-Sheet_5: -1977874523
+      platform_0: -1247586896
+      platform_1: -975341159
+      platform_2: 19254053
+      platform_3: -1940308928
+      platform_4: 419378196
+      platform_5: 820571923
+      platform_6: -546634745
+      platform_7: 908454110
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

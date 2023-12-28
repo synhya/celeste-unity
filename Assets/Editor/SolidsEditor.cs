@@ -8,8 +8,9 @@ public class SolidEditor : EntityEditor
 {
 }
 
-[CustomEditor(typeof(Spring), true)]
+[CustomEditor(typeof(Trigger), true)]
 [CanEditMultipleObjects]
-public class SpringEditor : SolidEditor
+public class TriggerEditor : EntityEditor
 {
 }
+

@@ -34,6 +34,8 @@ as I had to set Every particle's position.
 Death Effect is implemented with pooling.  
 Pooling system is left be more optimized.
 
+Lighting..
+
 ---
 ## Referenced Assets 
 
@@ -49,5 +51,6 @@ Pooling system is left be more optimized.
 - [Tiles](https://aran.ink/posts/celeste-tilesets)
 - [PixelPerfectLine](https://www.youtube.com/watch?v=nlzvesTsSrI)
 - [JumpGraceTime](http://kpulv.com/123/Platforming_Ledge_Forgiveness/)
+- [DefferedLights](https://www.youtube.com/watch?v=R6vQ9VmMz2w&t=5s)
 
 [//]: # (- [Scroller]&#40;https://github.com/setchi/FancyScrollView&#41;)

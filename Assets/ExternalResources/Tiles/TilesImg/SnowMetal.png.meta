@@ -975,6 +975,27 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: SnowMetal_4
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 32
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5de27405faab03d479c641c77654c089
+      internalID: 1921793882
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -990,6 +1011,7 @@ TextureImporter:
       SnowMetal_1: 1656485215
       SnowMetal_2: 837888772
       SnowMetal_3: 242536945
+      SnowMetal_4: 1921793882
       ttt_0: 351702542
       ttt_1: -948842263
       ttt_10: 30053165

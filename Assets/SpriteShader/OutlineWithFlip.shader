@@ -117,12 +117,12 @@ Shader "Custom/OutlineWithFlip"
                 SurfaceData2D surfaceData;
                 InputData2D inputData;
 
-                InitializeSurfaceData(main.rgb, main.a, mask, surfaceData);
-                InitializeInputData(i.uv, i.lightingUV, inputData);
+                half4 texcolor = lerp(main, _OutlineColor, CalculateOutline(main, i.uv, _MainTex, sampler_MainTex, _MainTex_TexelSize)); ;
 
-                half4 finColor = i.color * SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv); // CombinedShapeLightShared(surfaceData, inputData);
+                InitializeSurfaceData(texcolor.rgb, texcolor.a, mask, surfaceData);
+                InitializeInputData(i.uv, i.lightingUV, inputData);
                 
-                return lerp(finColor, _OutlineColor, CalculateOutline(finColor, i.uv, _MainTex, sampler_MainTex, _MainTex_TexelSize)); 
+                return CombinedShapeLightShared(surfaceData, inputData);
             }
             ENDHLSL
         }

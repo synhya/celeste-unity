@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 /// <summary>
 /// Actors don’t have any concept of their own velocity, acceleration, or gravity.
@@ -8,12 +9,16 @@ using UnityEngine;
 /// </summary>
 public class Actor : Entity
 {
+    private Tilemap tileMap;
+    protected Room Room => Level.CurrentRoom;
+    
     protected override void Start()
     {
         base.Start();
-        Room.OnActorEnter(this);
+        Level.AllActors.Add(this);
+        tileMap = Level.Map; 
     }
-
+    
     public void MoveX(float amount, Action<CollisionData> onCollide)
     {
         Remainder.x += amount;
@@ -92,7 +97,6 @@ public class Actor : Entity
             {
                 if (CollideCheck(solid))
                 {
-                    solid.OnTouchingActor(this);
                     ret = true;
                     break;
                 }
@@ -140,5 +144,74 @@ public class Actor : Entity
         return ret;
     }
 
+    #endregion
+    
+    #region Tile Collisions
+    
+    private Vector2Int GridPosMin => (Vector2Int)tileMap.WorldToCell((Vector3Int)HitBoxWS.position);
+
+    private Vector2Int GridPosMax
+    {
+        get {
+            var h = HitBoxWS;
+            return (Vector2Int)tileMap.WorldToCell((Vector3Int)(h.position + h.size));
+        }
+    }
+    
+    /// <summary>
+    /// overlap doesn't include "touching"
+    /// </summary>
+    /// <param name="type">the first tile overlapping</param>
+    /// <returns></returns>
+    protected bool OverlapTileFlagCheckOS(TileType flag, Vector2Int offset, out TileType type)
+    {
+        var was = PositionWS;
+        PositionWS += offset;
+        
+        var min = GridPosMin;
+        var max = GridPosMax;
+        
+        var tileRect = new RectInt();
+        var pos = new Vector3Int();
+
+        var ret = false;
+        type = TileType.None;
+        
+        for(int i = min.x; i <= max.x; i++)
+        {
+            for (int j = min.y; j <= max.y; j++)
+            {
+                pos.x = i;
+                pos.y = j;
+                var tile = tileMap.GetTile(pos) as TypeTile;
+                
+                if (tile && tile.Type.HasFlag(flag))
+                {
+                    tileRect = tile.AABB;
+                    var tilePosWS = tileMap.GetCellCenterWorld(pos) 
+                                    - Vector3.one * TileSize / 2;
+                    tileRect.position += Vector2Int.RoundToInt(tilePosWS);
+
+                    if (HitBoxWS.Overlaps(tileRect) && 
+                        (flag != TileType.Ground || !tile.Type.HasFlag(TileType.HalfGround) ||
+                         PositionWS.y - offset.y >= tilePosWS.y + TileSize))
+                    {
+                        // special case, if entity position.y + offset.y < tile center.y + Tilesize/2
+                        // player's previous position is below tile so pass
+                        
+                        type = tile.Type;
+                        ret = true;
+                    }
+                }
+            }
+        }
+        PositionWS = was;
+
+        return ret;
+    }
+    protected bool OverlapTileFlagCheckOS(TileType flag, Vector2Int offset)
+    {
+        return OverlapTileFlagCheckOS(flag, offset, out var t);
+    }
     #endregion
 }

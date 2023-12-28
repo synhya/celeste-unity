@@ -17,7 +17,7 @@ MonoBehaviour:
   m_DefaultColliderType: 1
   m_TilingRules: []
   Type: 8421376
-  EffectedByOtherRuleTile: 1
+  EffectedFlags: 
   AABB:
     x: 0
     y: 0

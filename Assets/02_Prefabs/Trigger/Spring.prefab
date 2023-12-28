@@ -50,6 +50,7 @@ MonoBehaviour:
   HitboxSize: {x: 16, y: 2}
   PositionWS: {x: 360, y: 224}
   PreviousPos: {x: 0, y: 0}
+  Triggered: 0
 --- !u!212 &171575298187738610
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -70,7 +71,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5d2e34046c4bcae46be27c3302040d36, type: 2}
+  - {fileID: 2100000, guid: 6e33b005f4542ac45a22b90e9a35184d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -90,7 +91,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: -2
   m_Sprite: {fileID: -793874265, guid: 34912c8a47d594f48a4b0faa9f1f3baf, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

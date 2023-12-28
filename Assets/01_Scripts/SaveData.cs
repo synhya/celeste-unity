@@ -9,4 +9,10 @@ public class SaveData
 
     public int TotalJumps = 0;
     public int TotalWallJumps = 0;
+    public HashSet<int> Strawberries;
+
+    SaveData()
+    {
+        Strawberries = new HashSet<int>();
+    }
 } 

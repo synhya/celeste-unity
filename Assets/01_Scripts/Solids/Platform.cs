@@ -1,14 +1,36 @@
 ﻿
 
 // this is main part has a lot to implement
+
+using System;
+using UnityEngine;
+
 public class Platform : Solid
 {
+    public int GearOffset = 8;
 
+    [SerializeField] private float maxSpeed;
+    
+    private Vector3 startPos;
+    private Vector3 endPos;
 
-    // maybe push down a little bit? if actor is riding..?
-    public override void OnTouchingActor(Actor actor)
+    private bool isMoving = false;
+    private Vector2 speed;
+
+    private void Update()
     {
-        base.OnTouchingActor(actor);
+        var was = PositionWS;
+        PositionWS.y += 1;
+        foreach (var actor in Level.AllActors)
+        {
+            if (!isMoving && CollideCheck(actor))
+            {
+                // move platform
+            }
+        }
+        PositionWS = was;
+        
+        //when moving .. start slow and get fast
     }
 }
 

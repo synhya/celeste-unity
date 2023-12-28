@@ -2,7 +2,7 @@
 using System;
 using UnityEngine;
 
-public class DashOrb : Solid
+public class DashOrb : Trigger
 {
     [SerializeField] private float RecreateTime = 4f;
 
@@ -15,23 +15,25 @@ public class DashOrb : Solid
         
         Collideable = false; // it is not "colliding" with player
     }
-
-    // refill if actor is player
-    public override void OnTouchingActor(Actor actor)
+    public override void OnEnter(Entity other)
     {
-        if (actor is Player)
+        if (other is Player)
         {
-            var p = actor as Player;
+            var p = other as Player;
             p.RefillDash();
-
-            
-
         }
         
         // play disappear animation and timer 
         isCreated = false;
         recreateTimer = RecreateTime;
     }
+    public override void OnStay(Entity other)
+    {
+    }
+    public override void OnLeave(Entity other)
+    {
+    }
+
 
     private void Update()
     {
