@@ -90,12 +90,11 @@ public class DustVisualization : MonoBehaviour, IPoolable
     {
         if (aliveTimer > 0f)
         {
-            aliveTimer -= Time.deltaTime;
-            
             dustCompute.SetFloat("_LeftTime", aliveTimer);
             dustCompute.Dispatch(0, Mathf.CeilToInt(instanceCount / 256.0f), 1, 1);
             
             Graphics.DrawMeshInstancedIndirect(instancedMesh, 0, instancedMaterial, bounds, argsBuffer);
+            aliveTimer -= Time.deltaTime;
         } 
         else if (didBurst)
         {
