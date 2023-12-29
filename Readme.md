@@ -20,27 +20,30 @@ I added Trigger class up on original system.
 #### TileCollision
 Tiles are solids but they can't inherit solid class because they  
 inherit from RuleTile class(In UnityEngine). So I created  
-TypeTile class with AABB attached to handle collisions with actor.
+TypeTile class that inherits RuleTile with AABB attached to handle collisions with actor.  
+
 
 ---
 ### Player
 Player moves based on state machine.  
 I could implement every single state inherit from IState.  
-But I wanted to keep every state in player class because   
-it looked more intuitive.  
+But I wanted to keep every state in player class because it looked more intuitive.  
 The player class was referenced by [this](https://github.com/NoelFB/Celeste/tree/master/Source/Player).
 
 ---
 ### Effects
-Dust and Dash Line Effect is implemented   
+Hood Color Change on dash is implemented using lookup table. It was inspired by this [devlog](https://www.youtube.com/watch?v=HsOKwUwL1bE&t=1s).  
+I first made tools to convert sprite texture to lookup texture and table texture then used it in shader.  
+
+Dust(when player jump and land) and Dash Line Effect is implemented   
 using compute shader. Using Particle system was  
 possible option but wasn't efficient   
-as I had to set Every particle's position.
+as I had to set Every particle's position with cpu each frame.
 
-Death Effect is implemented with pooling.  
-Pooling system is left be more optimized.
-
-Lighting..
+Death Effect is implemented with pooling because  
+I had to create 8 game objects for each circles.  
+Pooling system is left be more optimized.   
+Death Circles would be more pretty if they behave like [metaball](https://www.shadertoy.com/view/wd3SzS).  
 
 ---
 ## Referenced Assets 
@@ -57,6 +60,6 @@ Lighting..
 - [SpriteColorLUT](https://www.youtube.com/watch?v=HsOKwUwL1bE&t=1s)
 - [Tiles](https://aran.ink/posts/celeste-tilesets)
 - [PixelPerfectLine](https://www.youtube.com/watch?v=nlzvesTsSrI)
-- [JumpGraceTime](http://kpulv.com/123/Platforming_Ledge_Forgiveness/)
+- [PlatformerGameTips](http://kpulv.com/123/Platforming_Ledge_Forgiveness/)
 
 [//]: # (- [Scroller]&#40;https://github.com/setchi/FancyScrollView&#41;)
