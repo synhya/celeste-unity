@@ -46,7 +46,7 @@ Pooling system is left be more optimized.
 Death Circles would be more pretty if they behave like [metaball](https://www.shadertoy.com/view/wd3SzS).  
 
 ---
-## Referenced Assets 
+## Asset Credit
 
 - [Red Hood](https://legnops.itch.io/red-hood-character)
 
