@@ -41,7 +41,7 @@ possible option but wasn't efficient
 as I had to set Every particle's position with cpu each frame.
 
 Death Effect is implemented with pooling because  
-I had to create 8 game objects for each circles.  
+I had to create 8 game objects for circles.  
 Pooling system is left be more optimized.   
 Death Circles would be more pretty if they behave like [metaball](https://www.shadertoy.com/view/wd3SzS).  
 
