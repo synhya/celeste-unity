@@ -15,8 +15,6 @@ enum Facing
 
 public partial class Player : Actor
 {
-    private Level level;
-    
     [Header("OtherObjs")]
     [SerializeField] private GameObject deadBodyPrefab;
 

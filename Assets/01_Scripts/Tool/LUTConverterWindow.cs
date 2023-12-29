@@ -23,6 +23,8 @@ public class LUTConverterWindow : EditorWindow
     private HashSet<Color> spriteColorSet;
     private int lutTextureWidth = -1;
     private string assetPath;
+    private bool keepTableInfo = false;
+    private bool createLUTTex = false;
     
     [SerializeField] private Vector2 scrollPos = Vector2.zero;
 
@@ -49,6 +51,7 @@ public class LUTConverterWindow : EditorWindow
     private void OnEnable()
     {
         colorTable ??= new List<PairColor>();
+        spriteColorSet ??= new HashSet<Color>();
         
         reorderList = new ReorderableList(colorTable, typeof(PairColor), true, true, true, true)
         {
@@ -99,17 +102,37 @@ public class LUTConverterWindow : EditorWindow
         }
 
         EditorGUILayout.Space();
+        EditorGUILayout.BeginVertical();
+
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.FlexibleSpace();
+        createLUTTex = EditorGUILayout.Toggle("Create LUT texture", createLUTTex);
+        EditorGUILayout.EndHorizontal();
+        
         EditorGUILayout.BeginHorizontal();
         GUILayout.FlexibleSpace();
         if (GUILayout.Button("convert"))
         {
             Convert();
         }
+        EditorGUILayout.EndHorizontal();
+        
+        EditorGUILayout.Space();
+        
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.FlexibleSpace();
+        keepTableInfo = EditorGUILayout.Toggle("Keep Table Info", keepTableInfo);
+        EditorGUILayout.EndHorizontal();
+        
+        EditorGUILayout.BeginHorizontal();
+        GUILayout.FlexibleSpace();
+        EditorGUILayout.Space();
         if (GUILayout.Button("generate table from sprite"))
         {
             GenerateTable();
         }
         EditorGUILayout.EndHorizontal();
+        EditorGUILayout.EndVertical();
         
         EditorGUILayout.EndScrollView();
     }
@@ -118,9 +141,14 @@ public class LUTConverterWindow : EditorWindow
         if(targetSprite == null) return;
         
         colorTable.Clear();
-
-        spriteColorSet ??= new HashSet<Color>();
-        spriteColorSet.Clear();
+        if (!keepTableInfo)
+        {
+            spriteColorSet.Clear();
+        }
+        else
+        {
+            // color table should keep it's order..
+        }
 
         var from = targetSprite.texture.GetPixels();
         foreach (var t in from)
@@ -147,12 +175,15 @@ public class LUTConverterWindow : EditorWindow
                 {
                     // as 16bit texture has no alpha
                     // blue is used as alpha. red, green is for uv -> red is j green is i
-                    Color toColor = new Color(j * 1f / lutTextureWidth,i * 1f / lutTextureWidth,fromColors[curIdx].a,1);
+                    Color toColor = new Color((j + 0.5f) / lutTextureWidth,
+                        (i + 0.5f) / lutTextureWidth,fromColors[curIdx].a,1);
                     
                     colorTable.Add(new PairColor(fromColors[curIdx], toColor));
                 }
             }
         }
+        
+        Debug.Log("Color table length : " + colorTable.Count);
     }
 
     void Convert()
@@ -181,13 +212,15 @@ public class LUTConverterWindow : EditorWindow
                 }
         
                 tex.SetPixels(to);
-                tex.Apply();
+                tex.Apply(); // TextureImporterFormat.RGB16
+                // tex.format = 
                 assetPath = Application.dataPath.Split("Assets")[0] + AssetDatabase.GetAssetPath(tex);
                 Debug.Log("saved as: " + assetPath);
                 System.IO.File.WriteAllBytes(assetPath, tex.EncodeToPNG());
             }
         }
         // Generate Lookup Texture based on Table
+        if(createLUTTex)
         {
             var list = colorTable.Select(pc => pc.from).ToList();
             var total = list.Count;

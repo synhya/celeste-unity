@@ -41,6 +41,20 @@ public class DustVisualization : MonoBehaviour, IPoolable
     /// </summary>
     public void Burst(Vector2 posCenter, Vector2 extent, Vector2 dir, float totalTime)
     {
+        ////////////// error test
+        dustCompute.SetBuffer(0, Instances, instancedBuffer);
+        
+        // args setting
+        argsBuffer = new ComputeBuffer(1, 5 * sizeof(uint), ComputeBufferType.IndirectArguments);
+        args[0] = (uint)instancedMesh.GetIndexCount(0);
+        args[1] = (uint)instanceCount;
+        args[2] = (uint)instancedMesh.GetIndexStart(0);
+        args[3] = (uint)instancedMesh.GetBaseVertex(0);
+        argsBuffer.SetData(args);
+        
+        instancedMaterial.SetBuffer(InstancedBuffer, instancedBuffer);
+        //////////////
+        
         totalAliveTime = totalTime;
         aliveTimer = totalAliveTime;
         
@@ -67,23 +81,12 @@ public class DustVisualization : MonoBehaviour, IPoolable
         this.pool = pool as IObjectPool<DustVisualization>;
         
         dustCompute = Instantiate(dustCompute);
+        DontDestroyOnLoad(dustCompute);
         instancedMaterial = CoreUtils.CreateEngineMaterial("Hidden/Dust");
         
         instancedBuffer = new ComputeBuffer(instanceCount, SizeOf(typeof(Vector3)));
         randBuffer = new ComputeBuffer(instanceCount, sizeof(float));
         randArray = new float[instanceCount];
-        
-        dustCompute.SetBuffer(0, Instances, instancedBuffer);
-        
-        // args setting
-        argsBuffer = new ComputeBuffer(1, 5 * sizeof(uint), ComputeBufferType.IndirectArguments);
-        args[0] = (uint)instancedMesh.GetIndexCount(0);
-        args[1] = (uint)instanceCount;
-        args[2] = (uint)instancedMesh.GetIndexStart(0);
-        args[3] = (uint)instancedMesh.GetBaseVertex(0);
-        argsBuffer.SetData(args);
-        
-        instancedMaterial.SetBuffer(InstancedBuffer, instancedBuffer);
     }
     
     private void Update()
@@ -109,5 +112,6 @@ public class DustVisualization : MonoBehaviour, IPoolable
         instancedBuffer?.Release();
         randBuffer?.Release();
         CoreUtils.Destroy(instancedMaterial);
+        Destroy(dustCompute);
     }
 } 

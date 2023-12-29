@@ -16,6 +16,12 @@ Specifics can be found [here](https://maddythorson.medium.com/celeste-and-towerf
 For entities that are collide-able and don't block actor,  
 I added Trigger class up on original system.  
 (for example, strawberry and dash orb inherit this class)
+
+#### TileCollision
+Tiles are solids but they can't inherit solid class because they  
+inherit from RuleTile class(In UnityEngine). So I created  
+TypeTile class with AABB attached to handle collisions with actor.
+
 ---
 ### Player
 Player moves based on state machine.  

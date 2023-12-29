@@ -54,7 +54,7 @@ public partial class Player
         for (int i = 0; i < doors.Length; i++)
         {
             if (hitbox.Overlaps(doors[i]))
-                level.SwitchRoom(Room.NextRooms[i]);
+                Level.SwitchRoom(Room.NextRooms[i]);
         }
 
         if (invinsibleTimer > 0f) invinsibleTimer -= deltaTime;
@@ -120,7 +120,7 @@ public partial class Player
     void Die(Vector2 knockBackDir)
     {
         // camera shake
-        level.Shake(0.5f, 1.5f);
+        Level.Shake(0.5f, 1.5f);
         
         // spawn dead body (dont set as parent as it will be disabled)
         var body = Instantiate(deadBodyPrefab, CenterWS, Quaternion.identity)

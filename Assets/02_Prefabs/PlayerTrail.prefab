@@ -46,10 +46,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AliveTime: 0.26
-  StartColor: {r: 0.46274513, g: 0.909804, b: 1, a: 0.6862745}
+  StartColor: {r: 0.3466052, g: 0.6814611, b: 0.7490197, a: 0.9490196}
   EndColor: {r: 0, g: 0.4829449, b: 0.5754717, a: 0}
-  StartIntensity: 1.15
-  EndIntensity: 0.4
+  StartIntensity: 1.2
+  EndIntensity: 0
 --- !u!212 &7342079456134722979
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -91,12 +91,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -2
-  m_Sprite: {fileID: 878356098, guid: 934cb542e02a0e1489e33c387528aa7e, type: 3}
+  m_Sprite: {fileID: 1409103810, guid: 934cb542e02a0e1489e33c387528aa7e, type: 3}
   m_Color: {r: 0, g: 0.4532175, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 3.625, y: 3.6875}
+  m_Size: {x: 56, y: 48.5}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1

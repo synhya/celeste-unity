@@ -7,6 +7,7 @@ Shader "Custom/OutlineWithLUT"
         _MaskTex("Mask", 2D) = "white" {}
         _NormalMap("Normal Map", 2D) = "bump" {}
         
+        _Emission("Emission", float) = 0
         _OutlineColor("OutlineColor", Color) = (1,1,1,1)
         _Radius("Radius", Range(0,10)) = 1
 
@@ -80,6 +81,8 @@ Shader "Custom/OutlineWithLUT"
             TEXTURE2D(_LookUpTex);
             SAMPLER(sampler_LookUpTex);
 
+            float _Emission;
+
             #if USE_SHAPE_LIGHT_TYPE_0
             SHAPE_LIGHT(0)
             #endif
@@ -118,7 +121,7 @@ Shader "Custom/OutlineWithLUT"
             half4 CombinedShapeLightFragment(Varyings i) : SV_Target
             {
                 float2 lookup = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv).xy;
-                half4 main = SAMPLE_TEXTURE2D(_LookUpTex, sampler_LookUpTex, lookup.xy);;
+                half4 main = i.color * SAMPLE_TEXTURE2D(_LookUpTex, sampler_LookUpTex, lookup.xy);
                 const half4 mask = SAMPLE_TEXTURE2D(_MaskTex, sampler_MaskTex, i.uv);
                 SurfaceData2D surfaceData;
                 InputData2D inputData;
@@ -128,7 +131,7 @@ Shader "Custom/OutlineWithLUT"
                 InitializeSurfaceData(texcolor.rgb, texcolor.a, mask, surfaceData);
                 InitializeInputData(i.uv, i.lightingUV, inputData);
                 
-                return texcolor; //CombinedShapeLightShared(surfaceData, inputData);
+                return CombinedShapeLightShared(surfaceData, inputData) * (1 + _Emission); //;
             }
             ENDHLSL
         }

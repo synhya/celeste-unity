@@ -103,7 +103,7 @@ public partial class Player
         dashTrailTimer = DashTrailTimeArray[0];
         trailsLeft = DashTrailTimeArray.Length;
         
-        level.Shake(0.3f, 1.4f);
+        Level.Shake(0.3f, 1.4f);
         
         // set direction and speed
         DashDir = new Vector2(inputX, inputY).normalized;

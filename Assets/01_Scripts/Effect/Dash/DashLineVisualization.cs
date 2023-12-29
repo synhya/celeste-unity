@@ -45,13 +45,19 @@ public class DashLineVisualization : MonoBehaviour, IPoolable
         this.pool = pool as IObjectPool<DashLineVisualization>;
         
         dashLineCompute = Instantiate(dashLineCompute);
+        DontDestroyOnLoad(dashLineCompute);
+        
         instancedMaterial = CoreUtils.CreateEngineMaterial("Hidden/DashLine");
         
         instancedBuffer = new ComputeBuffer(instanceCount, SizeOf(typeof(DashLine)));
         randClipBuffer = new ComputeBuffer(instanceCount, sizeof(float));
         randColorBuffer = new ComputeBuffer(instanceCount, sizeof(float));
         randArray = new float[instanceCount];
-        
+    }
+
+    public void Cast(Vector2 posCenter, Vector2 dir)
+    {
+        ////////////// error test 
         // instance setting
         dashLineCompute.SetBuffer(0, Instances, instancedBuffer);
         
@@ -65,10 +71,8 @@ public class DashLineVisualization : MonoBehaviour, IPoolable
 
         // final shader setting
         instancedMaterial.SetBuffer(InstancedBuffer, instancedBuffer);
-    }
-
-    public void Cast(Vector2 posCenter, Vector2 dir)
-    {
+        //////////////
+        
         lifeTimer = maxLifeTime;
         didCast = true;
 
@@ -124,5 +128,6 @@ public class DashLineVisualization : MonoBehaviour, IPoolable
         randClipBuffer?.Release();
         randColorBuffer?.Release();
         if(instancedMaterial) CoreUtils.Destroy(instancedMaterial);
+        Destroy(dashLineCompute);
     }
 } 

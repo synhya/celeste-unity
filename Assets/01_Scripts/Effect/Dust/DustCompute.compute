@@ -29,8 +29,8 @@ void CSDust (uint3 id : SV_DispatchThreadID)
     
     float clip = _RandBuffer[id.x]
         - smoothstep(0, _TotalTime, passedTime)
-        - smoothstep(0, _Rect.w , posOS.y * (1 - _BoxierValue.y))
-        - smoothstep(0, extentX, abs(posOS.x - extentX) * (1 - _BoxierValue.x));
+        - smoothstep(0, _Rect.w , posOS.y * (1.0 - _BoxierValue.y))
+        - smoothstep(0, extentX, abs(posOS.x - extentX) * (1.0 - _BoxierValue.x));
     
     float2 dirOffset = round(_Dir * passedTime);
     
