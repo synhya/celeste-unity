@@ -41,6 +41,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _EmissionStrength: 0
     - _EnableExternalAlpha: 0
     - _Radius: 1
     m_Colors:

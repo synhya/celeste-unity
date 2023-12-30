@@ -15,10 +15,12 @@ public class PlayerDeadBody : MonoBehaviour
     [Header("Knockback Anim Settings")]
     public Vector2 BackAmount = Vector2.one;
     public float BackTime = 0.5f;
-    
-    [Header("Color Settings")]
-    public Color LerpColor1 = Color.white;
-    public Color LerpColor2 = Color.red;
+
+    [SerializeField] private Color normalColor = Color.red;
+    [SerializeField] private Color dashCOlor = Color.cyan;
+
+    private Color lerpColor1 = Color.white;
+    private Color lerpColor2 = Color.red;
     
     private float circlePosOffsetY;
 
@@ -28,15 +30,17 @@ public class PlayerDeadBody : MonoBehaviour
     public void Init(Vector2 backDir, bool flipX)
     {
         sr = GetComponentInChildren<SpriteRenderer>();
-        sr.color = LerpColor1;
+        sr.color = Color.white;
         sr.flipX = !flipX; // dead sprite is opposite direction.
+
+        lerpColor2 = Game.I.CurrentLevel.Player.Dashes > 0 ? normalColor : dashCOlor;
 
         var t = transform;
         var srT = sr.transform;
         circlePosOffsetY = -srT.localPosition.y;
         
         var seq = DOTween.Sequence();
-        seq.Append(sr.DOColor(LerpColor2, 0.5f).SetLoops(CeilToInt(BackTime / 0.5f), LoopType.Yoyo))
+        seq.Append(sr.DOColor(lerpColor2, 0.5f).SetLoops(CeilToInt(BackTime / 0.5f), LoopType.Yoyo))
             .Join(srT.DOScale(Vector3.one * 0.5f, BackTime))
             .Join(t.DOMoveX(backDir.x * BackAmount.x, BackTime, true).SetRelative().SetEase(Ease.InCubic))
             .Join(t.DOMoveY(backDir.y * BackAmount.y, BackTime, true).SetRelative().SetEase(Ease.OutCubic))
@@ -49,7 +53,7 @@ public class PlayerDeadBody : MonoBehaviour
                     var moveDir = new Vector2(Cos(angle), Sin(angle));
 
                     var circle = EffectManager.GetCircle();
-                    circle.Play(transform, circlePosOffsetY, moveDir, LerpColor1, LerpColor2);
+                    circle.Play(transform, circlePosOffsetY, moveDir, lerpColor1, lerpColor2);
                 }
             })
             .InsertCallback(6f, () =>

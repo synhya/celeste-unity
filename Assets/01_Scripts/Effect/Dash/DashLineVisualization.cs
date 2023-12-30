@@ -53,6 +53,7 @@ public class DashLineVisualization : MonoBehaviour, IPoolable
         randClipBuffer = new ComputeBuffer(instanceCount, sizeof(float));
         randColorBuffer = new ComputeBuffer(instanceCount, sizeof(float));
         randArray = new float[instanceCount];
+        argsBuffer = new ComputeBuffer(1, 5 * sizeof(uint), ComputeBufferType.IndirectArguments);
     }
 
     public void Cast(Vector2 posCenter, Vector2 dir)
@@ -62,8 +63,7 @@ public class DashLineVisualization : MonoBehaviour, IPoolable
         dashLineCompute.SetBuffer(0, Instances, instancedBuffer);
         
         // args setting
-        argsBuffer = new ComputeBuffer(1, 5 * sizeof(uint), ComputeBufferType.IndirectArguments);
-        args[0] = (uint)instancedMesh.GetIndexCount(0);
+          args[0] = (uint)instancedMesh.GetIndexCount(0);
         args[1] = (uint)instanceCount;
         args[2] = (uint)instancedMesh.GetIndexStart(0);
         args[3] = (uint)instancedMesh.GetBaseVertex(0);

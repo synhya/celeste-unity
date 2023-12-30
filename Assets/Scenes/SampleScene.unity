@@ -55688,34 +55688,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tableTex: {fileID: 2800000, guid: ea24e37a455076d4da326758ddd92165, type: 3}
   tableTexBackup: {fileID: 2800000, guid: e0b33a3420644b74fa6cdec9bc337443, type: 3}
-  animTime: 0.5
-  maxIntensity: 1
+  animTime: 0.25
+  maxIntensity: 1.2
   colorToColorMap:
     _serializedList:
     - Key:
         serializedVersion: 2
-        rgba: 4279435556
+        rgba: 4279436068
       Value:
         serializedVersion: 2
-        rgba: 4285994810
+        rgba: 4284353565
     - Key:
         serializedVersion: 2
-        rgba: 4279370020
+        rgba: 4279370532
       Value:
         serializedVersion: 2
-        rgba: 4285929274
-    - Key:
-        serializedVersion: 2
-        rgba: 4280953734
-      Value:
-        serializedVersion: 2
-        rgba: 4289999458
+        rgba: 4284353565
     - Key:
         serializedVersion: 2
         rgba: 4280158793
       Value:
         serializedVersion: 2
-        rgba: 4287829572
+        rgba: 4287509521
+    - Key:
+        serializedVersion: 2
+        rgba: 4280953734
+      Value:
+        serializedVersion: 2
+        rgba: 4290665525
     - Key:
         serializedVersion: 2
         rgba: 4282536866
@@ -55746,6 +55746,12 @@ MonoBehaviour:
       Value:
         serializedVersion: 2
         rgba: 4286704895
+    - Key:
+        serializedVersion: 2
+        rgba: 4279242768
+      Value:
+        serializedVersion: 2
+        rgba: 4284353565
 --- !u!1 &2121732506
 GameObject:
   m_ObjectHideFlags: 0

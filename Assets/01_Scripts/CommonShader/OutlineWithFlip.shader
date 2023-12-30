@@ -8,6 +8,7 @@ Shader "Custom/OutlineWithFlip"
         
         _OutlineColor("OutlineColor", Color) = (1,1,1,1)
         _Radius("Radius", Range(0,10)) = 1
+        _EmissionStrength("Emission Strength", Float) = 0
 
         // Legacy properties. They're here so that materials using this shader can gracefully fallback to the legacy sprite shader.
         [HideInInspector] _Color("Tint", Color) = (1,1,1,1)
@@ -75,6 +76,8 @@ Shader "Custom/OutlineWithFlip"
             half4 _RendererColor;
             float4 _MainTex_TexelSize;
 
+            float _EmissionStrength;
+
             #if USE_SHAPE_LIGHT_TYPE_0
             SHAPE_LIGHT(0)
             #endif
@@ -121,8 +124,10 @@ Shader "Custom/OutlineWithFlip"
 
                 InitializeSurfaceData(texcolor.rgb, texcolor.a, mask, surfaceData);
                 InitializeInputData(i.uv, i.lightingUV, inputData);
-                
-                return CombinedShapeLightShared(surfaceData, inputData);
+
+                half4 finColor = CombinedShapeLightShared(surfaceData, inputData);
+                finColor.xyz *= (1 + _EmissionStrength);
+                return finColor;
             }
             ENDHLSL
         }

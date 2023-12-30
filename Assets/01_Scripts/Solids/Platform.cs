@@ -1,7 +1,4 @@
 ﻿
-
-// this is main part has a lot to implement
-
 using System;
 using UnityEngine;
 
@@ -11,6 +8,7 @@ public class Platform : Solid
 
     [SerializeField] private float maxSpeed;
     
+    // has two gears at edges
     private Vector3 startPos;
     private Vector3 endPos;
 

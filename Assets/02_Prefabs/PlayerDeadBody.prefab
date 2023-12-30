@@ -131,5 +131,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BackAmount: {x: 8, y: 8}
   BackTime: 0.5
-  LerpColor1: {r: 1, g: 1, b: 1, a: 1}
-  LerpColor2: {r: 1, g: 0.23270434, b: 0.23270434, a: 1}
+  normalColor: {r: 0.7830189, g: 0.2770114, b: 0.2770114, a: 1}
+  dashCOlor: {r: 0.2021627, g: 0.7264151, b: 0.7264151, a: 1}

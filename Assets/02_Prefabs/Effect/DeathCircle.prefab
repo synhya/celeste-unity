@@ -50,6 +50,8 @@ MonoBehaviour:
   moveTime: 1.2
   angleSpeed: 120
   shrinkTime: 0.8
+  intensityInRed: 2
+  intensityInWhite: 0
   TotalTime: 0
 --- !u!212 &4269692089095498868
 SpriteRenderer:
@@ -71,7 +73,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 6e33b005f4542ac45a22b90e9a35184d, type: 2}
+  - {fileID: 2100000, guid: a555712abb252c043b0d046d633a3d1a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

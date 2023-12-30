@@ -17,7 +17,7 @@ public class HoodColorHandler : MonoBehaviour
     [SerializeField] private Texture2D tableTexBackup;
 
     [Header("Animation Settings")]
-    [SerializeField] private float animTime = 0.5f;
+    [SerializeField] private float animTime = 0.15f;
     [SerializeField] private float maxIntensity = 1f;
 
     [SerializeField] [SerializedDictionary("from", "to")]
@@ -27,31 +27,24 @@ public class HoodColorHandler : MonoBehaviour
     private float lerpValue;
     private bool isChangingColor;
     private bool hasChangedColor;
-    private TweenerCore<float, float, FloatOptions> lerpTween;
+    private Sequence seq;
 
-    private void Start()
+    private void Awake()
     {
         coordToColorMap = new Dictionary<Vector2Int, PairColor>();
-        foreach (var pair in colorToColorMap)
-        {
-            var value = pair.Value;
-            ColorUtility.TryParseHtmlString("#"+ColorUtility.ToHtmlStringRGB(pair.Key), out var hexColor);
-            colorToColorMap.Remove(pair.Key);
-            colorToColorMap.Add(hexColor, value);
-        }
         
         var tex = tableTex;
+        var texColors = tex.GetPixels32();
         for (int i = 0; i < tex.width; i++)
         {
             for (int j = 0; j < tex.height; j++)
             {
-                var originColor = tex.GetPixel(i, j);
-                ColorUtility.TryParseHtmlString("#"+ColorUtility.ToHtmlStringRGB(originColor), out var hexColor);
-                if (colorToColorMap.TryGetValue(hexColor, out var swapColor))
+                var originColor = texColors[i + j * tex.width];
+
+                if (colorToColorMap.TryGetValue(originColor, out var swapColor))
                     coordToColorMap.Add(new Vector2Int(i, j), new PairColor(originColor, swapColor));
             }
         }
-        Debug.Log(coordToColorMap.Count);
     }
 
     public void OnDash()
@@ -59,16 +52,20 @@ public class HoodColorHandler : MonoBehaviour
         isChangingColor = true;
         targetMat = player.SR.material;
 
-        lerpTween.Kill();
+        seq.Kill();
         lerpValue = 0;
-        lerpTween = DOTween.To(() => lerpValue, x => lerpValue = x, 1, animTime)
-            .SetEase(Ease.OutCubic)
+        targetMat.SetFloat("_EmissionStrength", 0);
+        
+        seq = DOTween.Sequence()
+            .Append(DOTween.To(() => lerpValue, x => lerpValue = x, 1, animTime)
+                .SetEase(Ease.OutCubic))
+            .Join(targetMat.DOFloat(maxIntensity, "_EmissionStrength", animTime))
             .SetAutoKill(false);
         
-        lerpTween.OnComplete(() =>
+        seq.OnComplete(() =>
         {
             if (player.Dashes > 0)
-                lerpTween.PlayBackwards();
+                seq.PlayBackwards();
             else
             {
                 isChangingColor = false;
@@ -89,12 +86,8 @@ public class HoodColorHandler : MonoBehaviour
         {
             hasChangedColor = false;
             isChangingColor = true;
-            lerpTween.PlayBackwards();
+            seq.PlayBackwards();
         }
-        
-
-        // // also change intensity value with targetMat
-        // targetMat.SetFloat("_EmissionStrength", maxIntensity);
     }
 
     /// <summary>
@@ -112,17 +105,19 @@ public class HoodColorHandler : MonoBehaviour
     }
 
     [ContextMenu("Rollback LUT")]
-    void RollbackLUT()
+    void RollbackLut()
     {
         var colors = tableTexBackup.GetPixels();
         tableTex.SetPixels(colors);
         tableTex.Apply();
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
         // switch back to original texture
         SwitchPixel(0);
+        seq.Kill();
+        
     }
 }
 

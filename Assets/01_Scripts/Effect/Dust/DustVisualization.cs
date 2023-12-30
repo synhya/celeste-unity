@@ -30,8 +30,6 @@ public class DustVisualization : MonoBehaviour, IPoolable
     
     private float aliveTimer;
     private float totalAliveTime;
-    private Vector2 speed;
-    private Vector4 rectInfo;
     // for pooling
     private IObjectPool<DustVisualization> pool;
     private bool didBurst = false;
@@ -45,7 +43,6 @@ public class DustVisualization : MonoBehaviour, IPoolable
         dustCompute.SetBuffer(0, Instances, instancedBuffer);
         
         // args setting
-        argsBuffer = new ComputeBuffer(1, 5 * sizeof(uint), ComputeBufferType.IndirectArguments);
         args[0] = (uint)instancedMesh.GetIndexCount(0);
         args[1] = (uint)instanceCount;
         args[2] = (uint)instancedMesh.GetIndexStart(0);
@@ -59,9 +56,9 @@ public class DustVisualization : MonoBehaviour, IPoolable
         aliveTimer = totalAliveTime;
         
         didBurst = true;
-        speed = dir * 8;
+        var speed = dir * 8;
         
-        rectInfo = new Vector4(-extent.x,-extent.y, extent.x * 2, extent.y * 2); 
+        var rectInfo = new Vector4(-extent.x,-extent.y, extent.x * 2, extent.y * 2); 
         
         // decide random here!
         for (int i = 0; i < instanceCount; i++)
@@ -87,6 +84,7 @@ public class DustVisualization : MonoBehaviour, IPoolable
         instancedBuffer = new ComputeBuffer(instanceCount, SizeOf(typeof(Vector3)));
         randBuffer = new ComputeBuffer(instanceCount, sizeof(float));
         randArray = new float[instanceCount];
+        argsBuffer = new ComputeBuffer(1, 5 * sizeof(uint), ComputeBufferType.IndirectArguments);
     }
     
     private void Update()
