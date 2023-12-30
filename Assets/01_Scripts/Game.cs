@@ -34,6 +34,17 @@ public class Game : MonoBehaviour
         // set level when?
         CurrentLevel = startingLevel;
     }
+    
+    // onclick -> menu button invoke this
+    void StartGame()
+    {
+        // disable all levels except starting one
+    }
+
+    void StartLevel()
+    {
+        // disable all rooms except starting one
+    }
 
     public void Freeze(float time)
     {
