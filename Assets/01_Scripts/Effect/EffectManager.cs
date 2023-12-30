@@ -16,16 +16,17 @@ public class EffectManager : MonoBehaviour
     private DeadCirclePool dCirclePool;
     private DustPool dustPool;
     private DashLinePool dashLinePool;
-
-    private Camera cam;
-
     private HoodColorHandler hoodColorHandler;
-    public SpriteRenderer PlayerSR { set; get; }
+    private Camera cam;
+    public static Camera mainCam => instance.cam;
+
+    [SerializeField] private RippleHandler rippleHandler;
 
     public static DustVisualization GetDust() => instance.dustPool.Pool.Get();
     public static DashLineVisualization GetDashLine() => instance.dashLinePool.Pool.Get();
     public static DeathCircle GetCircle() => instance.dCirclePool.Pool.Get();
     public static void ChangeCloth() => instance.hoodColorHandler.OnDash();
+    public static void CreateRipple(Vector2 pos) => instance.rippleHandler.Ripple(pos);
 
     // subscribers require different parameters so it would be messy.
     // public Action DashStart;
@@ -45,8 +46,8 @@ public class EffectManager : MonoBehaviour
         dCirclePool = GetComponent<DeadCirclePool>();
         dustPool = GetComponent<DustPool>();
         dashLinePool = GetComponent<DashLinePool>();
-        cam = Camera.main;
         hoodColorHandler = GetComponent<HoodColorHandler>();
+        cam = Camera.main;
     }
 
     #region Camera effects
@@ -63,4 +64,4 @@ public class EffectManager : MonoBehaviour
     }
 
     #endregion
-} 
+}

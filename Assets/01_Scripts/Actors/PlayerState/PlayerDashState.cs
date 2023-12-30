@@ -103,8 +103,6 @@ public partial class Player
         dashTrailTimer = DashTrailTimeArray[0];
         trailsLeft = DashTrailTimeArray.Length;
         
-        EffectManager.ShakeCam(0.3f, 1.4f);
-        
         // set direction and speed
         DashDir = new Vector2(inputX, inputY).normalized;
         if (DashDir.magnitude < 1) 
@@ -119,7 +117,9 @@ public partial class Player
         
         // effects
         DashLine.Cast(CenterWS, DashDir);
+        // EffectManager.ShakeCam(0.3f, 1.4f);
         EffectManager.ChangeCloth();
+        EffectManager.CreateRipple(CenterWS);
     }
 
     private void DashEnd()

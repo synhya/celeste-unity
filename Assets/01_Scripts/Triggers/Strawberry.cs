@@ -1,5 +1,8 @@
 ﻿
 using System;
+using DG.Tweening;
+using DG.Tweening.Core;
+using DG.Tweening.Plugins.Options;
 using UnityEngine;
 
 public class Strawberry : Trigger
@@ -25,10 +28,16 @@ public class Strawberry : Trigger
 
     private bool isTaken;
 
+    private TweenerCore<Vector3, Vector3, VectorOptions> lerpTween;
+
     protected override void Start()
     {
         base.Start();
         anim = GetComponent<Animator>();
+        
+        // keep moving up and down with tween
+        lerpTween = transform.DOLocalMoveY(6, 1.4f, true).SetRelative()
+            .SetEase(Ease.InOutSine).SetLoops(-1, LoopType.Yoyo);
     }
 
     public override void OnEnter(Entity other)
@@ -44,6 +53,8 @@ public class Strawberry : Trigger
             onBlink = true;
 
             isTaken = true;
+            lerpTween.Kill();
+            transform.SetParent(Level.transform);
         }
     }
     public override void OnStay(Entity other)
