@@ -120,12 +120,12 @@ public partial class Player
     void Die(Vector2 knockBackDir)
     {
         // camera shake
-        Level.Shake(0.5f, 1.5f);
+        EffectManager.ShakeCam(0.5f, 1.5f);
         
         // spawn dead body (dont set as parent as it will be disabled)
         var body = Instantiate(deadBodyPrefab, CenterWS, Quaternion.identity)
             .GetComponent<PlayerDeadBody>();
-        body.Init(knockBackDir, sr.flipX ^ flipAnimFlag);
+        body.Init(knockBackDir, SR.flipX ^ flipAnimFlag);
         // body.DeathAction = () => {}
         
         // change stats ( Stats.Death++; .. }

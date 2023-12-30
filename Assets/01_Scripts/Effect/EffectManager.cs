@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -15,9 +17,19 @@ public class EffectManager : MonoBehaviour
     private DustPool dustPool;
     private DashLinePool dashLinePool;
 
-    public DustVisualization GetDust() => dustPool.Pool.Get();
-    public DashLineVisualization GetDashLine() => dashLinePool.Pool.Get();
-    public DeathCircle GetCircle() => dCirclePool.Pool.Get();
+    private Camera cam;
+
+    private HoodColorHandler hoodColorHandler;
+    public SpriteRenderer PlayerSR { set; get; }
+
+    public static DustVisualization GetDust() => instance.dustPool.Pool.Get();
+    public static DashLineVisualization GetDashLine() => instance.dashLinePool.Pool.Get();
+    public static DeathCircle GetCircle() => instance.dCirclePool.Pool.Get();
+    public static void ChangeCloth() => instance.hoodColorHandler.OnDash();
+
+    // subscribers require different parameters so it would be messy.
+    // public Action DashStart;
+    // public Action DashEnd;
     
     void Awake() 
     {
@@ -28,9 +40,27 @@ public class EffectManager : MonoBehaviour
         }
         
         DontDestroyOnLoad(this);
-
+        
+        // get components
         dCirclePool = GetComponent<DeadCirclePool>();
         dustPool = GetComponent<DustPool>();
         dashLinePool = GetComponent<DashLinePool>();
+        cam = Camera.main;
+        hoodColorHandler = GetComponent<HoodColorHandler>();
     }
+
+    #region Camera effects
+    
+    public static Tweener ShakeCam(float duration, float strength) 
+        => instance.cam.DOShakePosition(duration, strength);
+    
+    public static Tweener MoveCam(Vector2 posWS, float time)
+        => instance.cam.transform.DOMove(new Vector3(posWS.x, posWS.y, -10), time);
+    
+    public void Ripple(Vector2 center, float duration, float strength)
+    {
+        // TODO: Ripple when dashing.
+    }
+
+    #endregion
 } 

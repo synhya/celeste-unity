@@ -1,16 +1,19 @@
-Shader "Custom/Trail"
+Shader "Custom/OutlineWithLUT"
 {
     Properties
     {
         _MainTex("Diffuse", 2D) = "white" {}
+        _LookUpTex("Lookup", 2D) = "white" {}
+        
         _MaskTex("Mask", 2D) = "white" {}
         _NormalMap("Normal Map", 2D) = "bump" {}
         
-        _OutlineColor("OutlineColor", Color) = (0.27, 0.97, 1, 1)
-        _Radius("Radius", float) = 1
+        [Toggle(IGNORE_EMISSION_TEXTURE)]_IgnoreEmissionTex("Ignore Emission Texture", float) = 0
+        _EmissionTex("Emission", 2D) = "white" {}
+        _EmissionStrength("Emission Strength", float) = 0
         
-        _TrailColor("TrailColor", Color) = (0.27, 0.97, 1, 1)
-        _Intensity("Intensity", float) = 0
+        _OutlineColor("OutlineColor", Color) = (1,1,1,1)
+        _Radius("Radius", Range(0,10)) = 1
 
         // Legacy properties. They're here so that materials using this shader can gracefully fallback to the legacy sprite shader.
         [HideInInspector] _Color("Tint", Color) = (1,1,1,1)
@@ -46,6 +49,8 @@ Shader "Custom/Trail"
             #pragma multi_compile USE_SHAPE_LIGHT_TYPE_3 __
             #pragma multi_compile _ DEBUG_DISPLAY
 
+            #pragma multi_compile __ IGNORE_EMISSION_TEXTURE
+
             struct Attributes
             {
                 float3 positionOS   : POSITION;
@@ -70,17 +75,22 @@ Shader "Custom/Trail"
             #include "PixelPerfectOutline.hlsl"
 
             TEXTURE2D(_MainTex);
+            SAMPLER(sampler_MainTex);
             TEXTURE2D(_MaskTex);
             SAMPLER(sampler_MaskTex);
-            SAMPLER(sampler_MainTex);
             half4 _MainTex_ST;
             float4 _Color;
             half4 _RendererColor;
-
             float4 _MainTex_TexelSize;
+            float4 _LookUpTex_TexelSize;
 
-            float4 _TrailColor;
-            float _Intensity;
+            TEXTURE2D(_LookUpTex);
+            SAMPLER(sampler_LookUpTex);
+
+            TEXTURE2D(_EmissionTex);
+            SAMPLER(sampler_EmissionTex);
+
+            float _EmissionStrength;
 
             #if USE_SHAPE_LIGHT_TYPE_0
             SHAPE_LIGHT(0)
@@ -119,21 +129,32 @@ Shader "Custom/Trail"
 
             half4 CombinedShapeLightFragment(Varyings i) : SV_Target
             {
-                const half4 main = i.color * SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv);
+                float2 lookup = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv).xy;
+                half4 main = i.color * SAMPLE_TEXTURE2D(_LookUpTex, sampler_LookUpTex, lookup.xy);
                 const half4 mask = SAMPLE_TEXTURE2D(_MaskTex, sampler_MaskTex, i.uv);
                 SurfaceData2D surfaceData;
                 InputData2D inputData;
 
-                InitializeSurfaceData(main.rgb, main.a, mask, surfaceData);
+                half4 texcolor = lerp(main, _OutlineColor, CalculateLUTOutline(main, i.uv, _MainTex, sampler_MainTex, _MainTex_TexelSize)); ;
+
+                InitializeSurfaceData(texcolor.rgb, texcolor.a, mask, surfaceData);
                 InitializeInputData(i.uv, i.lightingUV, inputData);
 
-                half4 mainTex = half4(_TrailColor.xyz, SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv).a); // CombinedShapeLightShared(surfaceData, inputData);
+                half4 finalColor = CombinedShapeLightShared(surfaceData, inputData);
+                
+                #if defined(IGNORE_EMISSION_TEXTURE)
 
-                const float lerpValue = CalculateOutline(mainTex, i.uv, _MainTex, sampler_MainTex, _MainTex_TexelSize);
-                mainTex = half4(lerp(mainTex, _OutlineColor, lerpValue));
-                mainTex.xyz *= (1 + _Intensity);
-                mainTex.a *= _TrailColor.a;
-                return mainTex;
+                finalColor.xyz *= (1 + _EmissionStrength);
+                
+                #else
+
+                const float hdrValue = SAMPLE_TEXTURE2D(_EmissionTex, sampler_EmissionTex, lookup.xy).a;
+                
+                finalColor.xyz += finalColor.xyz * (hdrValue * _EmissionStrength);
+                    
+                #endif
+                
+                return finalColor; //;
             }
             ENDHLSL
         }
@@ -208,7 +229,7 @@ Shader "Custom/Trail"
             HLSLPROGRAM
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "PixelPerfectOutline.hlsl"
-            
+
             #pragma vertex UnlitVertex
             #pragma fragment UnlitFragment
 
@@ -236,11 +257,7 @@ Shader "Custom/Trail"
             float4 _MainTex_ST;
             float4 _Color;
             half4 _RendererColor;
-
             float4 _MainTex_TexelSize;
-            
-            float4 _TrailColor;
-            float _Intensity;
 
             Varyings UnlitVertex(Attributes attributes)
             {
@@ -259,13 +276,24 @@ Shader "Custom/Trail"
 
             float4 UnlitFragment(Varyings i) : SV_Target
             {
-                float4 mainTex = float4(_TrailColor.xyz, SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv).a);
+                float4 mainTex = i.color * SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv);
 
-                const float lerpValue = CalculateOutline(mainTex, i.uv, _MainTex, sampler_MainTex, _MainTex_TexelSize);
-                mainTex = float4(lerp(mainTex, _OutlineColor, lerpValue));
-                mainTex.xyz *= (1 + _Intensity);
-                mainTex.a *= _TrailColor.a;
-                return mainTex;
+                #if defined(DEBUG_DISPLAY)
+                SurfaceData2D surfaceData;
+                InputData2D inputData;
+                half4 debugColor = 0;
+
+                InitializeSurfaceData(mainTex.rgb, mainTex.a, surfaceData);
+                InitializeInputData(i.uv, inputData);
+                SETUP_DEBUG_DATA_2D(inputData, i.positionWS);
+
+                if(CanDebugOverrideOutputColor(surfaceData, inputData, debugColor))
+                {
+                    return debugColor;
+                }
+                #endif
+                
+                return lerp(mainTex, _OutlineColor, CalculateOutline(mainTex, i.uv, _MainTex, sampler_MainTex, _MainTex_TexelSize)); 
             }
             ENDHLSL
         }

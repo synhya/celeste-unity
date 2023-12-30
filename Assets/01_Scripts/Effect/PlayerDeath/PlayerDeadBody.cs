@@ -24,8 +24,6 @@ public class PlayerDeadBody : MonoBehaviour
 
     private SpriteRenderer sr;
     
-    private readonly EffectManager em = EffectManager.Instance;
-    
     // 최적화 필요.
     public void Init(Vector2 backDir, bool flipX)
     {
@@ -50,7 +48,7 @@ public class PlayerDeadBody : MonoBehaviour
                     var angle = dir / 4f * PI;
                     var moveDir = new Vector2(Cos(angle), Sin(angle));
 
-                    var circle = em.GetCircle();
+                    var circle = EffectManager.GetCircle();
                     circle.Play(transform, circlePosOffsetY, moveDir, LerpColor1, LerpColor2);
                 }
             })

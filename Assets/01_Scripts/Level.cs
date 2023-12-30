@@ -22,13 +22,10 @@ public class Level : MonoBehaviour
     public bool InSpace = false;
     private const float RoomSwitchTime = 0.8f;
     public HashSet<Actor> AllActors;
-    
-    private Camera cam;
 
     void Awake() 
     {
         CurrentRoom = startingRoom;
-        cam = Camera.main;
         
         Map = GetComponent<Tilemap>();
         Map.CompressBounds();
@@ -43,7 +40,7 @@ public class Level : MonoBehaviour
         startingRoom.gameObject.SetActive(true);
         float x = startingRoom.OriginWS.x + 160;
         float y = startingRoom.OriginWS.y + 94;
-        cam.transform.position = new Vector3(x, y, -10);
+        EffectManager.MoveCam(new Vector2(x, y), 0.1f);
     }
 
     public void SwitchRoom(Room nextRoom)
@@ -73,23 +70,11 @@ public class Level : MonoBehaviour
         // adjust camera
         float x = CurrentRoom.OriginWS.x + 160;
         float y = CurrentRoom.OriginWS.y + 94;
-        cam.transform.DOMove(new Vector3(x, y, -10), time)
-            .SetEase(Ease.OutCubic)
-            .OnComplete(() =>
-            {
-                Game.Resume();
-                Player.OnSwitchRoomEnd();
-            });
-    }
-
-    public void Shake(float duration, float strength)
-    {
-        cam.DOShakePosition(duration, strength);
-    }
-    
-    public void DirectionalShake(Vector2 dashDir, float duration, float strength)
-    {
-        // TODO: shake to direction
-        cam.DOShakePosition(duration, strength);
+        
+        EffectManager.MoveCam(new Vector2(x, y), time).SetEase(Ease.OutCubic).OnComplete(() =>
+        {
+            Game.Resume();
+            Player.OnSwitchRoomEnd();
+        });
     }
 } 

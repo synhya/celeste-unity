@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AYellowpaper.SerializedCollections;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -33,19 +32,6 @@ public class LUTConverterWindow : EditorWindow
     {
         var window = GetWindow<LUTConverterWindow>(false, WINDOW_TITLE, true);
         window.Show();
-    }
-
-    [Serializable]
-    public struct PairColor
-    {
-        public Color from;
-        public Color to;
-
-        public PairColor(Color from, Color to)
-        {
-            this.from = from;
-            this.to = to;
-        }
     }
 
     private void OnEnable()

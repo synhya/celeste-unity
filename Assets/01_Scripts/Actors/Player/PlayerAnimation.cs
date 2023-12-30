@@ -5,7 +5,6 @@ using static UnityEngine.Mathf;
 public partial class Player
 {
     private Animator anim;
-    private SpriteRenderer sr;
     
     [Header("Animation Settings")]
     [SerializeField] private float runAnimThreshold = 1f;
@@ -47,7 +46,6 @@ public partial class Player
     
     private void InitAnimation()
     {
-        sr = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
     }
 
@@ -133,7 +131,7 @@ public partial class Player
         if (Speed.x != 0)
         {
             facing = Speed.x > 0 ? Facing.Right : Facing.Left;
-            sr.flipX = (facing == Facing.Left) ^ flipAnimFlag;
+            SR.flipX = (facing == Facing.Left) ^ flipAnimFlag;
         }
         
         
@@ -156,13 +154,13 @@ public partial class Player
         if (curHash == HashIdle || curHash == HashWallSlide)
         {
             flipAnimFlag = true;
-            sr.flipX = !sr.flipX;
+            SR.flipX = !SR.flipX;
         }
             
         else if (nextHash == HashIdle || curHash == HashWallSlide)
         {
             flipAnimFlag = false;
-            sr.flipX = !sr.flipX;
+            SR.flipX = !SR.flipX;
         }
         
         anim.Play(nextAnim);

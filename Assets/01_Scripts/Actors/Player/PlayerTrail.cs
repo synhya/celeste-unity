@@ -25,11 +25,11 @@ public class PlayerTrail : MonoBehaviour
             sr.sprite = sprite;
             sr.color = StartColor;
             mat = sr.material;
-            mat.SetFloat("_Emission", StartIntensity);
+            mat.SetFloat("_EmissionStrength", StartIntensity);
             
             DOTween.Sequence()
                 .Append(sr.DOColor(EndColor, AliveTime).SetEase(Ease.InCubic))
-                .Join(mat.DOFloat(EndIntensity, "_Emission", AliveTime).SetEase(Ease.InCubic))
+                .Join(mat.DOFloat(EndIntensity, "_EmissionStrength", AliveTime).SetEase(Ease.InCubic))
                 .OnComplete(() => Destroy(gameObject));
         }
     }

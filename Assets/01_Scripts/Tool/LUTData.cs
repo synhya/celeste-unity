@@ -5,5 +5,5 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "NewLUTData", menuName = "LUTData")]
 public class LUTData : ScriptableObject
 {
-    public List<LUTConverterWindow.PairColor> Table = new List<LUTConverterWindow.PairColor>();
+    public List<PairColor> Table = new List<PairColor>();
 } 

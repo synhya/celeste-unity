@@ -31,21 +31,23 @@ public partial class Player : Actor
     private int wallSlideDir;
     
     private Facing facing;
-    
-    [HideInInspector] public bool IsPaused;
 
     // State Machine
     private StateMachine sm;
-    private DustVisualization Dust => EffectManager.Instance.GetDust();
-    private DashLineVisualization DashLine => EffectManager.Instance.GetDashLine();
+    private DustVisualization Dust => EffectManager.GetDust();
+    private DashLineVisualization DashLine => EffectManager.GetDashLine();
     
     public const int StateNormal = 0;
     public const int StateDash = 1;
+    
+    // effect
+    [HideInInspector] public SpriteRenderer SR;
 
     protected override void Start()
     {
         base.Start();
 
+        SR = GetComponent<SpriteRenderer>();
         InitAnimation();
         
         sm = new StateMachine(3);

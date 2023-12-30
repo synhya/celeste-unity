@@ -103,7 +103,7 @@ public partial class Player
         dashTrailTimer = DashTrailTimeArray[0];
         trailsLeft = DashTrailTimeArray.Length;
         
-        Level.Shake(0.3f, 1.4f);
+        EffectManager.ShakeCam(0.3f, 1.4f);
         
         // set direction and speed
         DashDir = new Vector2(inputX, inputY).normalized;
@@ -117,8 +117,9 @@ public partial class Player
             newSpeed.x = Speed.x;
         Speed = newSpeed;
         
-        // create line
+        // effects
         DashLine.Cast(CenterWS, DashDir);
+        EffectManager.ChangeCloth();
     }
 
     private void DashEnd()
@@ -165,7 +166,7 @@ public partial class Player
          var trail = Instantiate(playerTrailPrefab, transform.position, quaternion.identity)
             .GetComponent<PlayerTrail>();
          
-         trail.Init(facing == Facing.Right, sr.sprite);
+         trail.Init(facing == Facing.Right, SR.sprite);
     }
 
     #endregion
