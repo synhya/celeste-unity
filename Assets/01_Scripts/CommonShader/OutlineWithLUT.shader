@@ -3,7 +3,7 @@ Shader "Custom/OutlineWithLUT"
     Properties
     {
         _MainTex("Diffuse", 2D) = "white" {}
-        _LookUpTex("Lookup", 2D) = "white" {}
+        _LookUpTex("LookUp", 2D) = "white" {}
         
         _MaskTex("Mask", 2D) = "white" {}
         _NormalMap("Normal Map", 2D) = "bump" {}

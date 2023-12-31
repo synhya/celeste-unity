@@ -119,6 +119,8 @@ public partial class Player
     
     void Die(Vector2 knockBackDir)
     {
+        Collideable = false;
+        
         // camera shake
         EffectManager.ShakeCam(0.5f, 1.5f);
         
@@ -131,7 +133,7 @@ public partial class Player
         // change stats ( Stats.Death++; .. }
         
         
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 }
 

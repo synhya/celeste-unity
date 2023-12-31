@@ -54,10 +54,21 @@ public partial class Player : Actor
         sm.SetCallbacks(StateNormal, NormalUpdate, NormalBegin, null);
         sm.SetCallbacks(StateDash, DashUpdate, DashBegin, DashEnd);
         sm.State = StateNormal;
-
-        wasGround = true;
-        facing = Facing.Right;
     }
+
+    public void OnSpawn()
+    {
+        Collideable = true;
+        wasGround = true;
+        
+        facing = Facing.Right;
+        SR.flipX = false;
+
+        Speed = Vector2.zero;
+        Remainder = Vector2.zero;
+        PositionWS = Room.SpawnPos;
+    }
+    
 
     private void Update()
     {

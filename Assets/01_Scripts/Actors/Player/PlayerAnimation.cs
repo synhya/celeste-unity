@@ -163,7 +163,8 @@ public partial class Player
             SR.flipX = !SR.flipX;
         }
         
-        anim.Play(nextAnim);
+        if(gameObject.activeSelf)
+            anim.Play(nextAnim);
     }
 }
 

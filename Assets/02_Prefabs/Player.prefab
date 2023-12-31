@@ -32,7 +32,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3301081140301246350
 MonoBehaviour:
@@ -51,7 +51,7 @@ MonoBehaviour:
   PositionWS: {x: 96, y: 56}
   PreviousPos: {x: 165, y: 96}
   deadBodyPrefab: {fileID: 7332204074699942299, guid: a82d9be9b0ab08446a7200708ec87c2c, type: 3}
-  IsPaused: 0
+  SR: {fileID: 0}
   runAnimThreshold: 1
   jumpTurnAroundThreshold: 50
   boostPower: 300

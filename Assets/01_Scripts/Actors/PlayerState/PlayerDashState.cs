@@ -120,6 +120,7 @@ public partial class Player
         // EffectManager.ShakeCam(0.3f, 1.4f);
         EffectManager.ChangeCloth();
         EffectManager.CreateRipple(CenterWS);
+        EffectManager.ShakeCam(0.3f, 0.8f);
     }
 
     private void DashEnd()

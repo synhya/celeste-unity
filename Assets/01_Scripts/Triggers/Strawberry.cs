@@ -70,7 +70,7 @@ public class Strawberry : Trigger
         {
             onBlink = false;
             isBlinking = true;
-            timer = anim.GetCurrentAnimatorStateInfo(0).length;;
+            timer = 0.2f;
         }
         
         if (timer > 0f)

@@ -38,8 +38,7 @@ public class Actor : Entity
                 }
                 else
                 {
-                    // if (onCollide != null)
-                    //     onCollide();
+                    onCollide?.Invoke(null);
                     break;
                 }
             }
@@ -66,8 +65,7 @@ public class Actor : Entity
                 }
                 else
                 {
-                    // if (onCollide != null)
-                    //     onCollide();
+                    onCollide?.Invoke(null);
                     break;
                 }
             }

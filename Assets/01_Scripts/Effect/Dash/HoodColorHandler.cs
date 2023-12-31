@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using AYellowpaper.SerializedCollections;
 using DG.Tweening;
@@ -9,12 +10,10 @@ using UnityEngine.Serialization;
 
 public class HoodColorHandler : MonoBehaviour
 {
-    // texture to modify
-    private Player player => Game.I.CurrentLevel.Player;
+    private Player player;
     private Material targetMat;
 
     [SerializeField] private Texture2D tableTex;
-    [SerializeField] private Texture2D tableTexBackup;
 
     [Header("Animation Settings")]
     [SerializeField] private float animTime = 0.15f;
@@ -28,6 +27,9 @@ public class HoodColorHandler : MonoBehaviour
     private bool isChangingColor;
     private bool hasChangedColor;
     private Sequence seq;
+
+    private Color? forceColor = null;
+    private static readonly int EmissionStrength = Shader.PropertyToID("_EmissionStrength");
 
     private void Awake()
     {
@@ -47,25 +49,34 @@ public class HoodColorHandler : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        player = Game.I.CurrentLevel.Player;
+        targetMat = player.SR.material;
+        tableTex = Instantiate(tableTex); // in order to avoid overriding source tex.
+        targetMat.SetTexture("_LookUpTex", tableTex);
+    }
+
     public void OnDash()
     {
         isChangingColor = true;
-        targetMat = player.SR.material;
-
-        seq.Kill();
+        
         lerpValue = 0;
-        targetMat.SetFloat("_EmissionStrength", 0);
+        targetMat.SetFloat(EmissionStrength, 0);
+        seq.Kill();
         
         seq = DOTween.Sequence()
             .Append(DOTween.To(() => lerpValue, x => lerpValue = x, 1, animTime)
                 .SetEase(Ease.OutCubic))
-            .Join(targetMat.DOFloat(maxIntensity, "_EmissionStrength", animTime))
+            .Join(targetMat.DOFloat(maxIntensity, EmissionStrength, animTime))
             .SetAutoKill(false);
-        
         seq.OnComplete(() =>
         {
             if (player.Dashes > 0)
+            {
+                // better than blink
                 seq.PlayBackwards();
+            }
             else
             {
                 isChangingColor = false;
@@ -79,13 +90,14 @@ public class HoodColorHandler : MonoBehaviour
         // can be changed to state machine
         if (isChangingColor)
         {
-            SwitchPixel(lerpValue);
+            SwitchPixel(lerpValue, forceColor);
             tableTex.Apply();
         }
         else if (hasChangedColor && player.Dashes > 0)
         {
             hasChangedColor = false;
             isChangingColor = true;
+            
             seq.PlayBackwards();
         }
     }
@@ -93,31 +105,33 @@ public class HoodColorHandler : MonoBehaviour
     /// <summary>
     /// </summary>
     /// <param name="t">should range from 0 to 1</param>
-    void SwitchPixel(float t)
+    void SwitchPixel(float t, Color? forceColor)
     {
         foreach (var pair in coordToColorMap)
         {
             var coord = pair.Key;
-            var color = Color.Lerp(pair.Value.from, pair.Value.to, t);
+            var color = forceColor ?? Color.Lerp(pair.Value.from, pair.Value.to, t);
             
             tableTex.SetPixel(coord.x, coord.y, color);
         }
     }
 
-    [ContextMenu("Rollback LUT")]
-    void RollbackLut()
+    void BlinkColor()
     {
-        var colors = tableTexBackup.GetPixels();
-        tableTex.SetPixels(colors);
-        tableTex.Apply();
+        // white then red 
+        forceColor = Color.white;
+        targetMat.SetFloat(EmissionStrength, 0);
+        DOTween.Sequence()
+            .InsertCallback(0.2f, () =>
+            {
+                forceColor = null;
+                lerpValue = 0;
+            });
     }
-
+    
     private void OnDisable()
     {
-        // switch back to original texture
-        SwitchPixel(0);
-        seq.Kill();
-        
+        // seq.Kill();
     }
 }
 

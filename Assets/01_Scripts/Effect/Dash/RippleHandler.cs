@@ -8,9 +8,9 @@ using UnityEngine.Serialization;
 public class RippleHandler : MonoBehaviour
 {
     private Material mat;
-    [SerializeField] private float manualPlaytime = 0.6f;
-    [SerializeField] private float progressStart = -0.05f;
-    [SerializeField] private float progressEnd = 0.28f;
+    [SerializeField] private float manualPlaytime = 0.4f;
+    [SerializeField] private float progressStart = -0.02f;
+    [SerializeField] private float progressEnd = 0.2f;
 
     private void Awake()
     {
@@ -28,7 +28,7 @@ public class RippleHandler : MonoBehaviour
         Vector2 screenPos = EffectManager.mainCam.WorldToScreenPoint(pos);
         
         mat.SetVector("_SpawnScreenPos", screenPos);
-        mat.DOFloat(progressEnd, "_Progress", time )
+        mat.DOFloat(progressEnd, "_Progress", time)
             .OnComplete(() => mat.SetFloat("_Progress", progressStart)); // max is 0.28
     }
 }

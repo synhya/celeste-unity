@@ -42,6 +42,8 @@ public abstract class Entity : MonoBehaviour
 
     public int RightWS => HitBoxWS.xMax;
     public int LeftWS => HitBoxWS.xMin;
+    public int DownWS => HitBoxWS.yMin;
+    public int UpWS => HitBoxWS.yMax;
 
     public const int TileSize = 8;
     
@@ -60,7 +62,6 @@ public abstract class Entity : MonoBehaviour
         if (PositionWS != PreviousPos)
         {
             transform.position = (Vector3Int)PositionWS;
-            
         }
         
         PreviousPos = PositionWS;

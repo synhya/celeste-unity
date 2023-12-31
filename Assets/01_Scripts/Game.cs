@@ -33,19 +33,21 @@ public class Game : MonoBehaviour
         
         // set level when?
         CurrentLevel = startingLevel;
+
+    }
+
+    void Start()
+    {
+        Application.targetFrameRate = 144;
+        StartGame();
     }
     
-    // onclick -> menu button invoke this
     void StartGame()
     {
-        // disable all levels except starting one
+        CurrentLevel.StartLevel();
+         
     }
-
-    void StartLevel()
-    {
-        // disable all rooms except starting one
-    }
-
+    
     public void Freeze(float time)
     {
         CurrentLevel.FreezeLevel(time);

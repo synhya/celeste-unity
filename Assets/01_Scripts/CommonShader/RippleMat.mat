@@ -54,13 +54,13 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Progress: -0.05
+    - _Progress: 0.2
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Radius: 0.3
     - _RadiusReciprocal: 5.4
     - _Size: 0.03
-    - _Strength: -0.15
+    - _Strength: -0.05
     m_Colors:
     - _SpawnPos: {r: 0.5, g: 0.5, b: 0, a: 0}
     - _SpawnScreenPos: {r: 960, g: 538.14, b: 0, a: 0}

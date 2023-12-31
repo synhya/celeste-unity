@@ -9,14 +9,13 @@ using UnityEngine.Tilemaps;
 
 public class Level : MonoBehaviour
 {
-    public GameObject PlayerPrefab;
+    public Player Player;
     [SerializeField] private Room startingRoom;
     
     /// <summary>
     /// set on awake
     /// </summary>
     [HideInInspector] public Room CurrentRoom;
-    [HideInInspector] public Player Player;
     [HideInInspector] public Tilemap Map;
 
     public bool InSpace = false;
@@ -26,15 +25,20 @@ public class Level : MonoBehaviour
     void Awake() 
     {
         CurrentRoom = startingRoom;
-        
         Map = GetComponent<Tilemap>();
         Map.CompressBounds();
-        
         AllActors = new HashSet<Actor>();
+
+        foreach (Transform room in transform)
+        {
+            if(room.gameObject.name.Contains("Room"))
+                room.gameObject.SetActive(false);
+        }
     }
 
-    private void Start()
+    public void StartLevel()
     {
+        Player.transform.SetParent(transform);
         SpawnPlayer();
         
         startingRoom.gameObject.SetActive(true);
@@ -54,13 +58,10 @@ public class Level : MonoBehaviour
         FreezeLevel(RoomSwitchTime);
     }
     
-    /// <summary>
-    /// 플레이어는 항상 레벨아래에 위치하기 때문에 스폰도 룸이 아닌 레벨단위가 맞다.
-    /// </summary>
     public void SpawnPlayer()
     {
-        Player = Instantiate(PlayerPrefab, (Vector3Int)CurrentRoom.SpawnPos, 
-            quaternion.identity).GetComponent<Player>();
+        Player.gameObject.SetActive(true);
+        Player.OnSpawn();
     }
     
     public void FreezeLevel(float time)

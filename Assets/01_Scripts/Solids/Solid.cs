@@ -33,7 +33,8 @@ public class Solid : Entity
             // Make this Solid non-collidable for actors,
             // so that actors moved by it do not get stuck on it
             Collideable = false;
-
+            
+            // x part
             if (moveX != 0)
             {
                 Remainder.x -= moveX;
@@ -73,26 +74,19 @@ public class Solid : Entity
                     }
                 }
             }
-    
-            if (moveX != 0)
+            // y part
+            if (moveY != 0)
             {
-                Remainder.x -= moveX;
-                PositionWS.x += moveX;
-                if (moveX > 0)
+                Remainder.y -= moveY;
+                PositionWS.y += moveY;
+                if (moveY > 0)
                 {
                     foreach (var actor in Level.AllActors)
                     {
                         if (OverlapCheck(actor))
                         {
-                            // Push right
-                            actor.MoveX(this.RightWS - actor.LeftWS, actor.Squish);
-                        }
-                        else if (riding.Contains(actor))
-                        {
-                            // Carry right
-                            // there is no danger of squishing here
-                            // nothing happens if actor hits wall!
-                            actor.MoveX(moveX, null);
+                            // Carry up may squish if hit ceiling
+                            actor.MoveY(moveY, actor.Squish);
                         }
                     }
                 }
@@ -102,13 +96,13 @@ public class Solid : Entity
                     {
                         if (OverlapCheck(actor))
                         {
-                            // Push left
-                            actor.MoveX(this.LeftWS - actor.RightWS, actor.Squish);
+                            // Push down
+                            actor.MoveY(this.DownWS - actor.UpWS, actor.Squish);
                         }
                         else if (riding.Contains(actor))
                         {
-                            // Carry left
-                            actor.MoveX(moveX, null);
+                            // Carry down
+                            actor.MoveY(moveY, null);
                         }
                     }
                 }
@@ -119,14 +113,27 @@ public class Solid : Entity
         Collideable = true;
     }
 
-    private bool OverlapCheck(Actor actor)
+    protected bool OverlapCheck(Actor actor)
     {
-        // CollideCheck()
-        throw new NotImplementedException();
+        return CollideCheck(actor);
     }
     private List<Actor> GetAllRidingActors()
     {
-        return null;
+        // making list every update
+        var ridingList = new List<Actor>();
+        // loop all actors in level and check overlap
+        var was = PositionWS;
+        PositionWS.y += 1;
+        foreach (var actor in Level.AllActors)
+        {
+            if (OverlapCheck(actor))
+            {
+                ridingList.Add(actor);
+            }
+        }
+        PositionWS = was;
+
+        return ridingList;
     }
 }
 
