@@ -46,9 +46,9 @@ public abstract class Entity : MonoBehaviour
     public int UpWS => HitBoxWS.yMax;
 
     public const int TileSize = 8;
-    
-    
-    protected Vector2 Speed;
+
+
+    public Vector2 Speed;
     protected Vector2 Remainder;
 
 

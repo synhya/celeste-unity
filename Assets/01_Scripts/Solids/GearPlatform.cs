@@ -49,7 +49,7 @@ public class GearPlatform : Solid
 
     private void Update()
     {
-        if (!isMovingForward && !isMovingBackward && IsActorRiding())
+        if (!isMovingForward && !isMovingBackward && HasActorRiding())
         {
             isMovingForward = true;
         }
@@ -66,11 +66,10 @@ public class GearPlatform : Solid
                 leftDist = edges[1] - PositionWS;
                 if (leftDist.magnitude == 0)
                 {
-                    // reset remainder and speed 
                     isMovingForward = false;
                     isMovingBackward = true;
                     dir = -dir;
-                    Speed = Vector2.zero;
+                    // anim speed * 0.6f; on backward.
                 }
                 else
                 {
@@ -82,10 +81,8 @@ public class GearPlatform : Solid
                 leftDist = edges[0] - PositionWS;
                 if (leftDist.magnitude == 0)
                 {
-                    // reset remainder and speed 
                     isMovingBackward = false;
                     dir = -dir;
-                    Speed = Vector2.zero;
                 }
                 else
                 {
@@ -107,24 +104,6 @@ public class GearPlatform : Solid
             anims[1].enabled = false;
         }
         UpdatePosition();
-    }
-    
-    private bool IsActorRiding()
-    {
-        var was = PositionWS;
-        var ret = false;
-        PositionWS.y += 1;
-        foreach (var actor in Level.AllActors)
-        {
-            if (OverlapCheck(actor))
-            {
-                ret = true;
-                break;
-            }
-        }
-        PositionWS = was;
-
-        return ret;
     }
 }
 

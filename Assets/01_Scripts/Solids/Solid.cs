@@ -121,19 +121,23 @@ public class Solid : Entity
     {
         // making list every update
         var ridingList = new List<Actor>();
-        // loop all actors in level and check overlap
-        var was = PositionWS;
-        PositionWS.y += 1;
+
         foreach (var actor in Level.AllActors)
         {
-            if (OverlapCheck(actor))
-            {
-                ridingList.Add(actor);
-            }
+           if(actor.IsRiding(this))
+               ridingList.Add(actor);
         }
-        PositionWS = was;
 
         return ridingList;
+    }
+    protected bool HasActorRiding()
+    {
+        foreach (var actor in Level.AllActors)
+        {
+            if (actor.IsRiding(this))
+                return true;
+        }
+        return false;
     }
 }
 

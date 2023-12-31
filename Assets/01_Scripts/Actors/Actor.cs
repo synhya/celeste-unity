@@ -72,7 +72,23 @@ public class Actor : Entity
         }
     }
 
-    public virtual bool IsRiding(Solid[] solid) { return true; }
+    public Vector2 LiftSpeed;
+    /// Typically, an Actor is riding a Solid if that Actor is immediately above the Solid.
+    /// But some Actors might want to override this function to change how it behaves
+    /// — for example, in TowerFall, players will also ride Solids
+    /// that they are ledge grabbing on, and flying monsters never ride Solids.
+    /// In Celeste, Madeline rides Solids when she stands on them or clings to the side of them.
+    public virtual bool IsRiding(Solid solid)
+    {
+        var was = PositionWS;
+        PositionWS.y -= 1;
+        var ret = CollideCheck(solid);
+        PositionWS = was;
+
+        LiftSpeed = ret ? solid.Speed : Vector2.zero;
+        
+        return ret;
+    }
     public virtual void Squish(CollisionData data) { }
 
     #region Collisions

@@ -5,11 +5,12 @@ using static UnityEngine.Mathf;
 
 public partial class Player
 {
-    [Header("Run settings")]
+    [Header("Horizontal Move settings")]
     [SerializeField] private float MaxRun = 90f;
     [SerializeField] private float RunAccel = 1000f;
     [SerializeField] private float AirMult = 0.65F;
     [SerializeField] private float RunReduce = 400f;
+    [SerializeField] private float DuckFriction = 500f;
     
     [Header("Jump settings")]
     [SerializeField] private float JumpHBoost = 40f;
@@ -31,8 +32,15 @@ public partial class Player
     [SerializeField] private Vector2 WallJumpSpeed = new Vector2(180, 180);
     [SerializeField] private float WallJumpForceTime = 0.16f;
     [SerializeField] private float WallSlideTime = 1.2f;
+    
+    [Header("Lift Boost settings")]
+    [SerializeField] private float LiftYCap = 130f;
+    [SerializeField] private float LiftXCap = 250f;
 
     private const int WallJumpCheckDist = 3;
+    private const int NormalHitboxY = 15;
+    private const int DuckHitboxY = 9;
+    
     // vars
     private float maxFall;
     
@@ -47,6 +55,42 @@ public partial class Player
     private float forceMoveXTimer;
     private float wallSlideParticleTimer;
 
+    private bool Ducking
+    {
+        get => HitboxSize.y == DuckHitboxY;
+        // may also have hurt box with different size.
+        set => HitboxSize.y = value ? DuckHitboxY : NormalHitboxY;
+    }
+
+    private bool CanUnDuck
+    {
+        get {
+            if (!Ducking) return true;
+
+            var was = HitboxSize.y;
+            HitboxSize.y = NormalHitboxY;
+            bool ret = !CollideCheck(Vector2Int.zero);
+
+            HitboxSize.y = was;
+            return ret;
+        }
+    }
+
+    private Vector2 LiftBoost
+    {
+        get {
+            Vector2 val = LiftSpeed;
+
+            if (Abs(val.x) > LiftXCap)
+                val.x = LiftXCap * Sign(val.x);
+
+            if (val.y < 0) val.y = 0;
+            else val.y = Min(val.y, LiftYCap);
+
+            return val;
+        }
+    }
+
     private void NormalBegin()
     {
         maxFall = MaxFall;
@@ -54,35 +98,36 @@ public partial class Player
     
     public int NormalUpdate()
     {
-        // //Use Lift Boost if walked off platform
-        // if (LiftBoost.Y < 0 && wasGround && !onGround && Speed.Y >= 0)
-        //     Speed.Y = LiftBoost.Y;
+        // 올라가는 플랫폼에서 떨어졌을때 속도 전달
+        if (LiftBoost.y > 0 && wasGround && !onGround && Speed.y <= 0)
+            Speed.y = LiftBoost.y;
         
-        // private Vector2 LiftBoost
-        // {
-        //     get
-        //     {
-        //         Vector2 val = LiftSpeed;
-        //
-        //         if (Math.Abs(val.X) > LiftXCap)
-        //             val.X = LiftXCap * Math.Sign(val.X);
-        //
-        //         if (val.Y > 0)
-        //             val.Y = 0;
-        //         else if (val.Y < LiftYCap)
-        //             val.Y = LiftYCap;
-        //
-        //         return val;
-        //     }
-        // }
-        
+        // Dashing
         if (CanDash)
         {
             Speed += LiftBoost;                   
             return StartDash();
         }
         
+        // Ducking 
+        if (Ducking)
+        {
+            if ( !onGround || (inputY != -1 && CanUnDuck))
+            {
+                Ducking = false;
+            }
+        }
+        else if (onGround && inputY == -1 && Speed.y <= 0)
+        {
+            Ducking = true;
+        }
+        
         // Running and Friction
+        if (Ducking)
+        {
+            Speed.x = MoveTowards(Speed.x, 0, DuckFriction * deltaTime);
+        }
+        else
         {
             float mult = onGround ? 1 : AirMult;
             // if (onGround && level.CoreMode == Session.CoreModes.Cold) mult *= .3f;

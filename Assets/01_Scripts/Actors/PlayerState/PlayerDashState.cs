@@ -57,17 +57,6 @@ public partial class Player
     private Vector2 beforeDashSpeed;
     private bool wasDashB;
 
-    /// <summary>
-    /// Platform lift value ( leave 0 for now )
-    /// </summary>
-    private Vector2 LiftBoost
-    {
-        get
-        {
-            return Vector2.zero;
-        }
-    }
-
     public int StartDash()
     {
         wasDashB = Dashes == 2;
@@ -114,6 +103,10 @@ public partial class Player
         if (Math.Sign(Speed.x) == Math.Sign(newSpeed.x) && Abs(Speed.x) > Abs(newSpeed.x))
             newSpeed.x = Speed.x;
         Speed = newSpeed;
+        
+        // never duck when dashing
+        if (CanUnDuck)
+            Ducking = false;
         
         // effects
         DashLine.Cast(CenterWS, DashDir);
