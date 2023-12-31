@@ -54,6 +54,28 @@ public partial class Player
     
     public int NormalUpdate()
     {
+        // //Use Lift Boost if walked off platform
+        // if (LiftBoost.Y < 0 && wasGround && !onGround && Speed.Y >= 0)
+        //     Speed.Y = LiftBoost.Y;
+        
+        // private Vector2 LiftBoost
+        // {
+        //     get
+        //     {
+        //         Vector2 val = LiftSpeed;
+        //
+        //         if (Math.Abs(val.X) > LiftXCap)
+        //             val.X = LiftXCap * Math.Sign(val.X);
+        //
+        //         if (val.Y > 0)
+        //             val.Y = 0;
+        //         else if (val.Y < LiftYCap)
+        //             val.Y = LiftYCap;
+        //
+        //         return val;
+        //     }
+        // }
+        
         if (CanDash)
         {
             Speed += LiftBoost;                   
