@@ -16,15 +16,17 @@ public class EffectManager : MonoBehaviour
     private DeadCirclePool dCirclePool;
     private DustPool dustPool;
     private DashLinePool dashLinePool;
+    private DashTrailPool dashTrailPool;
     private HoodColorHandler hoodColorHandler;
     private Camera cam;
-    public static Camera mainCam => instance.cam;
+    public static Camera MainCam => instance.cam;
 
     [SerializeField] private RippleHandler rippleHandler;
 
     public static DustVisualization GetDust() => instance.dustPool.Pool.Get();
     public static DashLineVisualization GetDashLine() => instance.dashLinePool.Pool.Get();
     public static DeathCircle GetCircle() => instance.dCirclePool.Pool.Get();
+    public static DashTrail GetTrail() => instance.dashTrailPool.Pool.Get();
     public static void ChangeCloth() => instance.hoodColorHandler.OnDash();
     public static void CreateRipple(Vector2 pos) => instance.rippleHandler.Ripple(pos);
 
@@ -47,6 +49,7 @@ public class EffectManager : MonoBehaviour
         dustPool = GetComponent<DustPool>();
         dashLinePool = GetComponent<DashLinePool>();
         hoodColorHandler = GetComponent<HoodColorHandler>();
+        dashTrailPool = GetComponent<DashTrailPool>();
         cam = Camera.main;
     }
 

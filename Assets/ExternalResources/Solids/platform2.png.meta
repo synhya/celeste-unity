@@ -312,7 +312,7 @@ TextureImporter:
         width: 11
         height: 11
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -320,6 +320,48 @@ TextureImporter:
       bones: []
       spriteID: ef6004bc26ffd82489be1a8f10c19c21
       internalID: -571633130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: platform2_9
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 48
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f2837f81026427944a5f754f64b10f35
+      internalID: 892295201
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: platform2_10
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 40
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5eba548845e9e514db20d33e87eb1234
+      internalID: 522669348
       vertices: []
       indices: 
       edges: []
@@ -337,6 +379,7 @@ TextureImporter:
     nameFileIdTable:
       platform2_0: -1614203420
       platform2_1: 2050137100
+      platform2_10: 522669348
       platform2_2: -1822795427
       platform2_3: -151475911
       platform2_4: -807982944
@@ -344,6 +387,7 @@ TextureImporter:
       platform2_6: -419357689
       platform2_7: 984305222
       platform2_8: -571633130
+      platform2_9: 892295201
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

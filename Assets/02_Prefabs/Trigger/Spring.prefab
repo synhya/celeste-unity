@@ -48,8 +48,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HitboxBottomLeftOffset: {x: -8, y: 0}
   HitboxSize: {x: 16, y: 2}
-  PositionWS: {x: 360, y: 224}
+  PositionWS: {x: 1312, y: 1080}
   PreviousPos: {x: 0, y: 0}
+  Speed: {x: 0, y: 0}
   Triggered: 0
 --- !u!212 &171575298187738610
 SpriteRenderer:

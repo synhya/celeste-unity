@@ -48,8 +48,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HitboxBottomLeftOffset: {x: -3, y: -4}
   HitboxSize: {x: 6, y: 8}
-  PositionWS: {x: 760, y: 420}
+  PositionWS: {x: 1063, y: 1170}
   PreviousPos: {x: 0, y: 0}
+  Speed: {x: 0, y: 0}
   Triggered: 0
   shrinkDistanceThreshold: 8
   speed: 70

@@ -8,7 +8,10 @@ Shader "Custom/OutlineWithFlip"
         
         _OutlineColor("OutlineColor", Color) = (1,1,1,1)
         _Radius("Radius", Range(0,10)) = 1
-        _EmissionStrength("Emission Strength", Float) = 0
+        
+        [Toggle(IGNORE_EMISSION_TEXTURE)]_IgnoreEmissionTex("Ignore Emission Texture", float) = 0
+        _EmissionTex("Emission", 2D) = "white" {}
+        _EmissionStrength("Emission Strength", float) = 0
 
         // Legacy properties. They're here so that materials using this shader can gracefully fallback to the legacy sprite shader.
         [HideInInspector] _Color("Tint", Color) = (1,1,1,1)
@@ -44,6 +47,8 @@ Shader "Custom/OutlineWithFlip"
             #pragma multi_compile USE_SHAPE_LIGHT_TYPE_3 __
             #pragma multi_compile _ DEBUG_DISPLAY
 
+            #pragma multi_compile __ IGNORE_EMISSION_TEXTURE
+
             struct Attributes
             {
                 float3 positionOS   : POSITION;
@@ -58,6 +63,7 @@ Shader "Custom/OutlineWithFlip"
                 half4   color       : COLOR;
                 float2  uv          : TEXCOORD0;
                 half2   lightingUV  : TEXCOORD1;
+                float2  hdrUV        : TEXCOORD3;
                 #if defined(DEBUG_DISPLAY)
                 float3  positionWS  : TEXCOORD2;
                 #endif
@@ -75,6 +81,10 @@ Shader "Custom/OutlineWithFlip"
             float4 _Color;
             half4 _RendererColor;
             float4 _MainTex_TexelSize;
+
+            TEXTURE2D(_EmissionTex);
+            SAMPLER(sampler_EmissionTex);
+            half4 _EmissionTex_ST;
 
             float _EmissionStrength;
 
@@ -107,6 +117,8 @@ Shader "Custom/OutlineWithFlip"
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 o.lightingUV = half2(ComputeScreenPos(o.positionCS / o.positionCS.w).xy);
 
+                o.hdrUV = TRANSFORM_TEX(v.uv, _EmissionTex);
+
                 o.color = v.color * _Color * _RendererColor;
                 return o;
             }
@@ -125,9 +137,21 @@ Shader "Custom/OutlineWithFlip"
                 InitializeSurfaceData(texcolor.rgb, texcolor.a, mask, surfaceData);
                 InitializeInputData(i.uv, i.lightingUV, inputData);
 
-                half4 finColor = CombinedShapeLightShared(surfaceData, inputData);
-                finColor.xyz *= (1 + _EmissionStrength);
-                return finColor;
+                half4 finalColor = CombinedShapeLightShared(surfaceData, inputData);
+
+                #if defined(IGNORE_EMISSION_TEXTURE)
+
+                finalColor.xyz *= (1 + _EmissionStrength);
+                
+                #else
+                
+                const float hdrValue = SAMPLE_TEXTURE2D(_EmissionTex, sampler_EmissionTex, i.hdrUV).a;
+                
+                finalColor.xyz += finalColor.xyz * (hdrValue * _EmissionStrength);
+                    
+                #endif
+
+                return finalColor;
             }
             ENDHLSL
         }

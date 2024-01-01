@@ -26,8 +26,13 @@ public class EntityEditor : Editor
             width = e.HitboxSize.x,
             height = e.HitboxSize.y
         };
-      
         Handles.DrawSolidRectangleWithOutline(rect, Color.clear, Color.green);
+        
+        // snap position to int
+        if (Event.current.type == EventType.MouseUp && Event.current.button == 0)
+        {
+            e.transform.position = Vector3Int.RoundToInt(e.transform.position);
+        }
     }
 }
 

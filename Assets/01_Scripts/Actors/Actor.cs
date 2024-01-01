@@ -72,7 +72,11 @@ public class Actor : Entity
         }
     }
 
-    public Vector2 LiftSpeed;
+    private Solid lastSolidRiding;
+    public Vector2 LiftSpeed
+    {
+        get => lastSolidRiding && IsRiding(lastSolidRiding) ? lastSolidRiding.Speed : Vector2.zero;
+    }
     /// Typically, an Actor is riding a Solid if that Actor is immediately above the Solid.
     /// But some Actors might want to override this function to change how it behaves
     /// — for example, in TowerFall, players will also ride Solids
@@ -80,13 +84,15 @@ public class Actor : Entity
     /// In Celeste, Madeline rides Solids when she stands on them or clings to the side of them.
     public virtual bool IsRiding(Solid solid)
     {
+        if (!Collideable) return false;
+        
         var was = PositionWS;
         PositionWS.y -= 1;
         var ret = CollideCheck(solid);
         PositionWS = was;
 
-        LiftSpeed = ret ? solid.Speed : Vector2.zero;
-        
+        lastSolidRiding = ret ? solid : null;
+
         return ret;
     }
     public virtual void Squish(CollisionData data) { }

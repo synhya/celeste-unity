@@ -3,9 +3,11 @@
 // Trigger, Killbox, Platform, WallBooster, JumpThru, SwapBlock, FlyFeather
 //  They all have CollideCheck
 
+using UnityEngine;
+
 public abstract class Trigger : Entity
 {
-    public bool Triggered;
+    [HideInInspector] public bool Triggered;
 
     protected override void Start()
     {

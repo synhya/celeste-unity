@@ -120,6 +120,7 @@ public partial class Player
     void Die(Vector2 knockBackDir)
     {
         Collideable = false;
+        trailsLeft = 0;
         
         // camera shake
         EffectManager.ShakeCam(0.5f, 1.5f);

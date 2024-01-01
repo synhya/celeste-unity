@@ -7,11 +7,11 @@ using UnityEngine.Tilemaps;
 
 public class Room : MonoBehaviour
 {
-    [FormerlySerializedAs("EnteringPower")]
+
     [Header("Player Settings")]
     [Tooltip("In case player is coming from down")]
     public float EnteringJumpPower = 50f;
-    [FormerlySerializedAs("RespawnPos")]
+    
     public Vector2Int SpawnPos;
     [Tooltip("In case room is too large")]
     public bool CamHasToFollowPlayer = false;
@@ -28,16 +28,7 @@ public class Room : MonoBehaviour
     
     public Vector2Int OriginWS => originWs;
     private Vector2Int originWs;
-
-    #region Validate
-
-    private void OnValidate()
-    {
-        // snap respawn y to 8
-        SpawnPos.y = (SpawnPos.y / 8) * 8;
-    }
-
-    #endregion
+    
     
     private void Awake()
     {

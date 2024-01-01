@@ -48,8 +48,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HitboxBottomLeftOffset: {x: -3, y: 0}
   HitboxSize: {x: 6, y: 15}
-  PositionWS: {x: 96, y: 56}
+  PositionWS: {x: 26, y: 40}
   PreviousPos: {x: 165, y: 96}
+  Speed: {x: 0, y: 0}
+  LiftSpeed: {x: 0, y: 0}
   deadBodyPrefab: {fileID: 7332204074699942299, guid: a82d9be9b0ab08446a7200708ec87c2c, type: 3}
   SR: {fileID: 0}
   runAnimThreshold: 1
@@ -71,6 +73,7 @@ MonoBehaviour:
   RunAccel: 1000
   AirMult: 0.65
   RunReduce: 400
+  DuckFriction: 500
   JumpHBoost: 40
   WallJumpHBoost: 130
   JumpSpeed: 105
@@ -85,6 +88,8 @@ MonoBehaviour:
   WallJumpSpeed: {x: 220, y: 150}
   WallJumpForceTime: 0.16
   WallSlideTime: 1.2
+  LiftYCap: 130
+  LiftXCap: 250
 --- !u!212 &3451402920003286382
 SpriteRenderer:
   m_ObjectHideFlags: 0

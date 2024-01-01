@@ -157,10 +157,9 @@ public partial class Player
     
     private void CreateTrail()
     {
-         var trail = Instantiate(playerTrailPrefab, transform.position, quaternion.identity)
-            .GetComponent<PlayerTrail>();
-         
-         trail.Init(facing == Facing.Right, SR.sprite);
+        // get trail from effect manager.
+        var trail = EffectManager.GetTrail();
+        trail.Play(transform.position, facing == Facing.Right, SR.sprite);
     }
 
     #endregion

@@ -48,7 +48,7 @@ public abstract class Entity : MonoBehaviour
     public const int TileSize = 8;
 
 
-    public Vector2 Speed;
+    [HideInInspector] public Vector2 Speed;
     protected Vector2 Remainder;
 
 

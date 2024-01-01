@@ -44,7 +44,7 @@ public class Level : MonoBehaviour
         startingRoom.gameObject.SetActive(true);
         float x = startingRoom.OriginWS.x + 160;
         float y = startingRoom.OriginWS.y + 94;
-        EffectManager.MoveCam(new Vector2(x, y), 0.1f);
+        EffectManager.MainCam.transform.position = new Vector3(x, y, -10f);
     }
 
     public void SwitchRoom(Room nextRoom)

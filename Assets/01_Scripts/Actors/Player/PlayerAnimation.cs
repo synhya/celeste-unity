@@ -22,6 +22,9 @@ public partial class Player
     private const string StAnimDash = "Player_Dash";
     private const string StAnimWallSlide = "Player_WallSlide";
 
+    private const string StAnimDucking = "Player_Duck";
+    private const string StAnimUnDucking = "Player_UnDuck";
+
     private readonly int HashIdle = Animator.StringToHash(StAnimIdle);
     private readonly int HashRun = Animator.StringToHash(StAnimRun);
     private readonly int HashReadyJump = Animator.StringToHash(StAnimReadyJump);
@@ -32,6 +35,9 @@ public partial class Player
     
     private readonly int HashDash = Animator.StringToHash(StAnimDash);
     private readonly int HashWallSlide = Animator.StringToHash(StAnimWallSlide);
+    
+    private readonly int HashDucking = Animator.StringToHash(StAnimDucking);
+    private readonly int HashUnDucking = Animator.StringToHash(StAnimUnDucking);
     
     // vars
     private bool flipAnimFlag = false;
@@ -63,9 +69,22 @@ public partial class Player
         
         hasToSwitch = false;
         
+        
+        if(curHash != HashDucking && !wasDucking && Ducking)
+        {
+            SetAsNextAnimation(HashDucking, StAnimDucking);
+        }
+        else if (curHash != HashUnDucking && wasDucking && !Ducking)
+        {
+            SetAsNextAnimation(HashUnDucking, StAnimUnDucking);
+        }
+        else if ((curHash == HashDucking && Ducking) || (curHash == HashUnDucking && currentAnim.normalizedTime <= 0.95f))
+        {
+            // keep 
+        }
         #region Normal State Animations
 
-        if (sm.State == StateNormal)
+        else if (sm.State == StateNormal)
         {
             if (wallSlideDir != 0)
             {

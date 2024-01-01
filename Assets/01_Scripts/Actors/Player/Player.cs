@@ -29,6 +29,7 @@ public partial class Player : Actor
     private bool isLanding;
     private bool isTakingOff;
     private int wallSlideDir;
+    private bool wasDucking;
     
     private Facing facing;
 
@@ -146,6 +147,7 @@ public partial class Player : Actor
     private void SetPreviousValues()
     {
         wasGround = onGround;
+        wasDucking = Ducking;
     }
 
     public override void Squish(CollisionData data)
