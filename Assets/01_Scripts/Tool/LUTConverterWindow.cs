@@ -131,10 +131,6 @@ public class LUTConverterWindow : EditorWindow
         {
             spriteColorSet.Clear();
         }
-        else
-        {
-            // color table should keep it's order..
-        }
 
         var from = targetSprite.texture.GetPixels();
         foreach (var t in from)
