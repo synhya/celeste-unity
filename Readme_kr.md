@@ -1,9 +1,9 @@
-﻿## 구현 세부사항
+﻿# 구현 세부사항
 
 Celeste라는 게임을 직접 플레이하고 최대한 비슷하게 구현하는데 초점을 맞추었습니다.
 
-### 이펙트
-#### 대쉬시에 후드 색상 변경
+## 이펙트
+### 대쉬시에 후드 색상 변경
 원작 게임에서 플레이어의 남은 대시 수에 따라서 머리의 색이 바뀝니다.   
 해당 기능을 구현하기에 가장 단순한 방법은 옷 색상을 파랗게 칠한 캐릭터를 새로 하나 더  
 만드는 것인데, 플레이어 애니메이션 스프라이트가 100개가까이 되므로 현실적인 어려움이 있었습니다.
@@ -16,11 +16,17 @@ Celeste라는 게임을 직접 플레이하고 최대한 비슷하게 구현하�
 실시간으로 2차 텍스쳐에서 옷부분과 머리부분의 색상을 변경하여 구현했습니다.  
 테이블 텍스쳐의 색상만 변경해주면 플레이어의 모든 스프라이트에 영향을 줄 수 있습니다.
 
-#### 더스트, 대시라인
+<img src="https://github.com/wkd2314/ForPortfolio/assets/25860861/85437d03-6eba-46d7-8720-24e822ba078c.png"  width="300" height="400"/>
+<img src="https://github.com/wkd2314/ForPortfolio/assets/25860861/a64fcda2-115a-4f84-9b48-23b2a1196b44.png"  width="300" height="300"/>
+<img src="https://github.com/wkd2314/ForPortfolio/assets/25860861/3a52b387-de50-4357-82f2-2b9a453c0d8f.png"  width="300" height="300"/>
+
+
+
+### 더스트, 대시라인
 플레이어가 점프를 하거나 앉을때 하얀 먼지 이펙트가 있는데 원작 게임에서는     
-픽셀 그리드에 딱 맞춰서 해당 효과가 연출됩니다. 파티클 시스템을 이용하면 
-비슷하게는 나오지만 완전히 그리드에 맞춰서 생성하려면 모든 입자를 매프레임마다
-위치조정하는 방식말고는 좋은 방법을 찾지 못했습니다.   
+픽셀 그리드에 딱 맞춰서 해당 효과가 연출됩니다. 파티클 시스템을 이용하면 비슷하게는 나오지만   
+완전히 그리드에 맞춰서 생성하려면 모든 입자를 매프레임마다
+위치조정하는 비효율적인 방식말고는 좋은 방법을 찾지 못했습니다.   
 따라서 Compute Shader와 인스턴싱을 이용해 구현하였습니다.  
 대시 라인은 플레이어가 대시시에 뒤에 나오는 1픽셀 실선인데 해당효과도 이와 비슷하게   
 구현했습니다.
@@ -28,16 +34,16 @@ Celeste라는 게임을 직접 플레이하고 최대한 비슷하게 구현하�
     // DustCompute
     uint2 to2D(float id)
     {
-    return uint2(id % _Rect.z, id / _Rect.z);
+        return uint2(id % _Rect.z, id / _Rect.z);
     }
     
     [numthreads(256,1,1)]
     void CSDust (uint3 id : SV_DispatchThreadID)
     {
-    float2 posOS = float2(to2D(id.x));
-    float extentX = _Rect.z * 0.5;
-    float passedTime = _TotalTime - _LeftTime;
-    
+        float2 posOS = float2(to2D(id.x));
+        float extentX = _Rect.z * 0.5;
+        float passedTime = _TotalTime - _LeftTime;
+        
         float clip = _RandBuffer[id.x]
             - smoothstep(0, _TotalTime, passedTime)
             - smoothstep(0, _Rect.w , posOS.y * (1.0 - _BoxierValue.y))
@@ -68,29 +74,36 @@ Celeste라는 게임을 직접 플레이하고 최대한 비슷하게 구현하�
         }
     }
 
-#### 사망시 서클
+### 사망시 서클
 플레이어가 죽으면 8개 원으로 흩어져 돌다 사라지는데 이러한 이펙트나 앞서 소개한   
 이펙트들은 상당히 자주 생성되고 사라지니 풀링 시스템을 활용했습니다.
 게임 오브젝트 단위로 풀링하면 사용할 때마다 GetComponent를 매번 해줘야 하기 때문에
 컴포넌트 단위로 작성했습니다.
 
-### 물리
-유니티 내장 콜라이더2D를 사용할 수도 있었지만 셀레스테 개발자가 친절하게 
+    public class ComponentPool<T> : MonoBehaviour where T : MonoBehaviour, IPoolable
+    {
+        ...
+    }
+
+## 물리
+유니티 내장 콜라이더2D를 사용할 수도 있었지만 셀레스테 개발자가 친절하게  
 작성한 자체 물리시스템에 대한 [설명](https://maddythorson.medium.com/celeste-and-towerfall-physics-d24bd2ae0fc5)이 있어서 해당 방식을 그대로 사용하기로 했습니다.  
 기본적인 로직은 다음과 같습니다.
 - 모든 씬의 객체들은 xy축과 평행한 직사각형의 히트박스를 갖고 있으며 정수단위로만 움직입니다. 
 - 객체들은 Solid와 Actor의 두가지 클래스로 나누어져 있으며 Actor는 Solid와 절대 곂치지 않습니다.  
   - Actor가 한칸씩 움직일 때마다 Solid와의 박스가 곂치는지 확인하고 곂치면 이동하지 않습니다.  
-  - 이동을 하는 Solid의 경우 Actor를 밀쳐내며 Actor가 두 Solid사이에 낑기면 파괴합니다.
+  - 이동을 하는 Solid의 경우 Actor를 밀쳐내며 이때 Actor가 두 Solid사이에 낑기면 파괴합니다.
   - Actor가 움직이는 Solid를 타고있는경우 해당 Solid를 따라 이동합니다.
 
 Actor가 이동할 때마다 레벨에 존재하는 모든 Solid와 충돌을 확인하면  
 비효율적이므로 방별로 Solid의 리스트를 담아서 해당 방의 객체들간에만 충돌을 체크하도록 했습니다.
 
-타일의 경우 RuleTile을 상속받기 때문에 MonoBehavior를 상속받는 Solid를 그대로 상속시킬수
-없었습니다. 따라서 enum flag를 추가하고 플레이어 Hitbox 근처에 있는 타일들만  
+### Unity Tilemap
+타일의 경우 RuleTile을 상속받기 때문에 MonoBehavior를 상속받는 Solid를 그대로 상속시킬수  
+없었습니다. 따라서 Hitbox(AABB)와 enum flag를 추가하고 플레이어 Hitbox 근처에 있는 타일들만  
 좌표를 가져와서 충돌체크를 할 수 있도록 작성했습니다.  
-원웨이 플랫폼의 경우 올라갈때는 충돌을 무시하도록 했습니다.
+원웨이 플랫폼의 경우 올라갈때는 충돌을 무시하도록 했습니다.  
+<img src="https://github.com/wkd2314/ForPortfolio/assets/25860861/c42dbdf5-face-4534-973c-c9d6bcee9799.png"  width="300" height="300"/>
 
     protected bool OverlapTileFlagCheckOS(TileType flag, Vector2Int offset, out TileType type)
     {
@@ -139,7 +152,7 @@ Actor가 이동할 때마다 레벨에 존재하는 모든 Solid와 충돌을 �
         return ret;
     }
 
-### 플레이어
+## 플레이어
 플레이어는 State Machine에 따라 움직입니다. 상태머신은 플레이어의 상태에 맞추어
 알맞은 Action을 실행합니다.
 
@@ -163,6 +176,9 @@ Actor가 이동할 때마다 레벨에 존재하는 모든 Solid와 충돌을 �
 넣는것이 보기가 깔끔해서 해당 방식을 채택 했습니다.
 
     // in player class
+    public const int StateNormal = 0;
+    public const int StateDash = 1;
+    
     protected override void Start()
     {
         base.Start();
@@ -173,11 +189,10 @@ Actor가 이동할 때마다 레벨에 존재하는 모든 Solid와 충돌을 �
         sm.State = StateNormal;
     }
 
-### 조작감 개선
-플랫포머 게임에서는 많이 채택하고 있는 부분인 Jump buffering을 포함하여
-Celeste 개발자가 소개한 몇가지 [특징](https://maddythorson.medium.com/celeste-forgiveness-31e4a40399f1)들을 그대로 구현하였습니다.   
-리프트 플랫폼에서의 부스팅, 코요테 타이머 등을 도입하였고    
+## 조작감 개선
+플랫포머 게임에서는 많이 채택하고 있는 부분인 Jump buffering, Jump GraceTime을 포함하여
+Celeste 개발자가 소개한 몇가지 [특징](https://maddythorson.medium.com/celeste-forgiveness-31e4a40399f1)들을 그대로 구현하였습니다.       
 
 Corner Correction은 구현 예정에 있습니다. 현재 충돌 체크 함수는 bool값만 반환하지만  
 해당 기능을 구현하기 위해서는 충돌한 범위와 센터값을 알아야 하기 때문에   
-추가적인 정보를 out Attribute로 가져오게 해야 할 것 같습니다. 
+추가적인 정보를 out Attribute로 가져오게 할 예정입니다.
