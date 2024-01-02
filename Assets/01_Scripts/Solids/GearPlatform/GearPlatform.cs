@@ -67,7 +67,9 @@ public class GearPlatform : Solid
     {
         if (timer > 0f)
         {
-            if(timer < StopTime - KeepSpeedTime) 
+            if (timer >= StopTime - KeepSpeedTime)
+                Speed = Vector2.MoveTowards(Speed, Vector2.zero, accel * 0.5f * Time.deltaTime);
+            else
                 Speed = Vector2.zero;
             timer -= Time.deltaTime;
         }

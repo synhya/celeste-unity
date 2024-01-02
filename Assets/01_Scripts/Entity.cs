@@ -50,8 +50,11 @@ public abstract class Entity : MonoBehaviour
 
     [HideInInspector] public Vector2 Speed;
     protected Vector2 Remainder;
-
-
+    
+    public virtual void Added(Room room)
+    {
+    }
+    
     protected virtual void Start()
     {
         PositionWS = Vector2Int.RoundToInt(transform.position);

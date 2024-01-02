@@ -11,6 +11,11 @@ public class Actor : Entity
 {
     private Tilemap tileMap;
     protected Room Room => Level.CurrentRoom;
+
+    public override void Added(Room room)
+    {
+        
+    }
     
     protected override void Start()
     {

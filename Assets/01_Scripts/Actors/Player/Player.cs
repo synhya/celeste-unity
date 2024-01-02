@@ -156,12 +156,22 @@ public partial class Player : Actor
     }
     
 
-    public void OnSwitchRoomStart(Room nextRoom)
+    public override void Added(Room room)
     {
+        base.Added(room);
+        // level = SceneAs<Level>(); ??
+        
+        RefillDash();
+        
+        // if(PositionWS.x > Level.BOunds)
+        
+        
+        
+        
         // if going up -> speedup
         if (Speed.y > 0)
-            Speed.y += nextRoom.EnteringJumpPower;
-        RefillDash();
+            Speed.y += room.EnteringJumpPower;
+        
     }
     public void OnSwitchRoomEnd()
     {

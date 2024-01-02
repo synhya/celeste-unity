@@ -1,5 +1,6 @@
 using System;
 using UnityEditor;
+using UnityEditor.IMGUI.Controls;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -7,6 +8,20 @@ using UnityEngine.Tilemaps;
 [CanEditMultipleObjects]
 public class RoomEditor : Editor
 {
+    private BoxBoundsHandle boundHandle;
+
+    private void OnEnable()
+    {
+        var r = target as Room;
+        
+        // set bound if zero.
+        // if(r.Bound.center = Vector3.zero)
+        
+        boundHandle = new BoxBoundsHandle();
+        boundHandle.center = r.transform.position;
+        boundHandle.size = Vector2.one * 10;
+    }
+
     private void OnSceneGUI()
     {
         var r = target as Room;
@@ -28,6 +43,13 @@ public class RoomEditor : Editor
             rect = new Rect(r.Doors[i].position + originWS, r.Doors[i].size);
             Handles.DrawSolidRectangleWithOutline(rect, Color.clear, Color.yellow);
         }
+        
+        // bound handle
+        Handles.color = new Color(0.52f, 1f, 0.2f);
+
+        boundHandle.axes = PrimitiveBoundsHandle.Axes.X | PrimitiveBoundsHandle.Axes.Y;
+        boundHandle.DrawHandle();
+        
         
         // snap position to int
         if (Event.current.type == EventType.MouseUp && Event.current.button == 0)

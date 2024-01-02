@@ -5,6 +5,9 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
+/// <summary>
+/// entire stage split to smaller levels(rooms)
+/// </summary>
 public class Room : MonoBehaviour
 {
 
@@ -28,6 +31,8 @@ public class Room : MonoBehaviour
     
     public Vector2Int OriginWS => originWs;
     private Vector2Int originWs;
+    
+    public RectInt Bound;
     
     
     private void Awake()

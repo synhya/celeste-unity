@@ -57,7 +57,7 @@ public partial class Player
                 Level.SwitchRoom(Room.NextRooms[i]);
         }
 
-        if (invinsibleTimer > 0f) invinsibleTimer -= deltaTime;
+        if (invinsibleTimer > 0f) invinsibleTimer -= deltaTime; // -> 수정필요
         else
         {
             // fall death check 320 * 180

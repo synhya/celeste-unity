@@ -53,7 +53,7 @@ public class Level : MonoBehaviour
         nextRoom.gameObject.SetActive(true);
         
         CurrentRoom = nextRoom;
-        Player.OnSwitchRoomStart(nextRoom);
+        Player.Added(nextRoom);
         
         FreezeLevel(RoomSwitchTime);
     }
