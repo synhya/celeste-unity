@@ -1,7 +1,6 @@
 ﻿
 public partial class Player
 {
-    // ..?
     // public const float ClimbMaxStamina = 110;
     // private const float ClimbUpCost = 100 / 2.2f;
     // private const float ClimbStillCost = 100 / 10f;

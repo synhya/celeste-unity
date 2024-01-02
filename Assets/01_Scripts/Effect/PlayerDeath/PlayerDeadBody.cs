@@ -33,7 +33,7 @@ public class PlayerDeadBody : MonoBehaviour
         sr.color = Color.white;
         sr.flipX = !flipX; // dead sprite is opposite direction.
 
-        lerpColor2 = Game.I.CurrentLevel.Player.Dashes > 0 ? normalColor : dashCOlor;
+        lerpColor2 = Game.MainPlayer.Dashes > 0 ? normalColor : dashCOlor;
 
         var t = transform;
         var srT = sr.transform;

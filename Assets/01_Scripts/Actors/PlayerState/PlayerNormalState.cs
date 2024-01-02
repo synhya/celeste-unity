@@ -38,7 +38,9 @@ public partial class Player
     [SerializeField] private float LiftXCap = 250f;
 
     private const int WallJumpCheckDist = 3;
-    private const int NormalHitboxY = 15;
+
+    private Vector2Int normalHitBoxSize;
+    private Vector2Int duckHitBoxSize;
     private const int DuckHitboxY = 9;
     
     // vars
@@ -57,21 +59,21 @@ public partial class Player
 
     private bool Ducking
     {
-        get => HitboxSize.y == DuckHitboxY;
+        get => HitboxSize == duckHitBoxSize;
         // may also have hurt box with different size.
-        set => HitboxSize.y = value ? DuckHitboxY : NormalHitboxY;
+        set => HitboxSize = value ? duckHitBoxSize : normalHitBoxSize;
     }
 
     private bool CanUnDuck
-    {
+    {    
         get {
             if (!Ducking) return true;
 
-            var was = HitboxSize.y;
-            HitboxSize.y = NormalHitboxY;
+            var was = HitboxSize;
+            HitboxSize = normalHitBoxSize;
             bool ret = !CollideCheck(Vector2Int.zero);
 
-            HitboxSize.y = was;
+            HitboxSize = was;
             return ret;
         }
     }
@@ -179,13 +181,13 @@ public partial class Player
                             if (wallSlideDir == 1 && wallSlideParticleTimer <= 0f)
                             {
                                 wallSlideParticleTimer = 0.4f;
-                                Dust.Burst(BottonRightWS + Vector2.up * 2,
+                                Dust.Burst(BottomRightWS + Vector2.up * 2,
                                     new Vector2(2, 5), new Vector2(-1f, 1f), 0.6f);
                             }
                             else if (wallSlideParticleTimer <= 0f)
                             {
                                 wallSlideParticleTimer = 0.4f;
-                                Dust.Burst(BottonLeftWS + Vector2.up * 2,
+                                Dust.Burst(BottomLeftWS + Vector2.up * 2,
                                     new Vector2(2, 5), new Vector2(1f, 1f), 0.6f);
                             }
                         }

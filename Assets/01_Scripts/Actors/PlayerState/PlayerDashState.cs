@@ -32,7 +32,7 @@ public partial class Player
 
     [HideInInspector] public int MaxDashes = 1;
     [HideInInspector] public int Dashes;
-    [HideInInspector] public Vector2? OverrideDashDirection;
+    // [HideInInspector] public Vector2? OverrideDashDirection;
 
     private float dashTimer;
     private float dashCoolDownTimer;
@@ -45,14 +45,6 @@ public partial class Player
 
     private float dashTrailTimer;
     private int trailsLeft = 0;
-
-    // use shader?
-    public static readonly Color NormalHairColor = new Color(0.67f, 0.2f, 0.2f);
-    public static readonly Color UsedHairColor = new Color(0.27f, 0.72f, 1f);
-    public static readonly Color FlashHairColor = Color.white;
-
-    private float hairFlashTimer;
-    public Color? OverrideHairColor;
     
     private Vector2 beforeDashSpeed;
     private bool wasDashB;
@@ -110,7 +102,6 @@ public partial class Player
         
         // effects
         DashLine.Cast(CenterWS, DashDir);
-        // EffectManager.ShakeCam(0.3f, 1.4f);
         EffectManager.ChangeCloth();
         EffectManager.CreateRipple(CenterWS);
         EffectManager.ShakeCam(0.3f, 0.8f);
@@ -140,26 +131,12 @@ public partial class Player
         
         return StateDash;
     }
-
-    // put where??
-    private IEnumerator DashCoroutine()
-    {
-        yield return null;
-        
-
-        CallDashEvents();
-            
-        //Feather particles
-        
-        //Dash Slide
-        
-    }
     
     private void CreateTrail()
     {
         // get trail from effect manager.
         var trail = EffectManager.GetTrail();
-        trail.Play(transform.position, facing == Facing.Right, SR.sprite);
+        trail.Play(transform.position, facing == Facings.Right, SR.sprite);
     }
 
     #endregion

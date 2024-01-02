@@ -3,24 +3,34 @@ using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
+public enum IntroTypes
+{
+    Transition,
+    Jump,
+    Fall,
+    WalkInRight,
+    WalkInLeft,
+    Respawn,
+    None
+}
+
 public class Level : MonoBehaviour
 {
-    public Player Player;
     [SerializeField] private Room startingRoom;
     
-    /// <summary>
-    /// set on awake
-    /// </summary>
     [HideInInspector] public Room CurrentRoom;
     [HideInInspector] public Tilemap Map;
-
-    public bool InSpace = false;
-    private const float RoomSwitchTime = 0.8f;
+    
+    private float roomTransitionTime = 0.8f;
     public HashSet<Actor> AllActors;
+    private Player player;
+    
+    public IntroTypes IntroType = IntroTypes.Jump;
 
     void Awake() 
     {
@@ -36,16 +46,50 @@ public class Level : MonoBehaviour
         }
     }
 
+    void Start()
+    {
+        player = Game.MainPlayer;
+    }
+
     public void StartLevel()
     {
-        Player.transform.SetParent(transform);
+        player.transform.SetParent(transform);
         SpawnPlayer();
         
         startingRoom.gameObject.SetActive(true);
-        float x = startingRoom.OriginWS.x + 160;
-        float y = startingRoom.OriginWS.y + 94;
-        EffectManager.MainCam.transform.position = new Vector3(x, y, -10f);
+
+        var camPos = FindRoomStartCamPos(startingRoom);
+        Game.MainCam.transform.position = new Vector3(camPos.x, camPos.y, -10f);
     }
+
+    private void Update()
+    {
+        if(Game.IsPaused) return;
+        
+        // if (CurrentRoom.BoundRect.size.y > Room.CamHeight)
+        // {
+        //     var cam = Game.MainCam;
+        //     var bound = new Rect();
+        //     // if player out of bound follow player .
+        // }
+    }
+    
+    // // Camera (lerp by distance using delta-time)
+    // if (InControl || ForceCameraUpdate)
+    // {
+    //     if (StateMachine.State == StReflectionFall)
+    //     {
+    //         level.Camera.Position = CameraTarget;
+    //     }
+    //     else
+    //     {
+    //         var from = level.Camera.Position;
+    //         var target = CameraTarget;
+    //         var multiplier = StateMachine.State == StTempleFall ? 8 : 1f;
+    //                 
+    //         level.Camera.Position = from + (target - from) * (1f - (float)Math.Pow(0.01f / multiplier, Engine.DeltaTime));
+    //     }
+    // }
 
     public void SwitchRoom(Room nextRoom)
     {
@@ -53,29 +97,32 @@ public class Level : MonoBehaviour
         nextRoom.gameObject.SetActive(true);
         
         CurrentRoom = nextRoom;
-        Player.Added(nextRoom);
+        // player.Added(nextRoom);
         
-        FreezeLevel(RoomSwitchTime);
+        FreezeLevel(roomTransitionTime);
     }
     
     public void SpawnPlayer()
     {
-        Player.gameObject.SetActive(true);
-        Player.OnSpawn();
+        player.gameObject.SetActive(true);
+        player.OnSpawn();
     }
     
     public void FreezeLevel(float time)
     {
         Game.Pause();
         
-        // adjust camera
-        float x = CurrentRoom.OriginWS.x + 160;
-        float y = CurrentRoom.OriginWS.y + 94;
-        
-        EffectManager.MoveCam(new Vector2(x, y), time).SetEase(Ease.OutCubic).OnComplete(() =>
+        EffectManager.MoveCam(FindRoomStartCamPos(CurrentRoom), time).SetEase(Ease.OutCubic).OnComplete(() =>
         {
             Game.Resume();
-            Player.OnSwitchRoomEnd();
+            player.OnResume();
         });
+    }
+
+    Vector2 FindRoomStartCamPos(Room room)
+    {
+        float x = room.BoundRect.position.x + 160;
+        float y = room.BoundRect.position.y + 94;
+        return new Vector2(x, y);
     }
 } 

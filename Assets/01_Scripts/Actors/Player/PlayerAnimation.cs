@@ -149,8 +149,8 @@ public partial class Player
         // after switching animation
         if (Speed.x != 0)
         {
-            facing = Speed.x > 0 ? Facing.Right : Facing.Left;
-            SR.flipX = (facing == Facing.Left) ^ flipAnimFlag;
+            facing = Speed.x > 0 ? Facings.Right : Facings.Left;
+            SR.flipX = (facing == Facings.Left) ^ flipAnimFlag;
         }
         
         
@@ -185,6 +185,192 @@ public partial class Player
         if(gameObject.activeSelf)
             anim.Play(nextAnim);
     }
+
+    #region original script
+
+    // private void UpdateSprite()
+    // {
+    //     //Tween
+    //     Sprite.Scale.X = Calc.Approach(Sprite.Scale.X, 1f, 1.75f * Engine.DeltaTime);
+    //     Sprite.Scale.Y = Calc.Approach(Sprite.Scale.Y, 1f, 1.75f * Engine.DeltaTime);
+    //
+    //     //Animation
+    //     if (InControl && Sprite.CurrentAnimationID != PlayerSprite.Throw && StateMachine.State != StTempleFall && 
+    //         StateMachine.State != StReflectionFall && StateMachine.State != StStarFly && StateMachine.State != StCassetteFly)
+    //     {
+    //         if (StateMachine.State == StAttract)
+    //         {
+    //             Sprite.Play(PlayerSprite.FallFast);
+    //         }
+    //         else if (StateMachine.State == StSummitLaunch)
+    //         {
+    //             Sprite.Play(PlayerSprite.Launch);
+    //         }
+    //         // picking up
+    //         else if (StateMachine.State == StPickup)
+    //         {
+    //             Sprite.Play(PlayerSprite.PickUp);
+    //         }
+    //         // swiming
+    //         else if (StateMachine.State == StSwim)
+    //         {
+    //             if (Input.MoveY.Value > 0)
+    //                 Sprite.Play(PlayerSprite.SwimDown);
+    //             else if (Input.MoveY.Value < 0)
+    //                 Sprite.Play(PlayerSprite.SwimUp);
+    //             else
+    //                 Sprite.Play(PlayerSprite.SwimIdle);
+    //         }
+    //         // dream dashing
+    //         else if (StateMachine.State == StDreamDash)
+    //         {
+    //             if (Sprite.CurrentAnimationID != PlayerSprite.DreamDashIn && Sprite.CurrentAnimationID != PlayerSprite.DreamDashLoop)
+    //                 Sprite.Play(PlayerSprite.DreamDashIn);
+    //         }
+    //         else if (Sprite.DreamDashing && Sprite.LastAnimationID != PlayerSprite.DreamDashOut)
+    //         {
+    //             Sprite.Play(PlayerSprite.DreamDashOut);
+    //         }
+    //         else if (Sprite.CurrentAnimationID != PlayerSprite.DreamDashOut)
+    //         {
+    //             // during dash
+    //             if (DashAttacking)
+    //             {
+    //                 if (onGround && DashDir.Y == 0 && !Ducking && Speed.X != 0 && moveX == -Math.Sign(Speed.X))
+    //                 {
+    //                     if (Scene.OnInterval(.02f))
+    //                         Dust.Burst(Position, Calc.Up, 1);
+    //                     Sprite.Play(PlayerSprite.Skid);
+    //                 }
+    //                 else
+    //                     Sprite.Play(PlayerSprite.Dash);
+    //             }
+    //             // climbing
+    //             else if (StateMachine.State == StClimb)
+    //             {
+    //                 if (lastClimbMove < 0)
+    //                     Sprite.Play(PlayerSprite.ClimbUp);
+    //                 else if (lastClimbMove > 0)
+    //                     Sprite.Play(PlayerSprite.WallSlide);
+    //                 else if (!CollideCheck<Solid>(Position + new Vector2((int)Facing, 6)))
+    //                     Sprite.Play(PlayerSprite.Dangling);
+    //                 else if (Input.MoveX == -(int)Facing)
+    //                 {
+    //                     if (Sprite.CurrentAnimationID != PlayerSprite.ClimbLookBack)
+    //                         Sprite.Play(PlayerSprite.ClimbLookBackStart);
+    //                 }
+    //                 else
+    //                     Sprite.Play(PlayerSprite.WallSlide);
+    //             }
+    //             // ducking
+    //             else if (Ducking && StateMachine.State == StNormal)
+    //             {
+    //                 Sprite.Play(PlayerSprite.Duck);
+    //             }
+    //             else if (onGround)
+    //             {
+    //                 fastJump = false;
+    //                 if (Holding == null && moveX != 0 && CollideCheck<Solid>(Position + Vector2.UnitX * moveX))
+    //                 {
+    //                     Sprite.Play("push");
+    //                 }
+    //                 else if (Math.Abs(Speed.X) <= RunAccel / 40f && moveX == 0)
+    //                 {
+    //                     if (Holding != null)
+    //                     {
+    //                         Sprite.Play(PlayerSprite.IdleCarry);
+    //                     }
+    //                     else if (!Scene.CollideCheck<Solid>(Position + new Vector2((int)Facing * 1, 2)) && !Scene.CollideCheck<Solid>(Position + new Vector2((int)Facing * 4, 2)) && !CollideCheck<JumpThru>(Position + new Vector2((int)Facing * 4, 2)))
+    //                     {
+    //                         Sprite.Play(PlayerSprite.FrontEdge);
+    //                     }
+    //                     else if (!Scene.CollideCheck<Solid>(Position + new Vector2(-(int)Facing * 1, 2)) && !Scene.CollideCheck<Solid>(Position + new Vector2(-(int)Facing * 4, 2)) && !CollideCheck<JumpThru>(Position + new Vector2(-(int)Facing * 4, 2)))
+    //                     {
+    //                         Sprite.Play("edgeBack");
+    //                     }
+    //                     else if (Input.MoveY.Value == -1)
+    //                     {
+    //                         if (Sprite.LastAnimationID != PlayerSprite.LookUp)
+    //                             Sprite.Play(PlayerSprite.LookUp);
+    //                     }
+    //                     else
+    //                     {
+    //                         if (Sprite.CurrentAnimationID != null && !Sprite.CurrentAnimationID.Contains("idle"))
+    //                             Sprite.Play(PlayerSprite.Idle);
+    //                     }
+    //                 }
+    //                 else if (Holding != null)
+    //                 {
+    //                     Sprite.Play(PlayerSprite.RunCarry);
+    //                 }
+    //                 else if (Math.Sign(Speed.X) == -moveX && moveX != 0)
+    //                 {
+    //                     if (Math.Abs(Speed.X) > MaxRun)
+    //                         Sprite.Play(PlayerSprite.Skid);
+    //                     else if (Sprite.CurrentAnimationID != PlayerSprite.Skid)
+    //                         Sprite.Play(PlayerSprite.Flip);
+    //                 }
+    //                 else if (windDirection.X != 0 && windTimeout > 0f && (int)Facing == -Math.Sign(windDirection.X))
+    //                 {
+    //                     Sprite.Play(PlayerSprite.RunWind);
+    //                 }
+    //                 else if (!Sprite.Running)
+    //                 {
+    //                     if (Math.Abs(Speed.X) < MaxRun * .5f)
+    //                         Sprite.Play(PlayerSprite.RunSlow);
+    //                     else
+    //                         Sprite.Play(PlayerSprite.RunFast);
+    //                 }
+    //             }
+    //             // wall sliding
+    //             else if (wallSlideDir != 0 && Holding == null)
+    //             {
+    //                 Sprite.Play(PlayerSprite.WallSlide);
+    //             }
+    //             // jumping up
+    //             else if (Speed.Y < 0)
+    //             {
+    //                 if (Holding != null)
+    //                 {
+    //                     Sprite.Play(PlayerSprite.JumpCarry);
+    //                 }
+    //                 else if (fastJump || Math.Abs(Speed.X) > MaxRun)
+    //                 {
+    //                     fastJump = true;
+    //                     Sprite.Play(PlayerSprite.JumpFast);
+    //                 }
+    //                 else
+    //                     Sprite.Play(PlayerSprite.JumpSlow);
+    //             }
+    //             // falling down
+    //             else
+    //             {
+    //                 if (Holding != null)
+    //                 {
+    //                     Sprite.Play(PlayerSprite.FallCarry);
+    //                 }
+    //                 else if (fastJump || Speed.Y >= MaxFall || level.InSpace)
+    //                 {
+    //                     fastJump = true;
+    //                     if (Sprite.LastAnimationID != PlayerSprite.FallFast)
+    //                         Sprite.Play(PlayerSprite.FallFast);
+    //                 }
+    //                 else
+    //                     Sprite.Play(PlayerSprite.FallSlow);
+    //             }
+    //         }
+    //     }
+    //
+    //     if (StateMachine.State != Player.StDummy)
+    //     {
+    //         if (level.InSpace)
+    //             Sprite.Rate = .5f;
+    //         else
+    //             Sprite.Rate = 1f;
+    //     }
+    // }
+
+    #endregion
 }
 
 

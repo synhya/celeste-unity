@@ -13,88 +13,143 @@ public class RoomEditor : Editor
     private void OnEnable()
     {
         var r = target as Room;
-        
-        // set bound if zero.
-        // if(r.Bound.center = Vector3.zero)
-        
-        boundHandle = new BoxBoundsHandle();
-        boundHandle.center = r.transform.position;
-        boundHandle.size = Vector2.one * 10;
+
+        if (r)
+        {
+            var position = r.transform.position;
+            position = Vector3Int.RoundToInt(position);
+            r.transform.position = position;
+
+            boundHandle = new BoxBoundsHandle();
+            boundHandle.size = (Vector2)r.BoundRect.size;
+            boundHandle.center = (Vector2)position + (r.BoundRect.size / 2);
+
+            if (r.TransitionPos == Vector2Int.zero)
+            {
+                r.TransitionPos = Vector2Int.RoundToInt(boundHandle.center);
+            }
+        }
+    }
+
+    private void OnPreSceneGUI()
+    {
+        var r = target as Room;
+
+        if (r)
+        {
+            boundHandle.center = Vector3Int.RoundToInt(r.transform.position);
+        }
     }
 
     private void OnSceneGUI()
     {
         var r = target as Room;
-        
-        var originWS = Vector2Int.RoundToInt(r.transform.position);
-        r.SpawnPos = Vector2Int.Max(r.SpawnPos, originWS);
-        
-        Handles.color = Color.green;
-        Handles.DrawSolidDisc((Vector3Int)r.SpawnPos, new Vector3(0, 0, -1), 2f);
-        
-        // draw 320, 184 from origin
-        var rect = new Rect(originWS, new Vector2(320, 184));
-        Handles.color = Color.cyan;
-        Handles.DrawSolidRectangleWithOutline(rect, Color.clear, Color.cyan);
-        
-        Handles.color = Color.yellow;
-        for (int i = 0; i < r.Doors.Length; i++)
-        {
-            rect = new Rect(r.Doors[i].position + originWS, r.Doors[i].size);
-            Handles.DrawSolidRectangleWithOutline(rect, Color.clear, Color.yellow);
-        }
-        
-        // bound handle
-        Handles.color = new Color(0.52f, 1f, 0.2f);
 
-        boundHandle.axes = PrimitiveBoundsHandle.Axes.X | PrimitiveBoundsHandle.Axes.Y;
-        boundHandle.DrawHandle();
-        
-        
-        // snap position to int
-        if (Event.current.type == EventType.MouseUp && Event.current.button == 0)
+        if (r)
         {
-            // round by 8
-            r.transform.position = Vector3Int.RoundToInt(r.transform.position / 8) * 8;
-            r.SpawnPos.y = (r.SpawnPos.y / 8) * 8;
+            var bottomLeft = Vector2Int.RoundToInt(boundHandle.center - boundHandle.size / 2);
+            var topRight = Vector2Int.RoundToInt(boundHandle.center + boundHandle.size / 2);
+            
+            // spawn position
+            r.SpawnPos = Vector2Int.Max(r.SpawnPos, bottomLeft);
+            r.SpawnPos = Vector2Int.Min(r.SpawnPos, topRight);
+            Handles.color = Color.green;
+            Handles.DrawSolidDisc((Vector3Int)r.SpawnPos, new Vector3(0, 0, -1), 2f);
+        
+            // transition target position
+            r.TransitionPos.PushOutsideOfBoundary(bottomLeft - Vector2Int.one, topRight + Vector2Int.one);
 
-            RoomLinkCheck(r);
+            Handles.color = Color.cyan;
+            Handles.DrawSolidDisc((Vector3Int)r.TransitionPos, new Vector3(0, 0, -1), 2f);
+
+            // bound handle
+            Handles.color = new Color(0.52f, 1f, 0.2f);
+            boundHandle.axes = PrimitiveBoundsHandle.Axes.X | PrimitiveBoundsHandle.Axes.Y;
+            boundHandle.DrawHandle();
+        
+            // doors
+            Handles.color = Color.red;
+            for (int i = 0; i < r.RoomLinks.Length; i++)
+            {
+                Vector2 start = bottomLeft, end = bottomLeft;
+                var door = r.RoomLinks[i].Door;
+                switch (door.Dir)
+                {
+                    case DoorDirections.Up:
+                        start.x += door.StartPos;
+                        start.y += r.BoundRect.size.y;
+                        end = start;
+                        end.x += door.Length;
+                        break;
+                    case DoorDirections.Down:
+                        start.x += door.StartPos;
+                        end = start;
+                        end.x += door.Length;
+                        break;
+                    case DoorDirections.Right:
+                        start.x += r.BoundRect.size.x;
+                        start.y += door.StartPos;
+                        end = start;
+                        end.y += door.Length;
+                        break;
+                    case DoorDirections.Left:
+                        start.y += door.StartPos;
+                        end = start;
+                        end.y += door.Length;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+                Handles.DrawLine(start, end);
+            }
+        
+        
+            // snap position to int
+            if (Event.current.type == EventType.MouseUp && Event.current.button == 0)
+            {
+                // round by 8
+                r.transform.position = Vector3Int.RoundToInt(r.transform.position / 4) * 4;
+                r.SpawnPos.y = (r.SpawnPos.y / 8) * 8;
+            
+                // bound save
+                r.BoundRect.size = Vector2Int.RoundToInt(boundHandle.size);
+            }
         }
     }
-    private void RoomLinkCheck(Room r)
-    {
-        // if next room exists -> link
-        var p = r.transform.parent;
-        var curIdx = r.transform.GetSiblingIndex() + 1;
-        Transform t = p.childCount - 1 >= curIdx + 1 ? p.GetChild(curIdx + 1) : null;
-        if (t)
-        {
-            r.NextRooms ??= new Room[1];
-            if(t.TryGetComponent(out Room nextR))
-                r.NextRooms[0] ??= nextR;
-        }
-    }
-
+    
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
+        var r = target as Room;
         
-        if (Event.current.type == EventType.KeyDown || Event.current.type == EventType.MouseDown)
+        if (r && Event.current.type == EventType.KeyDown || Event.current.type == EventType.MouseDown)
         {
             // snap spawn pos
-            var r = target as Room;
-            
             var pos = r.SpawnPos;
             pos.y = Mathf.RoundToInt(pos.y / 8f) * 8;
             r.SpawnPos = pos;
             
             // snap door
-            for (int i = 0; i < r.Doors.Length; i++)
+            for (int i = 0; i < r.RoomLinks.Length; i++)
             {
-                r.Doors[i].position = Vector2Int.RoundToInt((Vector2)r.Doors[i].position / 8f) * 8;
+                r.RoomLinks[i].Door.Length = Mathf.RoundToInt(r.RoomLinks[i].Door.Length / 8f) * 8;
+                r.RoomLinks[i].Door.StartPos = Mathf.RoundToInt(r.RoomLinks[i].Door.StartPos / 8f) * 8;
             }
-            
-            RoomLinkCheck(r);
         }
     }
+    
+    // private void RoomLinkCheck(Room r)
+    // {
+    //     // if next room exists -> link
+    //     var p = r.transform.parent;
+    //     var curIdx = r.transform.GetSiblingIndex() + 1;
+    //     Transform t = p.childCount - 1 >= curIdx + 1 ? p.GetChild(curIdx + 1) : null;
+    //     if (t)
+    //     {
+    //         r.NextRooms ??= new Room[1];
+    //         if(t.TryGetComponent(out Room nextR))
+    //             r.NextRooms[0] ??= nextR;
+    //     }
+    // }
+    //
 }

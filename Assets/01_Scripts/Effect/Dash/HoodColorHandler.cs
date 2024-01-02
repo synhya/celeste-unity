@@ -51,7 +51,7 @@ public class HoodColorHandler : MonoBehaviour
 
     private void Start()
     {
-        player = Game.I.CurrentLevel.Player;
+        player = Game.MainPlayer;
         targetMat = player.SR.material;
         tableTex = Instantiate(tableTex); // in order to avoid overriding source tex.
         targetMat.SetTexture("_LookUpTex", tableTex);

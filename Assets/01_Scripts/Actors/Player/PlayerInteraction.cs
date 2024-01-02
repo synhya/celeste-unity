@@ -7,7 +7,6 @@ using static UnityEngine.Mathf;
 // funcs in this part is called every frame
 public partial class Player
 {
-    [FormerlySerializedAs("SpringYPower")]
     [Header("Interaction Settings")]
     [SerializeField] private float boostPower = 300f;
 
@@ -49,35 +48,48 @@ public partial class Player
     {
         var hitbox = HitBoxWS;
         
-        // doorCheck  precedes fall
-        var doors = Room.Doors;
-        for (int i = 0; i < doors.Length; i++)
+        // room bound check
         {
-            if (hitbox.Overlaps(doors[i]))
-                Level.SwitchRoom(Room.NextRooms[i]);
+            // up
+            if (RightWS > Room.BoundRect.yMax)
+            {
+                
+            }
+            
+            // bottom
+            else if (PositionWS.y < Room.BoundRect.yMin)
+            {
+                // check room first
+            
+                
+                
+                
+                if(Speed.y < 0f)
+                    Die(Vector2.up);
+            }
+            
+            //right
+            if (PositionWS.x > Room.BoundRect.xMin)
+            {
+                
+            }
+            
+            //left
+            if (PositionWS.x > Room.BoundRect.xMax)
+            {
+                
+            }
         }
-
-        if (invinsibleTimer > 0f) invinsibleTimer -= deltaTime; // -> 수정필요
-        else
+        
+        // spike check
+        if (OverlapTileFlagCheckOS(TileType.Obstacle, Vector2Int.zero, out var obsType))
         {
-            // fall death check 320 * 180
-            if (PositionWS.y < Room.OriginWS.y && Speed.y < 0f)
-            {
-                // should also check if there is another room!
+            var deathDir = Vector2.zero;
             
-                Die(Vector2.up);
-            }
-
-            // spike check
-            if (OverlapTileFlagCheckOS(TileType.Obstacle, Vector2Int.zero, out var obsType))
-            {
-                var deathDir = Vector2.zero;
+            if (obsType.HasFlag(TileType.Spike))
+                deathDir = -Speed;
             
-                if (obsType.HasFlag(TileType.Spike))
-                    deathDir = -Speed;
-            
-                Die(deathDir.normalized);
-            }
+            Die(deathDir.normalized);
         }
         
         // ground check

@@ -11,11 +11,7 @@ public class Actor : Entity
 {
     private Tilemap tileMap;
     protected Room Room => Level.CurrentRoom;
-
-    public override void Added(Room room)
-    {
-        
-    }
+    private Vector2 overrideSpeed;
     
     protected override void Start()
     {
@@ -23,22 +19,50 @@ public class Actor : Entity
         Level.AllActors.Add(this);
         tileMap = Level.Map; 
     }
-    
-    public void MoveX(float amount, Action<CollisionData> onCollide)
+
+    protected virtual void Update()
     {
-        Remainder.x += amount;
+        if (overrideSpeed.x != 0)
+        {
+            Speed.x = overrideSpeed.x;
+            overrideSpeed.x = 0;
+        }
+        if (overrideSpeed.y != 0)
+        {
+            Speed.y = overrideSpeed.y;
+            overrideSpeed.y = 0;
+        }
+    }
+    
+    protected void MoveTowardsH(int targetX, float speed)
+    {
+        var leftDist = targetX - PositionWS.x;
+        var maxSpeed = leftDist / Time.deltaTime;
+        overrideSpeed.x = Mathf.Sign(leftDist) * Mathf.Max(maxSpeed, speed);
+    }
+
+    protected void MoveTowardsV(int targetY, float speed)
+    {
+        var leftDist = targetY - PositionWS.y;
+        var maxSpeed = leftDist / Time.deltaTime;
+        overrideSpeed.y = Mathf.Sign(leftDist) * Mathf.Max(maxSpeed, speed);
+    }
+
+    public void MoveH(float amount, Action<CollisionData> onCollide)
+    {
+        Remainder += Vector2.right;
         int move = Mathf.RoundToInt(Remainder.x);
 
         if (move != 0)
         {
-            Remainder.x -= move;
+            Remainder -= Vector2.right;
             int sign = (int)Mathf.Sign(move);
 
             while (move != 0)
             {
                 if(!CollideCheck(Vector2Int.right * sign))
                 {
-                    PositionWS.x += sign;
+                    PositionWS += Vector2Int.right;
                     move -= sign;
                 }
                 else
@@ -50,22 +74,22 @@ public class Actor : Entity
         }
     }
     
-    public void MoveY(float amount, Action<CollisionData> onCollide)
+    public void MoveV(float amount, Action<CollisionData> onCollide)
     {
-        Remainder.y += amount;
+        Remainder += Vector2.up;
         int move = Mathf.RoundToInt(Remainder.y);
             
 
         if (move != 0)
         {
-            Remainder.y -= move;
+            Remainder -= Vector2.up;
             int sign = (int)Mathf.Sign(move);
 
             while (move != 0)
             {
                 if(!CollideCheck(Vector2Int.up * sign))
                 {
-                    PositionWS.y += sign;
+                    PositionWS += Vector2Int.up;
                     move -= sign;
                 }
                 else
@@ -92,7 +116,7 @@ public class Actor : Entity
         if (!Collideable) return false;
         
         var was = PositionWS;
-        PositionWS.y -= 1;
+        PositionWS -= Vector2Int.up;
         var ret = CollideCheck(solid);
         PositionWS = was;
 

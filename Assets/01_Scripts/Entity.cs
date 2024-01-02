@@ -12,38 +12,53 @@ public abstract class Entity : MonoBehaviour
     protected Level Level => Game.I.CurrentLevel;
     
     protected bool Collideable = true;
-    
-    [Header("Entity Settings")]
-    public Vector2Int HitboxBottomLeftOffset;
-    public Vector2Int HitboxSize;
 
-    [HideInInspector] public Vector2Int PositionWS;
-    [HideInInspector] public Vector2Int PreviousPos;
+    [Header("Entity Settings")]
+    [SerializeField] private Transform targetTransform;
+    public Vector2Int HitboxBottomLeftOffset;
+    [FormerlySerializedAs("HitboxSize")]
+    [SerializeField] private Vector2Int hitboxSize;
+    private Vector2Int positionWS;
     
-    private RectInt varBox;
-    public RectInt HitBoxWS
+    [HideInInspector] public Vector2Int PreviousPos;
+    [HideInInspector] public RectInt HitBoxWS;
+    
+    #region Properties
+    public Vector2Int PositionWS
     {
-        get {
-            varBox.position = PositionWS + HitboxBottomLeftOffset;
-            varBox.size = HitboxSize;
-            return varBox;
+        get => positionWS;
+        set 
+        {
+            HitBoxWS.position = PositionWS + HitboxBottomLeftOffset;
+            positionWS = value;
         }
     }
+    public Vector2Int HitboxSize
+    {
+        get => hitboxSize;
+        set 
+        {
+            HitBoxWS.size = hitboxSize;
+            hitboxSize = value;
+        }
+    }
+    
+    #endregion
 
     #region Pos Shortcut
 
-    public Vector2 CenterWS => PositionWS + Vector2.up * (HitboxSize.y * 0.5f);
-    public Vector2 CenterRightWS => CenterWS + Vector2.right * (HitboxSize.x * 0.5f);
-    public Vector2 CenterLeftWS => CenterWS - Vector2.right * (HitboxSize.x * 0.5f);
-    public Vector2 BottonRightWS => PositionWS + Vector2.right * (HitboxSize.x * 0.5f);
-    public Vector2 BottonLeftWS => PositionWS - Vector2.right * (HitboxSize.x * 0.5f);    
-
-    #endregion
-
+    public Vector2 CenterWS => HitBoxWS.center;
+    public Vector2 CenterRightWS => CenterWS + Vector2.right * (hitboxSize.x * 0.5f);
+    public Vector2 CenterLeftWS => CenterWS - Vector2.right * (hitboxSize.x * 0.5f);
+    public Vector2 BottomRightWS => new Vector2(HitBoxWS.xMax, HitBoxWS.yMin);
+    public Vector2 BottomLeftWS => HitBoxWS.position;  
+    
     public int RightWS => HitBoxWS.xMax;
     public int LeftWS => HitBoxWS.xMin;
     public int DownWS => HitBoxWS.yMin;
     public int UpWS => HitBoxWS.yMax;
+
+    #endregion
 
     public const int TileSize = 8;
 
@@ -51,20 +66,26 @@ public abstract class Entity : MonoBehaviour
     [HideInInspector] public Vector2 Speed;
     protected Vector2 Remainder;
     
-    public virtual void Added(Room room)
+    // left to implement.
+    public virtual void Added(Level level)
     {
+    }
+    
+    protected virtual void Awake()
+    {
+        targetTransform ??= transform;
     }
     
     protected virtual void Start()
     {
-        PositionWS = Vector2Int.RoundToInt(transform.position);
+        PositionWS = Vector2Int.RoundToInt(targetTransform.position);
     }
 
     protected void UpdatePosition()
     {
         if (PositionWS != PreviousPos)
         {
-            transform.position = (Vector3Int)PositionWS;
+            targetTransform.position = (Vector3Int)PositionWS;
         }
         
         PreviousPos = PositionWS;

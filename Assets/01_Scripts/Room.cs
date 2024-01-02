@@ -5,51 +5,59 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
+
+public enum DoorDirections
+{
+    Up,
+    Down,
+    Right,
+    Left,
+}
+
+[Serializable]
+public struct Door
+{
+    public int StartPos;
+    public int Length;
+    public DoorDirections Dir;
+}
+
+[Serializable]
+public struct RoomLink
+{
+    public Door Door;
+    public Room Room;
+}
+
 /// <summary>
 /// entire stage split to smaller levels(rooms)
 /// </summary>
 public class Room : MonoBehaviour
 {
-
-    [Header("Player Settings")]
-    [Tooltip("In case player is coming from down")]
-    public float EnteringJumpPower = 50f;
-    
     public Vector2Int SpawnPos;
-    [Tooltip("In case room is too large")]
-    public bool CamHasToFollowPlayer = false;
+    [FormerlySerializedAs("TransitionTargetPos")]
+    public Vector2Int TransitionPos;
     
-    [Header("Link Settings")]
-    // doors can be in bottom.
-    [Tooltip("Offset from RoomOrigin")]
-    public RectInt[] Doors;
-    [Tooltip("Index should match linked doors")]
-    public Room[] NextRooms;
+    public RoomLink[] RoomLinks;
     
     public HashSet<Solid> Solids;
     public HashSet<Trigger> Triggers;
     
-    public Vector2Int OriginWS => originWs;
-    private Vector2Int originWs;
+    [FormerlySerializedAs("BoundRectWS")]
+    public RectInt BoundRect
+        = new RectInt(Vector2Int.zero, new Vector2Int(CamWidth, CamHeight));
     
-    public RectInt Bound;
-    
+    public const int CamWidth = 320;
+    public const int CamHeight = 184;
     
     private void Awake()
     {
-        // Solids, Actors(except player?), Tilemap will be set in start method of each class
-        
         Solids = new HashSet<Solid>();
         Triggers = new HashSet<Trigger>();
-        
-        // var cellSize = StaticTilemap.cellSize;
-        // var bound = StaticTilemap.cellBounds;
-        originWs = Vector2Int.RoundToInt(transform.position);
 
-        for (int i = 0; i < Doors.Length; i++)
-        {
-            Doors[i].position += originWs;
-        }
+        var pos = Vector2Int.RoundToInt(transform.position);
+
+        BoundRect.position = pos - BoundRect.size / 2;
     }
 }
 

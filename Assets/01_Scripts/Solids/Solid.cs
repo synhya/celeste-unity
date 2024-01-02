@@ -38,7 +38,7 @@ public class Solid : Entity
             if (moveX != 0)
             {
                 Remainder.x -= moveX;
-                PositionWS.x += moveX;
+                PositionWS += Vector2Int.right;
                 if (moveX > 0)
                 {
                     foreach (var actor in Level.AllActors)
@@ -46,14 +46,14 @@ public class Solid : Entity
                         if (OverlapCheck(actor))
                         {
                             // Push right
-                            actor.MoveX(this.RightWS - actor.LeftWS, actor.Squish);
+                            actor.MoveH(this.RightWS - actor.LeftWS, actor.Squish);
                         }
                         else if (riding.Contains(actor))
                         {
                             // Carry right
                             // there is no danger of squishing here
                             // nothing happens if actor hits wall!
-                            actor.MoveX(moveX, null);
+                            actor.MoveH(moveX, null);
                         }
                     }
                 }
@@ -64,12 +64,12 @@ public class Solid : Entity
                         if (OverlapCheck(actor))
                         {
                             // Push left
-                            actor.MoveX(this.LeftWS - actor.RightWS, actor.Squish);
+                            actor.MoveH(this.LeftWS - actor.RightWS, actor.Squish);
                         }
                         else if (riding.Contains(actor))
                         {
                             // Carry left
-                            actor.MoveX(moveX, null);
+                            actor.MoveH(moveX, null);
                         }
                     }
                 }
@@ -78,7 +78,7 @@ public class Solid : Entity
             if (moveY != 0)
             {
                 Remainder.y -= moveY;
-                PositionWS.y += moveY;
+                PositionWS += Vector2Int.up;
                 if (moveY > 0)
                 {
                     foreach (var actor in Level.AllActors)
@@ -86,7 +86,7 @@ public class Solid : Entity
                         if (OverlapCheck(actor))
                         {
                             // Carry up may squish if hit ceiling
-                            actor.MoveY(moveY, actor.Squish);
+                            actor.MoveV(moveY, actor.Squish);
                         }
                     }
                 }
@@ -97,12 +97,12 @@ public class Solid : Entity
                         if (OverlapCheck(actor))
                         {
                             // Push down
-                            actor.MoveY(this.DownWS - actor.UpWS, actor.Squish);
+                            actor.MoveV(this.DownWS - actor.UpWS, actor.Squish);
                         }
                         else if (riding.Contains(actor))
                         {
                             // Carry down
-                            actor.MoveY(moveY, null);
+                            actor.MoveV(moveY, null);
                         }
                     }
                 }

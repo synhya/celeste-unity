@@ -7,7 +7,8 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Serialization;
 using static UnityEngine.Mathf;
-enum Facing
+
+public enum Facings
 {
     Right = 1,
     Left = -1,
@@ -17,9 +18,6 @@ public partial class Player : Actor
 {
     [Header("OtherObjs")]
     [SerializeField] private GameObject deadBodyPrefab;
-
-    private const float InvinsibleTimeOnSwitch = 0.5f;
-    private float invinsibleTimer;
 
     private float gravityAccel;
     
@@ -31,7 +29,7 @@ public partial class Player : Actor
     private int wallSlideDir;
     private bool wasDucking;
     
-    private Facing facing;
+    private Facings facing;
 
     // State Machine
     private StateMachine sm;
@@ -40,6 +38,10 @@ public partial class Player : Actor
     
     public const int StateNormal = 0;
     public const int StateDash = 1;
+    public const int StateIntroRespawn = 2;
+    public const int StateIntroWalk = 3;
+    public const int StateIntroJump = 4;
+    public const int StateReflectionFall = 5; // ?
     
     // effect
     [HideInInspector] public SpriteRenderer SR;
@@ -55,6 +57,10 @@ public partial class Player : Actor
         sm.SetCallbacks(StateNormal, NormalUpdate, NormalBegin, null);
         sm.SetCallbacks(StateDash, DashUpdate, DashBegin, DashEnd);
         sm.State = StateNormal;
+
+        normalHitBoxSize = HitboxSize;
+        duckHitBoxSize = normalHitBoxSize;
+        duckHitBoxSize.y = DuckHitboxY;
     }
 
     public void OnSpawn()
@@ -62,16 +68,16 @@ public partial class Player : Actor
         Collideable = true;
         wasGround = true;
         
-        facing = Facing.Right;
+        facing = Facings.Right;
         SR.flipX = false;
 
         Speed = Vector2.zero;
         Remainder = Vector2.zero;
         PositionWS = Room.SpawnPos;
     }
-    
 
-    private void Update()
+
+    protected override void Update()
     {
         if(Game.IsPaused) return;
         
@@ -103,6 +109,7 @@ public partial class Player : Actor
             {
                 if (dashCoolDownTimer > 0)
                     dashCoolDownTimer -= deltaTime;
+                
                 if (dashRefillCooldownTimer > 0)
                     dashRefillCooldownTimer -= deltaTime;
                 else if (onGround)
@@ -122,23 +129,23 @@ public partial class Player : Actor
             
             //Var Jump
             if (varJumpTimer > 0f) varJumpTimer -= deltaTime;
-            
-            
         }
         
         
         // StateMachine.Update
         sm.Update();
         
-        // should be called after speed is confirmed
-        SetAnimation();
-
-        var moveAmount = Speed *  deltaTime;
+        base.Update();
         
-        MoveX(moveAmount.x, null);
-        MoveY(moveAmount.y, null);
+        var moveAmount = Speed * Time.deltaTime;
+        
+        MoveH(moveAmount.x, null);
+        MoveV(moveAmount.y, null);
 
         UpdatePosition();
+        
+        // should be called after speed is confirmed
+        SetAnimation();
 
         SetPreviousValues();
     }
@@ -154,28 +161,10 @@ public partial class Player : Actor
     {
         Die(Vector2.up);
     }
-    
 
-    public override void Added(Room room)
+    public void OnResume()
     {
-        base.Added(room);
-        // level = SceneAs<Level>(); ??
-        
-        RefillDash();
-        
-        // if(PositionWS.x > Level.BOunds)
-        
-        
-        
-        
-        // if going up -> speedup
-        if (Speed.y > 0)
-            Speed.y += room.EnteringJumpPower;
-        
-    }
-    public void OnSwitchRoomEnd()
-    {
-        invinsibleTimer = InvinsibleTimeOnSwitch;
+
     }
     public void OnAddStrawberry(int id)
     {

@@ -18,8 +18,6 @@ public class EffectManager : MonoBehaviour
     private DashLinePool dashLinePool;
     private DashTrailPool dashTrailPool;
     private HoodColorHandler hoodColorHandler;
-    private Camera cam;
-    public static Camera MainCam => instance.cam;
 
     [SerializeField] private RippleHandler rippleHandler;
 
@@ -50,21 +48,15 @@ public class EffectManager : MonoBehaviour
         dashLinePool = GetComponent<DashLinePool>();
         hoodColorHandler = GetComponent<HoodColorHandler>();
         dashTrailPool = GetComponent<DashTrailPool>();
-        cam = Camera.main;
     }
 
     #region Camera effects
     
     public static Tweener ShakeCam(float duration, float strength) 
-        => instance.cam.DOShakePosition(duration, strength);
+        => Game.MainCam.DOShakePosition(duration, strength);
     
     public static Tweener MoveCam(Vector2 posWS, float time)
-        => instance.cam.transform.DOMove(new Vector3(posWS.x, posWS.y, -10), time);
-    
-    public void Ripple(Vector2 center, float duration, float strength)
-    {
-        // TODO: Ripple when dashing.
-    }
+        => Game.MainCam.transform.DOMove(new Vector3(posWS.x, posWS.y, -10), time);
 
     #endregion
 }
