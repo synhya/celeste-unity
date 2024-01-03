@@ -47,6 +47,9 @@ public partial class Player
 
         PositionWS = Vector2Int.RoundToInt(Vector2.MoveTowards(PositionWS, TransitionTarget, 140 * Time.deltaTime));
 
+        // set speed just for animation
+        Speed = TransitionTarget - PositionWS;
+        
         if (PositionWS == TransitionTarget)
         {
             // no more extra moves.

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Game : MonoBehaviour
 {
@@ -11,10 +12,10 @@ public class Game : MonoBehaviour
 
     [SerializeField] private Level startingLevel;
     [SerializeField] private GameObject playerPrefab;
-    [SerializeField] private Transform camHolder;
+    [SerializeField] private Transform camShaderT;
     [HideInInspector] public Level CurrentLevel;
 
-    public static Transform CamHolder => instance.camHolder;
+    public static Transform CamShakerT => instance.camShaderT;
     public static Camera MainCam => instance.cam;
     public const int Width = 320;
     public const int Height = 180;

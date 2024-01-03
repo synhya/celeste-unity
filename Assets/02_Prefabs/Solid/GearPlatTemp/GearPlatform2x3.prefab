@@ -12,13 +12,21 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 689971580050500819, guid: 10cc5ec46aa5f06458a5f7a6bc8f919c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 5566008088839716060, guid: 10cc5ec46aa5f06458a5f7a6bc8f919c, type: 3}
+      propertyPath: GearOffset
+      value: 12
+      objectReference: {fileID: 0}
     - target: {fileID: 5566008088839716060, guid: 10cc5ec46aa5f06458a5f7a6bc8f919c, type: 3}
       propertyPath: HitBoxWS.x
-      value: 1128
+      value: -48
       objectReference: {fileID: 0}
     - target: {fileID: 5566008088839716060, guid: 10cc5ec46aa5f06458a5f7a6bc8f919c, type: 3}
       propertyPath: HitBoxWS.y
-      value: 920
+      value: -150
       objectReference: {fileID: 0}
     - target: {fileID: 5566008088839716060, guid: 10cc5ec46aa5f06458a5f7a6bc8f919c, type: 3}
       propertyPath: HitboxSize.x
@@ -34,11 +42,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5566008088839716060, guid: 10cc5ec46aa5f06458a5f7a6bc8f919c, type: 3}
       propertyPath: hitBoxSize.x
-      value: 32
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 5566008088839716060, guid: 10cc5ec46aa5f06458a5f7a6bc8f919c, type: 3}
+      propertyPath: hitBoxSize.y
+      value: 24
       objectReference: {fileID: 0}
     - target: {fileID: 5566008088839716060, guid: 10cc5ec46aa5f06458a5f7a6bc8f919c, type: 3}
       propertyPath: HitboxBottomLeftOffset.x
-      value: -16
+      value: -8
       objectReference: {fileID: 0}
     - target: {fileID: 6638056564713426387, guid: 10cc5ec46aa5f06458a5f7a6bc8f919c, type: 3}
       propertyPath: HitboxSize.x
@@ -71,7 +83,7 @@ PrefabInstance:
     - target: {fileID: 6703336253548410203, guid: 10cc5ec46aa5f06458a5f7a6bc8f919c, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -745064841, guid: 72777aed95bb4da46ab7512384e84de3, type: 3}
+      objectReference: {fileID: 567853019, guid: 72777aed95bb4da46ab7512384e84de3, type: 3}
     - target: {fileID: 6703336253548410203, guid: 10cc5ec46aa5f06458a5f7a6bc8f919c, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
@@ -86,7 +98,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7054861992690472288, guid: 10cc5ec46aa5f06458a5f7a6bc8f919c, type: 3}
       propertyPath: m_Name
-      value: GearPlatform4x2
+      value: GearPlatform2x3
       objectReference: {fileID: 0}
     - target: {fileID: 8336791976658432773, guid: 10cc5ec46aa5f06458a5f7a6bc8f919c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -100,13 +112,17 @@ PrefabInstance:
       propertyPath: MaxDistance
       value: 1.01
       objectReference: {fileID: 0}
+    - target: {fileID: 8711169111217003378, guid: 10cc5ec46aa5f06458a5f7a6bc8f919c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 12
+      objectReference: {fileID: 0}
     - target: {fileID: 8894873380748052232, guid: 10cc5ec46aa5f06458a5f7a6bc8f919c, type: 3}
       propertyPath: m_SortingOrder
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9221545364466897555, guid: 10cc5ec46aa5f06458a5f7a6bc8f919c, type: 3}
       propertyPath: m_RootOrder
-      value: -1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9221545364466897555, guid: 10cc5ec46aa5f06458a5f7a6bc8f919c, type: 3}
       propertyPath: m_LocalPosition.x
