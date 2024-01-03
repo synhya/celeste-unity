@@ -50,10 +50,6 @@ public partial class Player
     
     private bool hasToSwitch;
     
-    private void InitAnimation()
-    {
-        anim = GetComponent<Animator>();
-    }
 
     private void SetAnimation()
     {
@@ -147,7 +143,11 @@ public partial class Player
             SwitchAnimation();
         
         // after switching animation
-        if (Speed.x != 0)
+        if (ForceSpriteFlip)
+        {
+            SR.flipX = ForceFlipXValue ^ flipAnimFlag;
+        }
+        else if (Speed.x != 0)
         {
             facing = Speed.x > 0 ? Facings.Right : Facings.Left;
             SR.flipX = (facing == Facings.Left) ^ flipAnimFlag;

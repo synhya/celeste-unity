@@ -299,10 +299,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68d90d5bfa354b2b813bd4492044ecda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  targetTransform: {fileID: 0}
   HitboxBottomLeftOffset: {x: -12, y: 1}
-  HitboxSize: {x: 24, y: 7}
-  PositionWS: {x: 1103, y: 784}
+  hitBoxSize: {x: 24, y: 7}
   PreviousPos: {x: 0, y: 0}
+  HitBoxWS:
+    x: 1099
+    y: 765
+    width: 0
+    height: 0
   Speed: {x: 0, y: 0}
   FadeOutTime: 0.8
   ShakeFadeRatio: 0.6

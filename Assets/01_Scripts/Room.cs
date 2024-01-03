@@ -1,4 +1,4 @@
-﻿using System;
+﻿ using System;
 using System.Collections.Generic;
 using AYellowpaper.SerializedCollections;
 using UnityEngine;
@@ -17,9 +17,10 @@ public enum DoorDirections
 [Serializable]
 public struct Door
 {
-    public int StartPos;
+    public int StartPosWS;
     public int Length;
     public DoorDirections Dir;
+    public Vector2Int TransPosWS;
 }
 
 [Serializable]
@@ -34,9 +35,8 @@ public struct RoomLink
 /// </summary>
 public class Room : MonoBehaviour
 {
-    public Vector2Int SpawnPos;
+    public Vector2Int SpawnPosWS;
     [FormerlySerializedAs("TransitionTargetPos")]
-    public Vector2Int TransitionPos;
     
     public RoomLink[] RoomLinks;
     
@@ -45,19 +45,28 @@ public class Room : MonoBehaviour
     
     [FormerlySerializedAs("BoundRectWS")]
     public RectInt BoundRect
-        = new RectInt(Vector2Int.zero, new Vector2Int(CamWidth, CamHeight));
-    
-    public const int CamWidth = 320;
-    public const int CamHeight = 184;
+        = new RectInt(Vector2Int.zero, new Vector2Int(Game.Width, Game.Height));
     
     private void Awake()
     {
         Solids = new HashSet<Solid>();
         Triggers = new HashSet<Trigger>();
 
-        var pos = Vector2Int.RoundToInt(transform.position);
+        var bottomLeft = Vector2Int.RoundToInt(transform.position) - BoundRect.size / 2;
 
-        BoundRect.position = pos - BoundRect.size / 2;
+        // move to world space
+        for (int i = 0; i < RoomLinks.Length; i++)
+        {
+            if(RoomLinks[i].Door.Dir == DoorDirections.Up ||
+               RoomLinks[i].Door.Dir == DoorDirections.Down)
+                RoomLinks[i].Door.StartPosWS += bottomLeft.x;
+            else 
+                RoomLinks[i].Door.StartPosWS += bottomLeft.y;
+            
+            RoomLinks[i].Door.TransPosWS += bottomLeft;
+        }
+        SpawnPosWS += bottomLeft;
+        BoundRect.position = bottomLeft;
     }
 }
 

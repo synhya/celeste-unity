@@ -104,7 +104,9 @@ public partial class Player
         DashLine.Cast(CenterWS, DashDir);
         EffectManager.ChangeCloth();
         EffectManager.CreateRipple(CenterWS);
-        EffectManager.ShakeCam(0.3f, 0.8f);
+        EffectManager.ShakeCam(0.3f, 1.3f);
+        
+        PlaySound(dashSnd[0], 1f, dashSnd[0].length * 0.2f);
     }
 
     private void DashEnd()

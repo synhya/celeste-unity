@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http.Headers;
 using DG.Tweening;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 using static UnityEngine.Mathf;
@@ -33,30 +34,52 @@ public partial class Player : Actor
 
     // State Machine
     private StateMachine sm;
+    public int State
+    {
+        get => sm.State;
+        set => sm.State = value;
+    }
+    
     private DustVisualization Dust => EffectManager.GetDust();
     private DashLineVisualization DashLine => EffectManager.GetDashLine();
     
     public const int StateNormal = 0;
     public const int StateDash = 1;
-    public const int StateIntroRespawn = 2;
-    public const int StateIntroWalk = 3;
-    public const int StateIntroJump = 4;
-    public const int StateReflectionFall = 5; // ?
+    public const int StateTransition = 2;
+    public const int StateIntroJump = 3;
+
+    public AudioSource source;
+
+    public AudioClip[] jumpSnd;
+    public AudioClip[] wallJumpSnd;
+    public AudioClip[] dashSnd;
+    public AudioClip[] snowWalkSnd;
+
+    public int snowWalkSndIdx = 0;
     
     // effect
     [HideInInspector] public SpriteRenderer SR;
 
-    protected override void Start()
+    protected override void Awake()
     {
-        base.Start();
-
+        base.Awake();
+        
         SR = GetComponent<SpriteRenderer>();
-        InitAnimation();
+        anim = GetComponent<Animator>();
         
         sm = new StateMachine(3);
         sm.SetCallbacks(StateNormal, NormalUpdate, NormalBegin, null);
         sm.SetCallbacks(StateDash, DashUpdate, DashBegin, DashEnd);
+        sm.SetCallbacks(StateTransition, TransitionUpdate, TransitionBegin, TransitionEnd);
         sm.State = StateNormal;
+
+        source = GetComponent<AudioSource>();
+        source.playOnAwake = false;
+    }
+
+    protected override void Start()
+    {
+        base.Start();
 
         normalHitBoxSize = HitboxSize;
         duckHitBoxSize = normalHitBoxSize;
@@ -65,6 +88,7 @@ public partial class Player : Actor
 
     public void OnSpawn()
     {
+        Dead = false;
         Collideable = true;
         wasGround = true;
         
@@ -73,7 +97,6 @@ public partial class Player : Actor
 
         Speed = Vector2.zero;
         Remainder = Vector2.zero;
-        PositionWS = Room.SpawnPos;
     }
 
 
@@ -131,16 +154,27 @@ public partial class Player : Actor
             if (varJumpTimer > 0f) varJumpTimer -= deltaTime;
         }
         
+        if (inputX != 0 && !dashPressed && onGround)
+        {
+            if(!source.isPlaying)
+            {
+                PlaySound(snowWalkSnd[0],2f);
+            }
+        } else if (source.clip == snowWalkSnd[0])
+        {
+            source.Stop();
+        }
         
-        // StateMachine.Update
+        // StateMachine.Update Speed is determined here
         sm.Update();
+
+        if (sm.State != StateTransition)
+        {
+            var moveAmount = Speed * Time.deltaTime;
         
-        base.Update();
-        
-        var moveAmount = Speed * Time.deltaTime;
-        
-        MoveH(moveAmount.x, null);
-        MoveV(moveAmount.y, null);
+            MoveH(moveAmount.x, null);
+            MoveV(moveAmount.y, null);
+        }
 
         UpdatePosition();
         
@@ -161,16 +195,21 @@ public partial class Player : Actor
     {
         Die(Vector2.up);
     }
-
-    public void OnResume()
-    {
-
-    }
+    
     public void OnAddStrawberry(int id)
     {
         // other things to do.
         
         SaveData.Instance.Strawberries.Add(id);
+    }
+
+    void PlaySound(AudioClip clip, float pitch = 1f, float playfrom = 0f)
+    {
+        source.Stop();
+        source.pitch = pitch;
+        source.time = playfrom;
+        source.clip = clip;
+        source.Play();
     }
 }
 

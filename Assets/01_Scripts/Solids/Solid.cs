@@ -38,7 +38,7 @@ public class Solid : Entity
             if (moveX != 0)
             {
                 Remainder.x -= moveX;
-                PositionWS += Vector2Int.right;
+                PositionWS += Vector2Int.right * moveX;
                 if (moveX > 0)
                 {
                     foreach (var actor in Level.AllActors)
@@ -78,7 +78,7 @@ public class Solid : Entity
             if (moveY != 0)
             {
                 Remainder.y -= moveY;
-                PositionWS += Vector2Int.up;
+                PositionWS += Vector2Int.up * moveY;
                 if (moveY > 0)
                 {
                     foreach (var actor in Level.AllActors)

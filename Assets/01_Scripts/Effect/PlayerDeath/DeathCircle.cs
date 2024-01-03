@@ -15,7 +15,7 @@ public class DeathCircle : MonoBehaviour, IPoolable
     [SerializeField] private float angleSpeed = 120f;
 
     [Header("Shrink Settings")]
-    [SerializeField] private float shrinkTime = 1.3f;
+    [SerializeField] private float shrinkTime = 0.8f;
 
     [SerializeField] private float intensityInRed = 2;
     [SerializeField] private float intensityInWhite = 1;
@@ -61,14 +61,15 @@ public class DeathCircle : MonoBehaviour, IPoolable
             .Join(t.DOLocalMove(moveDir * (targetMoveSpeed * moveTime), moveTime).SetRelative())
             .Insert(moveTime, t.DOScale(Vector3.zero, shrinkTime).SetEase(Ease.OutExpo))
             .SetAutoKill(false);
-        seq.OnComplete(() =>
+        seq.InsertCallback(TotalTime * 0.75f,() =>
         {
             if (!didResetPivotPos)
             {
                 didResetPivotPos = true;
-                var spawnP = (Vector2)Game.I.CurrentLevel.CurrentRoom.SpawnPos;
-                spawnP.y += circleYOffset;
-                pivotT.position = spawnP;
+                var spawnP = Game.I.CurrentLevel.CurRoom.SpawnPosWS;
+                Game.MainPlayer.PositionWS = spawnP;
+                spawnP.y += (int)circleYOffset;
+                pivotT.position = (Vector2)spawnP;
             }
             seq.PlayBackwards();
         });

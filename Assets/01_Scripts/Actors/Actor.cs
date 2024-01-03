@@ -10,7 +10,7 @@ using UnityEngine.Tilemaps;
 public class Actor : Entity
 {
     private Tilemap tileMap;
-    protected Room Room => Level.CurrentRoom;
+    protected Room Room => Level.CurRoom;
     private Vector2 overrideSpeed;
     
     protected override void Start()
@@ -22,47 +22,36 @@ public class Actor : Entity
 
     protected virtual void Update()
     {
-        if (overrideSpeed.x != 0)
-        {
-            Speed.x = overrideSpeed.x;
-            overrideSpeed.x = 0;
-        }
-        if (overrideSpeed.y != 0)
-        {
-            Speed.y = overrideSpeed.y;
-            overrideSpeed.y = 0;
-        }
+        
     }
     
-    protected void MoveTowardsH(int targetX, float speed)
+    protected void MoveTowardsH(int targetX, float amount)
     {
-        var leftDist = targetX - PositionWS.x;
-        var maxSpeed = leftDist / Time.deltaTime;
-        overrideSpeed.x = Mathf.Sign(leftDist) * Mathf.Max(maxSpeed, speed);
+        // 남은 거리에 상관없이 일정 속도로 이동
+        // 도착후에 정지
     }
 
-    protected void MoveTowardsV(int targetY, float speed)
+    protected void MoveTowardsV(int targetY, float amount)
     {
-        var leftDist = targetY - PositionWS.y;
-        var maxSpeed = leftDist / Time.deltaTime;
-        overrideSpeed.y = Mathf.Sign(leftDist) * Mathf.Max(maxSpeed, speed);
+        // 남은 거리에 상관없이 일정 속도로 이동
+        // 도착후에 정지
     }
 
     public void MoveH(float amount, Action<CollisionData> onCollide)
     {
-        Remainder += Vector2.right;
+        Remainder.x += amount;
         int move = Mathf.RoundToInt(Remainder.x);
 
         if (move != 0)
         {
-            Remainder -= Vector2.right;
+            Remainder.x -= move;
             int sign = (int)Mathf.Sign(move);
 
             while (move != 0)
             {
                 if(!CollideCheck(Vector2Int.right * sign))
                 {
-                    PositionWS += Vector2Int.right;
+                    PositionWS += Vector2Int.right * sign;
                     move -= sign;
                 }
                 else
@@ -76,20 +65,20 @@ public class Actor : Entity
     
     public void MoveV(float amount, Action<CollisionData> onCollide)
     {
-        Remainder += Vector2.up;
+        Remainder.y += amount;
         int move = Mathf.RoundToInt(Remainder.y);
             
 
         if (move != 0)
         {
-            Remainder -= Vector2.up;
+            Remainder.y -= move;
             int sign = (int)Mathf.Sign(move);
 
             while (move != 0)
             {
                 if(!CollideCheck(Vector2Int.up * sign))
                 {
-                    PositionWS += Vector2Int.up;
+                    PositionWS += Vector2Int.up * sign;
                     move -= sign;
                 }
                 else
@@ -197,15 +186,8 @@ public class Actor : Entity
     
     #region Tile Collisions
     
-    private Vector2Int GridPosMin => (Vector2Int)tileMap.WorldToCell((Vector3Int)HitBoxWS.position);
-
-    private Vector2Int GridPosMax
-    {
-        get {
-            var h = HitBoxWS;
-            return (Vector2Int)tileMap.WorldToCell((Vector3Int)(h.position + h.size));
-        }
-    }
+    private Vector2Int GridPosMin => (Vector2Int)tileMap.WorldToCell((Vector3Int)HitBoxWS.min);
+    private Vector2Int GridPosMax => (Vector2Int)tileMap.WorldToCell((Vector3Int)(HitBoxWS.max));
     
     /// <summary>
     /// overlap doesn't include "touching"

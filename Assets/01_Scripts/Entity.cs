@@ -16,8 +16,7 @@ public abstract class Entity : MonoBehaviour
     [Header("Entity Settings")]
     [SerializeField] private Transform targetTransform;
     public Vector2Int HitboxBottomLeftOffset;
-    [FormerlySerializedAs("HitboxSize")]
-    [SerializeField] private Vector2Int hitboxSize;
+    [SerializeField] private Vector2Int hitBoxSize;
     private Vector2Int positionWS;
     
     [HideInInspector] public Vector2Int PreviousPos;
@@ -29,17 +28,17 @@ public abstract class Entity : MonoBehaviour
         get => positionWS;
         set 
         {
-            HitBoxWS.position = PositionWS + HitboxBottomLeftOffset;
             positionWS = value;
+            HitBoxWS.position = value + HitboxBottomLeftOffset;
         }
     }
     public Vector2Int HitboxSize
     {
-        get => hitboxSize;
+        get => hitBoxSize;
         set 
         {
-            HitBoxWS.size = hitboxSize;
-            hitboxSize = value;
+            hitBoxSize = value;
+            HitBoxWS.size = value;
         }
     }
     
@@ -48,8 +47,8 @@ public abstract class Entity : MonoBehaviour
     #region Pos Shortcut
 
     public Vector2 CenterWS => HitBoxWS.center;
-    public Vector2 CenterRightWS => CenterWS + Vector2.right * (hitboxSize.x * 0.5f);
-    public Vector2 CenterLeftWS => CenterWS - Vector2.right * (hitboxSize.x * 0.5f);
+    public Vector2 CenterRightWS => CenterWS + Vector2.right * (hitBoxSize.x * 0.5f);
+    public Vector2 CenterLeftWS => CenterWS - Vector2.right * (hitBoxSize.x * 0.5f);
     public Vector2 BottomRightWS => new Vector2(HitBoxWS.xMax, HitBoxWS.yMin);
     public Vector2 BottomLeftWS => HitBoxWS.position;  
     
@@ -73,12 +72,15 @@ public abstract class Entity : MonoBehaviour
     
     protected virtual void Awake()
     {
-        targetTransform ??= transform;
+        if (!targetTransform)
+            targetTransform = transform;
+        
+        PositionWS = Vector2Int.RoundToInt(targetTransform.position);
+        HitBoxWS = new RectInt(PositionWS + HitboxBottomLeftOffset, hitBoxSize);
     }
     
     protected virtual void Start()
     {
-        PositionWS = Vector2Int.RoundToInt(targetTransform.position);
     }
 
     protected void UpdatePosition()

@@ -46,8 +46,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetScale: 0.45
-  targetMoveSpeed: 10
-  moveTime: 1.2
+  targetMoveSpeed: 14
+  moveTime: 0.8
   angleSpeed: 120
   shrinkTime: 0.8
   intensityInRed: 2

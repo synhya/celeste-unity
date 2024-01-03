@@ -25,6 +25,9 @@ public class PlayerDeadBody : MonoBehaviour
     private float circlePosOffsetY;
 
     private SpriteRenderer sr;
+
+    public AudioSource Source;
+    public AudioClip[] forwardBackwardSnd;
     
     // 최적화 필요.
     public void Init(Vector2 backDir, bool flipX)
@@ -47,6 +50,11 @@ public class PlayerDeadBody : MonoBehaviour
             .InsertCallback(BackTime, () =>
             {
                 sr.enabled = false;
+                
+                Source.clip = forwardBackwardSnd[0];
+                Source.time = forwardBackwardSnd[0].length * 0.2f;
+                Source.Play();
+                
                 for (var dir = 0; dir <= 7; dir++)
                 {
                     var angle = dir / 4f * PI;
@@ -55,6 +63,13 @@ public class PlayerDeadBody : MonoBehaviour
                     var circle = EffectManager.GetCircle();
                     circle.Play(transform, circlePosOffsetY, moveDir, lerpColor1, lerpColor2);
                 }
+            })
+            .InsertCallback(2f, () =>
+            {
+                Source.Stop();
+                Source.clip = forwardBackwardSnd[1];
+                Source.time = forwardBackwardSnd[1].length * 0.65f;
+                Source.Play();
             })
             .InsertCallback(6f, () =>
             {

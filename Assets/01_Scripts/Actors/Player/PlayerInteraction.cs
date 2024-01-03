@@ -17,6 +17,8 @@ public partial class Player
     private bool jumpPressing;
     private float deltaTime;
 
+    public bool Dead;
+
 
     private void CheckInput()
     {
@@ -46,40 +48,7 @@ public partial class Player
     
     private void CheckOverlaps()
     {
-        var hitbox = HitBoxWS;
-        
-        // room bound check
-        {
-            // up
-            if (RightWS > Room.BoundRect.yMax)
-            {
-                
-            }
-            
-            // bottom
-            else if (PositionWS.y < Room.BoundRect.yMin)
-            {
-                // check room first
-            
-                
-                
-                
-                if(Speed.y < 0f)
-                    Die(Vector2.up);
-            }
-            
-            //right
-            if (PositionWS.x > Room.BoundRect.xMin)
-            {
-                
-            }
-            
-            //left
-            if (PositionWS.x > Room.BoundRect.xMax)
-            {
-                
-            }
-        }
+        // room bound check is done in level
         
         // spike check
         if (OverlapTileFlagCheckOS(TileType.Obstacle, Vector2Int.zero, out var obsType))
@@ -94,8 +63,6 @@ public partial class Player
         
         // ground check
         onGround = CollideCheck(Vector2Int.down);
-            // (OverlapTileFlagCheckOS(TileType.Ground, Vector2Int.down) &&
-            // !OverlapTileFlagCheckOS(TileType.HalfGround, Vector2Int.zero));
         
         // landing check
         isLanding = onGround && !wasGround;
@@ -129,24 +96,27 @@ public partial class Player
         Speed.y = boostPower;
     }
     
-    void Die(Vector2 knockBackDir)
+    public void Die(Vector2 knockBackDir)   
     {
-        Collideable = false;
-        trailsLeft = 0;
+        if (!Dead)
+        {
+            Dead = true;
+            Collideable = false;
+            trailsLeft = 0;
         
-        // camera shake
-        EffectManager.ShakeCam(0.5f, 1.5f);
+            // camera shake
+            EffectManager.ShakeCam(0.5f, 1.5f);
         
-        // spawn dead body (dont set as parent as it will be disabled)
-        var body = Instantiate(deadBodyPrefab, CenterWS, Quaternion.identity)
-            .GetComponent<PlayerDeadBody>();
-        body.Init(knockBackDir, SR.flipX ^ flipAnimFlag);
-        // body.DeathAction = () => {}
+            // spawn dead body (dont set as parent as it will be disabled)
+            var body = Instantiate(deadBodyPrefab, CenterWS, Quaternion.identity)
+                .GetComponent<PlayerDeadBody>();
+            body.Init(knockBackDir, SR.flipX ^ flipAnimFlag);
+            // body.DeathAction = () => {}
         
-        // change stats ( Stats.Death++; .. }
-        
-        
-        gameObject.SetActive(false);
+            // change stats ( Stats.Death++; .. }
+            
+            gameObject.SetActive(false);
+        }
     }
 }
 

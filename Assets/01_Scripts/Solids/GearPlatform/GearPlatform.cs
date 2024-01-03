@@ -34,6 +34,9 @@ public class GearPlatform : Solid
 
     private Animator[] anims;
     private SpriteRenderer blockSR;
+    public AudioSource Source;
+    public AudioClip[] forwardSnd;
+    public AudioClip[] backwardSnd;
 
     private float timer;
     
@@ -68,7 +71,7 @@ public class GearPlatform : Solid
         if (timer > 0f)
         {
             if (timer >= StopTime - KeepSpeedTime)
-                Speed = Vector2.MoveTowards(Speed, Vector2.zero, accel * 0.5f * Time.deltaTime);
+                Speed = Vector2.MoveTowards(Speed, Vector2.zero, accel * 0.3f * Time.deltaTime);
             else
                 Speed = Vector2.zero;
             timer -= Time.deltaTime;
@@ -78,11 +81,21 @@ public class GearPlatform : Solid
             isMovingForward = true;
             lightSR.sprite = lightSprites[0];
             lightSR.material.SetTexture("_EmissionTex", hdrTex[0]);
+            
+            Source.pitch = 2f;
+            Source.time = 0.3f;
+            Source.clip = forwardSnd[0];
+            Source.Play();
         }
         else if (stoppedAtEdge)
         {
             stoppedAtEdge = false;
             isMovingBackward = true;
+
+            Source.pitch = 1f;
+            Source.time = 0.2f;
+            Source.clip = backwardSnd[0];
+            Source.Play();
         }
         
         if (isMovingForward || isMovingBackward)
@@ -107,6 +120,8 @@ public class GearPlatform : Solid
                     anims[1].speed = 0.6f;
                     lightSR.sprite = lightSprites[1];
                     lightSR.material.SetTexture("_EmissionTex", hdrTex[1]);
+                    
+                    Source.Stop();
                 }
                 else
                     Speed = Vector2.MoveTowards(Speed, dir * maxForwardSpeed, accel * Time.deltaTime);
@@ -123,6 +138,8 @@ public class GearPlatform : Solid
                     anims[1].speed = 1f;
                     lightSR.sprite = lightSprites[2];
                     lightSR.material.SetTexture("_EmissionTex", hdrTex[2]);
+                    
+                    Source.Stop();
                 }
                 else
                     Speed = Vector2.MoveTowards(Speed, dir * maxRewindSpeed, accel * Time.deltaTime);

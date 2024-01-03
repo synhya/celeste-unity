@@ -11,12 +11,13 @@ public class Game : MonoBehaviour
 
     [SerializeField] private Level startingLevel;
     [SerializeField] private GameObject playerPrefab;
-    
+    [SerializeField] private Transform camHolder;
     [HideInInspector] public Level CurrentLevel;
-    
-    // 카메라는 레벨 객체별로 하나씩 존재하는게 맞다.
-    // 메뉴화면이 3d인경우 또는 씬이 다른경우 완전히 다른 카메라를 쓸테니까.
+
+    public static Transform CamHolder => instance.camHolder;
     public static Camera MainCam => instance.cam;
+    public const int Width = 320;
+    public const int Height = 180;
     
     // 플레이어는 하나니까 일단 Don't destroy on load설정하고 
     // 레벨시작시마다 가져오는게 좋을듯
@@ -48,6 +49,8 @@ public class Game : MonoBehaviour
         // instance initialize
         cam = Camera.main;
         mainPlayer = Instantiate(playerPrefab).GetComponent<Player>();
+        DontDestroyOnLoad(mainPlayer);
+        mainPlayer.gameObject.SetActive(false);
     }
 
     void Start()
@@ -62,10 +65,5 @@ public class Game : MonoBehaviour
     {
         CurrentLevel.gameObject.SetActive(true);
         CurrentLevel.StartLevel();
-    }
-    
-    public void Freeze(float time)
-    {
-        CurrentLevel.FreezeLevel(time);
     }
 } 

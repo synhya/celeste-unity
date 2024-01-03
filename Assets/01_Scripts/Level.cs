@@ -1,9 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using DG.Tweening;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
@@ -23,18 +19,26 @@ public class Level : MonoBehaviour
 {
     [SerializeField] private Room startingRoom;
     
-    [HideInInspector] public Room CurrentRoom;
+    [HideInInspector] public Room CurRoom;
+    private Room prevRoom;
     [HideInInspector] public Tilemap Map;
-    
-    private float roomTransitionTime = 0.8f;
+
     public HashSet<Actor> AllActors;
     private Player player;
     
     public IntroTypes IntroType = IntroTypes.Jump;
+    
+    private Transform camT;
 
+    [HideInInspector] public RoomLink NextRoomLink;
+
+    private Vector2 curBoundMin;
+    private Vector2 curBoundMax;
+    private Vector2 boundOffset = new Vector2(Game.Width / 2f,  Game.Height / 2f);
+    
     void Awake() 
     {
-        CurrentRoom = startingRoom;
+        CurRoom = startingRoom;
         Map = GetComponent<Tilemap>();
         Map.CompressBounds();
         AllActors = new HashSet<Actor>();
@@ -46,83 +50,106 @@ public class Level : MonoBehaviour
         }
     }
 
-    void Start()
-    {
-        player = Game.MainPlayer;
-    }
-
     public void StartLevel()
     {
-        player.transform.SetParent(transform);
+        CurRoom.gameObject.SetActive(true); // 이러면 awake먼저 실행됨 이함수 도중에!
+        
+        player = Game.MainPlayer;
+        var pt = player.transform;
+        pt.SetParent(transform);
         SpawnPlayer();
         
-        startingRoom.gameObject.SetActive(true);
-
-        var camPos = FindRoomStartCamPos(startingRoom);
-        Game.MainCam.transform.position = new Vector3(camPos.x, camPos.y, -10f);
+        curBoundMin = CurRoom.BoundRect.min + boundOffset;
+        curBoundMax = CurRoom.BoundRect.max - boundOffset;
+        
+        camT = Camera.main.transform;
+        camT.position = CameraTarget;
     }
 
     private void Update()
     {
-        if(Game.IsPaused) return;
+        // shake하고 움직여서 느려지는거였다.
+        var from = camT.position;
+        camT.position
+            = from + (CameraTarget - from) * (1f - Mathf.Pow(0.01f, Time.deltaTime));
         
-        // if (CurrentRoom.BoundRect.size.y > Room.CamHeight)
-        // {
-        //     var cam = Game.MainCam;
-        //     var bound = new Rect();
-        //     // if player out of bound follow player .
-        // }
+        // for each frame, check if player needs transition or is dead(out of boundary)
+        if(player.State != Player.StateTransition && !player.Dead)
+        {
+            // up 
+            if (player.UpWS > CurRoom.BoundRect.yMax)
+                CheckDoorsAndMove(player.RightWS, player.LeftWS, DoorDirections.Up);
+            // down
+            else if (player.DownWS < CurRoom.BoundRect.yMin && 
+                     !CheckDoorsAndMove(player.RightWS, player.LeftWS, DoorDirections.Down))
+                player.Die(Vector2.up);               
+            // side
+            else if (player.LeftWS < CurRoom.BoundRect.xMin)
+                CheckDoorsAndMove(player.DownWS, player.UpWS, DoorDirections.Left);
+            else if (player.RightWS > CurRoom.BoundRect.xMax)
+                CheckDoorsAndMove(player.DownWS, player.UpWS, DoorDirections.Right);
+        }
     }
     
-    // // Camera (lerp by distance using delta-time)
-    // if (InControl || ForceCameraUpdate)
-    // {
-    //     if (StateMachine.State == StReflectionFall)
-    //     {
-    //         level.Camera.Position = CameraTarget;
-    //     }
-    //     else
-    //     {
-    //         var from = level.Camera.Position;
-    //         var target = CameraTarget;
-    //         var multiplier = StateMachine.State == StTempleFall ? 8 : 1f;
-    //                 
-    //         level.Camera.Position = from + (target - from) * (1f - (float)Math.Pow(0.01f / multiplier, Engine.DeltaTime));
-    //     }
-    // }
-
-    public void SwitchRoom(Room nextRoom)
+    bool CheckDoorsAndMove(int min, int max, DoorDirections dir)
     {
-        CurrentRoom.gameObject.SetActive(false);
-        nextRoom.gameObject.SetActive(true);
+        foreach (var link in CurRoom.RoomLinks)
+        {
+            var door = link.Door;
+
+            if (dir == door.Dir)
+            {
+                // overlap
+                if (min >= door.StartPosWS &&
+                    max <= door.StartPosWS + door.Length)
+                {
+                    StartTransitionTo(link);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private void StartTransitionTo(RoomLink link)
+    {
+        NextRoomLink = link;   
+        prevRoom = CurRoom;
+        CurRoom = link.Room;
+        CurRoom.gameObject.SetActive(true);
         
-        CurrentRoom = nextRoom;
-        // player.Added(nextRoom);
+        player.State = Player.StateTransition; // -> transitionBegin
         
-        FreezeLevel(roomTransitionTime);
+        curBoundMin = CurRoom.BoundRect.min + boundOffset;
+        curBoundMax = CurRoom.BoundRect.max - boundOffset;
+    }
+
+    public void OnTransitionEnd()
+    {
+        prevRoom.gameObject.SetActive(false);
+    }
+
+    /// <summary>
+    /// should follow player and be clamped to room boundary.
+    /// </summary>
+    private Vector3 CameraTarget
+    {
+        get {
+            Vector3 at = new Vector3(0 ,0, -10);
+            Vector2 target = player.PositionWS;
+            
+            
+            at.x = Mathf.Clamp(target.x, curBoundMin.x, curBoundMax.x);
+            at.y = Mathf.Clamp(target.y, curBoundMin.y, curBoundMax.y);
+
+            return at;
+        }
     }
     
     public void SpawnPlayer()
     {
         player.gameObject.SetActive(true);
+        player.PositionWS = CurRoom.SpawnPosWS;
         player.OnSpawn();
-    }
-    
-    public void FreezeLevel(float time)
-    {
-        Game.Pause();
-        
-        EffectManager.MoveCam(FindRoomStartCamPos(CurrentRoom), time).SetEase(Ease.OutCubic).OnComplete(() =>
-        {
-            Game.Resume();
-            player.OnResume();
-        });
-    }
-
-    Vector2 FindRoomStartCamPos(Room room)
-    {
-        float x = room.BoundRect.position.x + 160;
-        float y = room.BoundRect.position.y + 94;
-        return new Vector2(x, y);
     }
 } 
