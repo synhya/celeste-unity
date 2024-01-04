@@ -54,8 +54,6 @@ public partial class Player : Actor
     public AudioClip[] wallJumpSnd;
     public AudioClip[] dashSnd;
     public AudioClip[] snowWalkSnd;
-
-    public int snowWalkSndIdx = 0;
     
     // effect
     [HideInInspector] public SpriteRenderer SR;

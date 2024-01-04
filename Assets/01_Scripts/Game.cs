@@ -9,22 +9,16 @@ public class Game : MonoBehaviour
     public static Game I =>
         (instance ??= (new GameObject("Manager")).AddComponent<Game>());
     private static Game instance = null;
-
-    [SerializeField] private Level startingLevel;
+    
     [SerializeField] private GameObject playerPrefab;
-    [SerializeField] private Transform camShaderT;
-    [HideInInspector] public Level CurrentLevel;
 
-    public static Transform CamShakerT => instance.camShaderT;
-    public static Camera MainCam => instance.cam;
     public const int Width = 320;
     public const int Height = 180;
     
-    // 플레이어는 하나니까 일단 Don't destroy on load설정하고 
-    // 레벨시작시마다 가져오는게 좋을듯
     public static Player MainPlayer => instance.mainPlayer;
     private Player mainPlayer;
-    private Camera cam;
+    public static Level CurrentLevel => instance.currentLevel;
+    private Level currentLevel;
 
     public static bool IsPaused
     {
@@ -44,11 +38,8 @@ public class Game : MonoBehaviour
         }
         
         DontDestroyOnLoad(this);
-        
-        CurrentLevel = startingLevel;
 
         // instance initialize
-        cam = Camera.main;
         mainPlayer = Instantiate(playerPrefab).GetComponent<Player>();
         DontDestroyOnLoad(mainPlayer);
         mainPlayer.gameObject.SetActive(false);
@@ -64,6 +55,8 @@ public class Game : MonoBehaviour
     
     void StartGame()
     {
+        // switch scene here.
+        
         CurrentLevel.gameObject.SetActive(true);
         CurrentLevel.StartLevel();
     }

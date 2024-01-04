@@ -36,6 +36,10 @@ public class Level : MonoBehaviour
     private Vector2 curBoundMax;
     private Vector2 boundOffset = new Vector2(Game.Width / 2f,  Game.Height / 2f);
     
+    
+    public Camera MainCam;
+    public Transform CamShakerT;
+    
     void Awake() 
     {
         CurRoom = startingRoom;
@@ -47,6 +51,14 @@ public class Level : MonoBehaviour
         {
             if(room.gameObject.name.Contains("Room"))
                 room.gameObject.SetActive(false);
+        }
+
+        MainCam = Camera.main;
+        if(!MainCam) Debug.Log("No cam attached");
+        else
+        {
+            camT = MainCam.transform;
+            CamShakerT = camT.parent;
         }
     }
 
@@ -62,7 +74,6 @@ public class Level : MonoBehaviour
         curBoundMin = CurRoom.BoundRect.min + boundOffset;
         curBoundMax = CurRoom.BoundRect.max - boundOffset;
         
-        camT = Camera.main.transform;
         camT.position = CameraTarget;
     }
 

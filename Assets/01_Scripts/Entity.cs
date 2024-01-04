@@ -9,7 +9,7 @@ using UnityEngine.Tilemaps;
 /// </summary>
 public abstract class Entity : MonoBehaviour
 {
-    protected Level Level => Game.I.CurrentLevel;
+    protected Level Level => Game.CurrentLevel;
     
     protected bool Collideable = true;
 
