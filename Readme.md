@@ -6,6 +6,11 @@ Celeste Origin is playable in the linked website.
 
 ## Features
 
+### Menu
+
+Procedural Terrain Generation was used in menu. [Triangle.net](https://github.com/garykac/triangle.net) library helped a lot.   
+The idea basically came from [here](https://github.com/KristinLague/Low-Poly-Terrain-Generator).
+
 ### Effects
 Hood Color Change on dash is implemented using lookup table. It was inspired by this [devlog](https://www.youtube.com/watch?v=HsOKwUwL1bE&t=1s).  
 I first made tools to convert sprite texture to lookup texture and table texture then used it in shader.
