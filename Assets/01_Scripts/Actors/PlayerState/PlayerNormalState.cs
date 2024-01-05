@@ -253,7 +253,7 @@ public partial class Player
         Speed += LiftBoost;
         varJumpSpeed = Speed.y;
 
-        PlaySound(jumpSnd[0]);
+        PlaySound(SoundManager.I.jumpSnd[0]);
         
         
         // play sfx
@@ -294,7 +294,7 @@ public partial class Player
         
         //Get list of wall jumped off of
         // -> 움직이는 플렛폼의 스피드를 이어받아야 할 경우ㅡ
-        PlaySound(wallJumpSnd[0]);
+        PlaySound(SoundManager.I.wallJumpSnd[0]);
         
         
         Speed.x += WallJumpHBoost * dir;

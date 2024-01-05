@@ -2,13 +2,31 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
+/// <summary>
+/// manage all the clips here
+/// </summary>
 public class SoundManager : MonoBehaviour
 {
-    public static SoundManager Instance => instance;
+    public static SoundManager I => instance;
     private static SoundManager instance = null;
-
-    public AudioSource Source;
+    
+    private AudioSource bgmSource;
+    
+    // player move sounds
+    public AudioClip[] jumpSnd;
+    public AudioClip[] wallJumpSnd;
+    public AudioClip[] dashSnd;
+    public AudioClip[] snowWalkSnd;
+    
+    // player death sounds
+    
+    // gear sounds
+    
+    // spring sounds
+    
+    // 
     
     void Awake() 
     {
@@ -23,6 +41,7 @@ public class SoundManager : MonoBehaviour
 
     private void Start()
     {
-        Source.Play();
+        bgmSource = GetComponent<AudioSource>();
+        bgmSource.Play();
     }
 } 

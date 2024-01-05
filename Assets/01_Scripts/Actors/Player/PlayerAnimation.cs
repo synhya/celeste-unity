@@ -145,12 +145,12 @@ public partial class Player
         // after switching animation
         if (ForceSpriteFlip)
         {
-            SR.flipX = ForceFlipXValue ^ flipAnimFlag;
+            sr.flipX = ForceFlipXValue ^ flipAnimFlag;
         }
         else if (Speed.x != 0)
         {
             facing = Speed.x > 0 ? Facings.Right : Facings.Left;
-            SR.flipX = (facing == Facings.Left) ^ flipAnimFlag;
+            sr.flipX = (facing == Facings.Left) ^ flipAnimFlag;
         }
         
         
@@ -173,13 +173,13 @@ public partial class Player
         if (curHash == HashIdle || curHash == HashWallSlide)
         {
             flipAnimFlag = true;
-            SR.flipX = !SR.flipX;
+            sr.flipX = !sr.flipX;
         }
             
         else if (nextHash == HashIdle || curHash == HashWallSlide)
         {
             flipAnimFlag = false;
-            SR.flipX = !SR.flipX;
+            sr.flipX = !sr.flipX;
         }
         
         if(gameObject.activeSelf)

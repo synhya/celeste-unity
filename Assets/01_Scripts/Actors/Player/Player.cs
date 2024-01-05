@@ -17,7 +17,6 @@ public enum Facings
 
 public partial class Player : Actor
 {
-    [Header("OtherObjs")]
     [SerializeField] private GameObject deadBodyPrefab;
 
     private float gravityAccel;
@@ -34,6 +33,10 @@ public partial class Player : Actor
 
     // State Machine
     private StateMachine sm;
+    public const int StateNormal = 0;
+    public const int StateDash = 1;
+    public const int StateTransition = 2;
+    public const int StateIntroJump = 3;
     public int State
     {
         get => sm.State;
@@ -42,27 +45,17 @@ public partial class Player : Actor
     
     private DustVisualization Dust => EffectManager.GetDust();
     private DashLineVisualization DashLine => EffectManager.GetDashLine();
-    
-    public const int StateNormal = 0;
-    public const int StateDash = 1;
-    public const int StateTransition = 2;
-    public const int StateIntroJump = 3;
 
     public AudioSource source;
-
-    public AudioClip[] jumpSnd;
-    public AudioClip[] wallJumpSnd;
-    public AudioClip[] dashSnd;
-    public AudioClip[] snowWalkSnd;
     
     // effect
-    [HideInInspector] public SpriteRenderer SR;
+    private SpriteRenderer sr;
 
     protected override void Awake()
     {
         base.Awake();
         
-        SR = GetComponent<SpriteRenderer>();
+        sr = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
         
         sm = new StateMachine(3);
@@ -91,7 +84,7 @@ public partial class Player : Actor
         wasGround = true;
         
         facing = Facings.Right;
-        SR.flipX = false;
+        sr.flipX = false;
 
         Speed = Vector2.zero;
         Remainder = Vector2.zero;
@@ -156,9 +149,9 @@ public partial class Player : Actor
         {
             if(!source.isPlaying)
             {
-                PlaySound(snowWalkSnd[0],2f);
+                PlaySound(SoundManager.I.snowWalkSnd[0],2f);
             }
-        } else if (source.clip == snowWalkSnd[0])
+        } else if (source.clip == SoundManager.I.snowWalkSnd[0])
         {
             source.Stop();
         }

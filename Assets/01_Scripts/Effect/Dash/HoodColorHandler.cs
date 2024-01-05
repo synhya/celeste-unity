@@ -31,6 +31,9 @@ public class HoodColorHandler : MonoBehaviour
     private Color? forceColor = null;
     private static readonly int EmissionStrength = Shader.PropertyToID("_EmissionStrength");
 
+    /// <summary>
+    /// 여기서 부르면 의미가 없다. 각 플레이어 나 몬스터 등에 이걸 붙여버리자.
+    /// </summary>
     private void Awake()
     {
         coordToColorMap = new Dictionary<Vector2Int, PairColor>();
@@ -52,7 +55,7 @@ public class HoodColorHandler : MonoBehaviour
     private void Start()
     {
         player = Game.MainPlayer;
-        targetMat = player.SR.material;
+        targetMat = player.GetComponent<SpriteRenderer>().material;
         tableTex = Instantiate(tableTex); // in order to avoid overriding source tex.
         targetMat.SetTexture("_LookUpTex", tableTex);
     }

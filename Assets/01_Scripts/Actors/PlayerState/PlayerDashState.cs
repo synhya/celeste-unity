@@ -12,19 +12,17 @@ public partial class Player
     [Header("Dash Settings")]
     [SerializeField] private float DashSpeed = 220f;
     [SerializeField] private float DashYRatio = 0.6f;
-    private const float EndDashSpeed = 160f; // end speed?
-    private const float EndDashUpMult = .75f;
+    // private const float EndDashSpeed = 160f; // end speed?
+    // private const float EndDashUpMult = .75f;
     private const float DashTime = .15f;
     private const float DashCoolDown = .2f;
     private const float DashRefillCooldown = .1f;
-    private const int DashHJumpThruNudge = 6; // ?
-    private const int DashCornerCorrection = 4;
-    private const int DashVFloorSnapDist = 3; // vertical snap
+    // private const int DashHJumpThruNudge = 6; // ?
+    // private const int DashCornerCorrection = 4;
+    // private const int DashVFloorSnapDist = 3; // vertical snap
     private const float DashAttackTime = .3f; // Attack? => brake hidden wall
-
-
+    
     [SerializeField] private float[] DashTrailTimeArray;
-    [SerializeField] private GameObject playerTrailPrefab;
     
 
     // vars    
@@ -106,7 +104,7 @@ public partial class Player
         EffectManager.CreateRipple(CenterWS);
         EffectManager.ShakeCam(0.3f, 1.3f);
         
-        PlaySound(dashSnd[0], 1f, dashSnd[0].length * 0.2f);
+        PlaySound(SoundManager.I.dashSnd[0], 1f, SoundManager.I.dashSnd[0].length * 0.2f);
     }
 
     private void DashEnd()
@@ -138,7 +136,7 @@ public partial class Player
     {
         // get trail from effect manager.
         var trail = EffectManager.GetTrail();
-        trail.Play(transform.position, facing == Facings.Right, SR.sprite);
+        trail.Play(transform.position, facing == Facings.Right, sr.sprite);
     }
 
     #endregion

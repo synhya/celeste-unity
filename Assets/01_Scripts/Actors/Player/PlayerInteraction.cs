@@ -110,7 +110,7 @@ public partial class Player
             // spawn dead body (dont set as parent as it will be disabled)
             var body = Instantiate(deadBodyPrefab, CenterWS, Quaternion.identity)
                 .GetComponent<PlayerDeadBody>();
-            body.Init(knockBackDir, SR.flipX ^ flipAnimFlag);
+            body.Init(knockBackDir, sr.flipX ^ flipAnimFlag);
             // body.DeathAction = () => {}
         
             // change stats ( Stats.Death++; .. }
