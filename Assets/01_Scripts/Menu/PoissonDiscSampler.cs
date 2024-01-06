@@ -31,7 +31,7 @@ public static class PoissonDiscSampler
                 if (IsValid(candidate, sampleRegionSize, cellSize, radius, points, grid))
                 {
                     points.Add(candidate);
-                    grid[(int)(candidate.x / cellSize), (int)(candidate.y / cellSize)] = points.Count;
+                    grid[(int)(candidate.x / cellSize),(int)(candidate.y / cellSize)] = points.Count;
                     spawnPoints.Add(candidate);
 
                     break;
@@ -61,7 +61,7 @@ public static class PoissonDiscSampler
             {
                 for (int y = searchStartY; y <= searchEndY; y++)
                 {
-                    int pointIdx = grid[x, y] - 1;
+                    int pointIdx = grid[x,y] - 1;
                     if (pointIdx != -1)
                     {
                         float sqrDst = (candidate - points[pointIdx]).sqrMagnitude;

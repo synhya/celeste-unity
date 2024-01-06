@@ -10,17 +10,15 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
-
 [RequireComponent(typeof(MeshFilter)), RequireComponent(typeof(MeshRenderer)), RequireComponent(typeof(MeshCollider))]
 public class TerrainGenerator : MonoBehaviour
 {
-
     [SerializeField] private Material terrainMat;
         
     [Header("Point Distribution")]
     [SerializeField] [Range(1, 1000)] private int sizeX = 5;
     [SerializeField] [Range(1, 1000)] private int sizeY = 5;
-    [SerializeField] [Range(0.001f, 100)] private float poissonRadius = 1;
+    [SerializeField] [Range(1f, 100)] private float poissonRadius = 1;
     [SerializeField][Range(5, 30)] private int beforeReject = 30;
 
     [Header("Color")]
@@ -46,6 +44,12 @@ public class TerrainGenerator : MonoBehaviour
 
     
     public int seed;
+    public float MinNoiseHeight;
+    public float MaxNoiseHeight;
+
+    private bool overrideMinMax;
+    private float maxOverride = float.NegativeInfinity;
+    private float minOverride = float.PositiveInfinity;
 
     private Polygon polygon;
     private TriangleNet.Mesh mesh;
@@ -57,26 +61,14 @@ public class TerrainGenerator : MonoBehaviour
 
     private List<Vector2> poissonPoints;
     private List<float> heights;
-    private float minNoiseHeight;
-    private float maxNoiseHeight;
-
-    private float maxPossibleHeight;
-    private float minPossibleHeight;
 
     private Vector2 posOffset;
-
-    // [ContextMenu("Surround Create")]
-    // void NineSurround()
-    // {
-    //     for (int i = 0; i < 3; i++)
-    //     {
-    //         for (int j = 0; j < 3; j++)
-    //         {
-    //             posOffset
-    //             Initiate(false);
-    //         }
-    //     }
-    // }
+    
+    // 전달하는것도 되는데 그냥 끝을 내려버리자.
+    private Vertex[] rightPassVertex;
+    private Vertex[] leftPassVertex;
+    private Vertex[] upPassVertex;
+    private Vertex[] downPassVertex;
 
     private void Update()
     {
@@ -97,9 +89,27 @@ public class TerrainGenerator : MonoBehaviour
         polygon = new Polygon();
 
         poissonPoints = PoissonDiscSampler.GeneratePoints(poissonRadius, new Vector2(sizeX, sizeY), beforeReject);
-        for(int i = 0; i < poissonPoints.Count; i++) 
+        for (int i = 0; i < poissonPoints.Count; i++)
+        {
+            if(poissonPoints[i].x == 0 || poissonPoints[i].x > sizeX - 1f ||
+               poissonPoints[i].y == 0 || poissonPoints[i].x > sizeY - 1f )
+                continue;
             polygon.Add(new Vertex(poissonPoints[i].x, poissonPoints[i].y));
+        }
+        
+        // add edges to link with other terrains 
+        for (int i = 0; i <= sizeX; i+=(int)poissonRadius)
+        {
+            polygon.Add(new Vertex(i, 0));
+            polygon.Add(new Vertex(i, sizeY));
+        }
+        for (int i = 0; i <= sizeY; i+=(int)poissonRadius)
+        {
+            polygon.Add(new Vertex(0, i));
+            polygon.Add(new Vertex(sizeX, i));
+        }
 
+        // connect vertices
         ConstraintOptions constaints = new ConstraintOptions
         {
             ConformingDelaunay = true
@@ -115,8 +125,8 @@ public class TerrainGenerator : MonoBehaviour
     {
         heights = new List<float>();
         
-        minNoiseHeight = float.PositiveInfinity;
-        maxNoiseHeight = float.NegativeInfinity;
+        MinNoiseHeight = float.PositiveInfinity;
+        MaxNoiseHeight = float.NegativeInfinity;
 
         bool useAdditionalTex = heightTexture != null;
 
@@ -136,27 +146,21 @@ public class TerrainGenerator : MonoBehaviour
                 noiseHeight += perlinValue * amplitude;
                 amplitude *= persistence; // 기존값에 추가되는 정도 (감쇠)
                 frequency *= lacunarity; // 위로 갈수록 주기가 짧아지는게 가파라서 자연스러울듯.
-
-                maxPossibleHeight += amplitude;
-                minPossibleHeight -= amplitude;
             }
 
             if (useAdditionalTex)
             {
-                int coordX = Mathf.RoundToInt((float)(mesh.vertices[i].x * (heightTexture.width / sizeX)));
-                int coordY = Mathf.RoundToInt((float)(mesh.vertices[i].y * (heightTexture.height / sizeY)));
+                int coordX = Mathf.RoundToInt((float)(mesh.vertices[i].x * (heightTexture.width * 1f / sizeX)));
+                int coordY = Mathf.RoundToInt((float)(mesh.vertices[i].y * (heightTexture.height * 1f / sizeY)));
                 noiseHeight += heightTexture.GetPixel(coordX, coordY).r * heightTexRatio;
                 noiseHeight -= lowerTexture.GetPixel(coordX, coordY).r * lowerTexRatio;
-
-                maxPossibleHeight += heightTexRatio;
-                minPossibleHeight -= lowerTexRatio;
             }
             
 
-            if (noiseHeight > maxNoiseHeight)
-                maxNoiseHeight = noiseHeight;
-            else if (noiseHeight < minNoiseHeight)
-                minNoiseHeight = noiseHeight;
+            if (noiseHeight > MaxNoiseHeight)
+                MaxNoiseHeight = noiseHeight;
+            else if (noiseHeight < MinNoiseHeight)
+                MinNoiseHeight = noiseHeight;
 
             noiseHeight = (noiseHeight < 0f) ? noiseHeight * heightScale / 10f : noiseHeight * heightScale;
             
@@ -230,17 +234,41 @@ public class TerrainGenerator : MonoBehaviour
 
         currentHeight = (currentHeight < 0f) ? currentHeight / heightScale * 10f : currentHeight / heightScale;
 
-        float gradientVal = Mathf.InverseLerp(minNoiseHeight, maxNoiseHeight, currentHeight);
+        float gradientVal;
+        
+        if (overrideMinMax)
+        {
+            if (minOverride < MinNoiseHeight)
+                MinNoiseHeight = minOverride;
+            if (maxOverride > MaxNoiseHeight)
+                MaxNoiseHeight = maxOverride;
+        }
+
+        
+        gradientVal = Mathf.InverseLerp(MinNoiseHeight, MaxNoiseHeight, currentHeight);
         
         return heightGradient.Evaluate(gradientVal);
     }
-    public void SaveMesh()
+    public void SaveMesh(int index = -1)
     {
         if (transform.GetComponent<MeshFilter>() != null)
         {
             var path = "Assets/GeneratedMesh" + seed + ".asset";
+            if (index != -1)
+            {
+                path = "Assets/GeneratedMesh" + index + ".asset";
+            }
+            
             AssetDatabase.CreateAsset(transform.GetComponent<MeshFilter>().sharedMesh, path);
         }
+    }
+
+    public void OverrideMinMaxHeight(float minOver, float maxOver)
+    {
+        minOverride = minOver;
+        maxOverride = maxOver;
+        
+        overrideMinMax = true;
     }
 }
 

@@ -14,6 +14,12 @@ public class MenuCamController : MonoBehaviour
     private void Update()
     {
         transform.RotateAround(pivotT.position, Vector3.up, Time.deltaTime * rotateSpeed);
+
+
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            // move to position 1. create buildings first
+        }
     }
 
 } 
