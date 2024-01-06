@@ -100,7 +100,7 @@ public partial class Player
         
         // effects
         DashLine.Cast(CenterWS, DashDir);
-        EffectManager.ChangeCloth();
+        hoodColorHandler.SwitchColor();
         EffectManager.CreateRipple(CenterWS);
         EffectManager.ShakeCam(0.3f, 1.3f);
         

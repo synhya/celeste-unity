@@ -10,8 +10,7 @@ using UnityEngine.Serialization;
 
 public class HoodColorHandler : MonoBehaviour
 {
-    private Player player;
-    private Material targetMat;
+    [HideInInspector] public Material Mat;
 
     [SerializeField] private Texture2D tableTex;
 
@@ -31,9 +30,8 @@ public class HoodColorHandler : MonoBehaviour
     private Color? forceColor = null;
     private static readonly int EmissionStrength = Shader.PropertyToID("_EmissionStrength");
 
-    /// <summary>
-    /// 여기서 부르면 의미가 없다. 각 플레이어 나 몬스터 등에 이걸 붙여버리자.
-    /// </summary>
+    public Func<bool> HasToRollBack;
+    
     private void Awake()
     {
         coordToColorMap = new Dictionary<Vector2Int, PairColor>();
@@ -54,28 +52,27 @@ public class HoodColorHandler : MonoBehaviour
 
     private void Start()
     {
-        player = Game.MainPlayer;
-        targetMat = player.GetComponent<SpriteRenderer>().material;
+        Mat = GetComponent<SpriteRenderer>().material;
         tableTex = Instantiate(tableTex); // in order to avoid overriding source tex.
-        targetMat.SetTexture("_LookUpTex", tableTex);
+        Mat.SetTexture("_LookUpTex", tableTex);
     }
 
-    public void OnDash()
+    public void SwitchColor()
     {
         isChangingColor = true;
         
         lerpValue = 0;
-        targetMat.SetFloat(EmissionStrength, 0);
+        Mat.SetFloat(EmissionStrength, 0);
         seq.Kill();
         
         seq = DOTween.Sequence()
             .Append(DOTween.To(() => lerpValue, x => lerpValue = x, 1, animTime)
                 .SetEase(Ease.OutCubic))
-            .Join(targetMat.DOFloat(maxIntensity, EmissionStrength, animTime))
+            .Join(Mat.DOFloat(maxIntensity, EmissionStrength, animTime))
             .SetAutoKill(false);
         seq.OnComplete(() =>
         {
-            if (player.Dashes > 0)
+            if (HasToRollBack())
             {
                 // better than blink
                 seq.PlayBackwards();
@@ -96,7 +93,7 @@ public class HoodColorHandler : MonoBehaviour
             SwitchPixel(lerpValue, forceColor);
             tableTex.Apply();
         }
-        else if (hasChangedColor && player.Dashes > 0)
+        else if (hasChangedColor && HasToRollBack())
         {
             hasChangedColor = false;
             isChangingColor = true;
@@ -123,7 +120,7 @@ public class HoodColorHandler : MonoBehaviour
     {
         // white then red 
         forceColor = Color.white;
-        targetMat.SetFloat(EmissionStrength, 0);
+        Mat.SetFloat(EmissionStrength, 0);
         DOTween.Sequence()
             .InsertCallback(0.2f, () =>
             {

@@ -250,7 +250,12 @@ Shader "Universal Render Pipeline/Simple Lit"
                 lightInput.uv = input.uv;
                 lightInput.positionCS = input.positionCS;
                 lightInput.positionWS = input.positionWS;
-                lightInput.vertexSH = input.vertexSH;
+
+                #if defined(LIGHTMAP_ON)
+                    lightInput.staticLightmapUV =  input.staticLightmapUV;
+                #else
+                    lightInput.vertexSH = input.vertexSH;
+                #endif
 
                 #ifdef _NORMALMAP
                     lightInput.normalWS = input.normalWS;

@@ -50,12 +50,16 @@ public partial class Player : Actor
     
     // effect
     private SpriteRenderer sr;
+    protected HoodColorHandler hoodColorHandler;
 
     protected override void Awake()
     {
         base.Awake();
         
         sr = GetComponent<SpriteRenderer>();
+        hoodColorHandler = GetComponent<HoodColorHandler>();
+        hoodColorHandler.Mat = sr.material;
+        hoodColorHandler.HasToRollBack = () => Dashes > 0;
         anim = GetComponent<Animator>();
         
         sm = new StateMachine(3);

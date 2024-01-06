@@ -17,7 +17,6 @@ public class EffectManager : MonoBehaviour
     private DustPool dustPool;
     private DashLinePool dashLinePool;
     private DashTrailPool dashTrailPool;
-    private HoodColorHandler hoodColorHandler;
 
     [SerializeField] private RippleHandler rippleHandler;
 
@@ -25,7 +24,6 @@ public class EffectManager : MonoBehaviour
     public static DashLineVisualization GetDashLine() => instance.dashLinePool.Pool.Get();
     public static DeathCircle GetCircle() => instance.dCirclePool.Pool.Get();
     public static DashTrail GetTrail() => instance.dashTrailPool.Pool.Get();
-    public static void ChangeCloth() => instance.hoodColorHandler.OnDash();
     public static void CreateRipple(Vector2 pos) => instance.rippleHandler.Ripple(pos);
 
     // subscribers require different parameters so it would be messy.
@@ -46,7 +44,6 @@ public class EffectManager : MonoBehaviour
         dCirclePool = GetComponent<DeadCirclePool>();
         dustPool = GetComponent<DustPool>();
         dashLinePool = GetComponent<DashLinePool>();
-        hoodColorHandler = GetComponent<HoodColorHandler>();
         dashTrailPool = GetComponent<DashTrailPool>();
     }
 
