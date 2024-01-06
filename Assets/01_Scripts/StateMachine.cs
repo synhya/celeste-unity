@@ -5,7 +5,6 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 
-
 public class StateMachine
 {
     private Dictionary<int, StateActions> stateDict;
