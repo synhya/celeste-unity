@@ -44,19 +44,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91a5911afdcfc0748855de4346f0f417, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menuWindSnd: {fileID: 0}
-  menuClickSnd: {fileID: 0}
-  levelBgmSnd: {fileID: 0}
-  jumpSnd: {fileID: 0}
-  wallJumpSnd: {fileID: 0}
-  dashSnd: {fileID: 0}
-  snowWalkSnds: []
-  metalWalkSnds: []
-  playerDeathSnd: {fileID: 0}
-  playerReviveSnd: {fileID: 0}
-  gearBellSnd: {fileID: 0}
-  gearForwardSnd: {fileID: 0}
-  gearBackwardSnd: {fileID: 0}
-  brickShakeSnd: {fileID: 0}
-  springSnd: {fileID: 0}
-  strawberrySnd: {fileID: 0}
+  menuWindSnd: {fileID: 8300000, guid: f5e35a416d3be304aa9a92248e6decf3, type: 3}
+  menuClickSnd: {fileID: 8300000, guid: 0c0c112040d825644a256496d67beb39, type: 3}
+  menuStartLevelSnd: {fileID: 8300000, guid: cf212c394c87c5a45b11a222ad991499, type: 3}
+  levelBgmSnd: {fileID: 8300000, guid: 4bd9da6c346047f45bccc79996842fc8, type: 3}
+  jumpSnd: {fileID: 8300000, guid: 15277fe9e1237e6419e6decae5b367db, type: 3}
+  wallJumpSnd: {fileID: 8300000, guid: 017b535c1fdad3a4cab4dbcbdb5c72f8, type: 3}
+  dashSnd: {fileID: 8300000, guid: facb7132f2608bc4b9b9cc7d0fdd4b36, type: 3}
+  snowWalkSnd: {fileID: 8300000, guid: cb88bc574a0131b4885dc36f76fe336a, type: 3}
+  metalWalkSnd: {fileID: 8300000, guid: 38a49d68895c49e4aab18f5ff883fb96, type: 3}
+  stoneWalkSnd: {fileID: 8300000, guid: 0358c0559ece84444a82719f2bbf0a07, type: 3}
+  playerDeathSnd: {fileID: 8300000, guid: 06f3f3957e516cc498f5bd4e728f2c40, type: 3}
+  playerReviveSnd: {fileID: 8300000, guid: 3561606ce1d15384d855af5a422f5952, type: 3}
+  gearBellSnd: {fileID: 8300000, guid: 37e95ee0876605041b26ce8ced1f8efb, type: 3}
+  gearSpinSnd: {fileID: 8300000, guid: b545587278a55c44794b66b3814bfce3, type: 3}
+  brickShakeSnd: {fileID: 8300000, guid: aaca06637f629fd4eb66c80d4c6fafd3, type: 3}
+  springSnd: {fileID: 8300000, guid: 628274b4f890e604387aa9bb0f7d04d9, type: 3}
+  strawberrySnd: {fileID: 8300000, guid: 7cfb1d58288206544bc214a7d04914af, type: 3}

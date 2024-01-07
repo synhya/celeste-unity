@@ -69,10 +69,7 @@ dashing wall jump and corner correction is yet to be implemented.
 ## Asset Credit
 
 - [Red Hood](https://legnops.itch.io/red-hood-character)
-
-[//]: # (- [Pixel Art GUI Elements]&#40;https://mounirtohami.itch.io/pixel-art-gui-elements&#41;)
-
-[//]: # (- [fantasy icons pack]&#40;https://shikashipx.itch.io/shikashis-fantasy-icons-pack&#41;)
+- [Sound](https://soundeffect-lab.info/sound/various/)
 
 ## Articles And Scripts
 - [CelestePhysics](https://maddythorson.medium.com/celeste-and-towerfall-physics-d24bd2ae0fc5)

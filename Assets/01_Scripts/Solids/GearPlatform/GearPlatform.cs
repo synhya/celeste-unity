@@ -89,7 +89,7 @@ public class GearPlatform : Solid
 
     private int WaitUpdate()
     {
-        if (HasActorRiding())
+        if (timer <= 0f && HasActorRiding())
         {
             PlaySound(Clips.gearBellSnd);
             timer = startDelayTime;
@@ -116,7 +116,7 @@ public class GearPlatform : Solid
         anims[0].enabled = true;
         anims[1].enabled = true;
         
-        PlaySound(Clips.gearForwardSnd, 2f, 0.3f);
+        PlaySound(Clips.gearSpinSnd, 2f);
     }
 
     int ForwardUpdate()
@@ -190,7 +190,7 @@ public class GearPlatform : Solid
         anims[0].enabled = true;
         anims[1].enabled = true;
         
-        PlaySound(Clips.gearBackwardSnd, 1f, 0.2f);
+        PlaySound(Clips.gearSpinSnd, 1f);
     }
 
     private int BackwardUpdate()
