@@ -1,0 +1,40 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSLine
+
+struct DashLine
+{
+    float2 pos;
+    float4 color;
+};
+
+RWStructuredBuffer<DashLine> _Instances;
+StructuredBuffer<float> _RandClipBuffer;
+StructuredBuffer<float> _RandColorBuffer;
+
+float2 _Direction;
+
+float _Length;
+float _TotalTime;
+float _LeftTime;
+
+// float3 _BlueColor = float3(0.26, 1, 0.87); // can't initialize here.
+
+[numthreads(256,1,1)]
+void CSLine (uint3 id : SV_DispatchThreadID)
+{
+    DashLine dline;
+    
+    float2 pos = _Direction.xy * id.x; // pivot is bound center!
+    float passedTime = _TotalTime - _LeftTime;
+    float clip = _RandClipBuffer[id.x] - smoothstep(0, _Length, id.x) - smoothstep(0, _TotalTime, passedTime);
+        
+
+    float3 color = float3(1,1,1);
+    if(_RandColorBuffer[id.x] > 0.4) color = float3(0.26, 1, 0.87);
+    
+    pos += 0.5f;
+    dline.pos = pos;
+    dline.color = float4(color, clip);
+
+    _Instances[id.x] = dline;
+}
