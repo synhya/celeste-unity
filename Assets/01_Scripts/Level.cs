@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
@@ -20,8 +21,14 @@ public class Level : MonoBehaviour
     public static Level Current => instance;
     private static Level instance;
     
-    [SerializeField] private Room startingRoom;
+    // for intro
+    [Header("Intro")]
+    [SerializeField] private Material introMat;
+    [SerializeField] private Vector2 cropScreenPos;
+    [SerializeField] private float targetProgress; // from 1 to backward
     
+    [Header("General")]
+    [SerializeField] private Room startingRoom;
     [HideInInspector] public Room CurRoom;
     private Room prevRoom;
     [HideInInspector] public Tilemap Map;
@@ -78,6 +85,15 @@ public class Level : MonoBehaviour
         curBoundMax = CurRoom.BoundRect.max - boundOffset;
         
         camT.position = CameraTarget;
+        
+        // intro
+        introMat.SetVector("_CenterScreenPos", cropScreenPos);
+        introMat.SetFloat("_Progress", 1);
+        introMat.DOFloat(targetProgress, "_Progress", 1f)
+            .OnComplete(() =>
+            {
+                // player intro
+            }); // after intro wipe out circle.
     }
 
     private void Update()

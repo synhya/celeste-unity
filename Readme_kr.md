@@ -6,7 +6,7 @@ Celeste라는 게임을 직접 플레이하고 최대한 비슷하게 구현하�
 
 점들은 푸아송 디스크 샘플링으로 xz평면 위치를 정하고   
 점들을 이쁘게 연결하기 위해 들로네 삼각분할 기법을 이용해 매쉬를 생성했습니다.   
-각 점들의 높이는 페럴린 노이즈로 생성했습니다. [Triangle.Net](https://github.com/garykac/triangle.net)라이브러리와 해당 [영상](https://www.youtube.com/watch?v=sRn8TL3EKDU)의 도움을 받았습니다.   
+각 점들의 높이는 페럴린 노이즈를 샘플링해 구했습니다. [Triangle.Net](https://github.com/garykac/triangle.net)라이브러리와 해당 [영상](https://www.youtube.com/watch?v=sRn8TL3EKDU)의 도움을 받았습니다.   
 
 
 ## 이펙트

@@ -88,7 +88,7 @@ public class FadePlatform : Solid
                 for (int i = 0; i < blockTs.Count; i++)
                 {
                     blockTs[i].transform.localScale = Vector3.one * 0.6f;
-                   var seq =  DOTween.Sequence()
+                    DOTween.Sequence()
                         .Append(blockSRs[i].DOFade(1f, 0.15f))
                         .Append(blockTs[i].DOScale(Vector3.one * 1.15f, FadeInTime - 0.3f))
                         .Append(blockTs[i].DOScale(Vector3.one, 0.15f));

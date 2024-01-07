@@ -7,6 +7,8 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Serialization;
 
+
+// TODO: 레벨에서 돌아오면 상태유지하게 DontDestroy추가.
 public class MenuManager : MonoBehaviour
 {
     // Cam settings 
@@ -42,14 +44,18 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private Color blink1 = new Color(1f, 1f, 0.54f);
     [SerializeField] private Color blink2 = new Color(0.75f, 1f, 0.6f);
     [SerializeField] private TMP_Text[] menuTexts;
+    [SerializeField] private TMP_Text[] levelTexts;
     
     [SerializeField] private RectTransform menuUI;
     [SerializeField] private RectTransform levelSelectUI;
     [SerializeField] private RectTransform levelUI;
-    [SerializeField] private float rectMoveAmount = 500f;
+    [SerializeField] private float rectMoveAmount = 800f;
     [SerializeField] private float rectMoveDuration = 1f;
     
     private int activeTextIdx;
+
+    [SerializeField] private Material transitionMat;
+    private bool isOnSceneTransition = false;
     
     private void Start()
     {
@@ -156,7 +162,7 @@ public class MenuManager : MonoBehaviour
 
     #endregion
 
-    #region State Level
+    #region State Level Select
 
     private void LevelSelectBegin()
     {
@@ -196,17 +202,28 @@ public class MenuManager : MonoBehaviour
     {
         level1Cam.Priority = 1;
         
+        activeTextIdx = 0;
+        
         levelUI.DOMoveX(-rectMoveAmount, rectMoveDuration).SetRelative().SetEase(Ease.OutCubic);
     }
 
     private int LevelUpdate()
     {
+        if (isOnSceneTransition) return StLevel;
+        
+        levelTexts[activeTextIdx].color = Color.Lerp(blink1, blink2, Mathf.PingPong(Time.time * 4, 1));
+        
         if (Input.GetKeyDown(oKey))
         {
-            // scene transition
-            SceneSwitcher.I.LoadScene(SceneSwitcher.SceneLevel1);
-            
-            // Game.I.StartGame();
+            // start transition
+            isOnSceneTransition = true;
+            transitionMat.SetVector("_CenterScreenPos", new Vector2(1920 / 2, 1080 / 2));
+            transitionMat.SetFloat("_Progress", 0);
+
+            DOTween.Sequence()
+                .Append(levelUI.DOMoveX(rectMoveAmount, rectMoveDuration).SetRelative().SetEase(Ease.OutCubic))
+                .Join(transitionMat.DOFloat(1, "_Progress", 1))
+                .OnComplete(() => SceneSwitcher.I.LoadScene(SceneSwitcher.SceneLevel1));
         }
             
         else if (Input.GetKeyDown(xKey))

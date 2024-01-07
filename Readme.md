@@ -82,5 +82,7 @@ dashing wall jump and corner correction is yet to be implemented.
 - [PixelPerfectLine](https://www.youtube.com/watch?v=nlzvesTsSrI)
 - [PlatformerForgiveness](http://kpulv.com/123/Platforming_Ledge_Forgiveness/)
 - [CelesteUserForgiveness](https://maddythorson.medium.com/celeste-forgiveness-31e4a40399f1)
+- [ProceduralTerrainGeneration](https://www.youtube.com/watch?v=wbpMiKiSKm8&list=PLFt_AvWsXl0eBW2EiBtl_sxmDtSgZBxB3)
+- [ShaderTransitions](https://gl-transitions.com/)
 
 [//]: # (- [Scroller]&#40;https://github.com/setchi/FancyScrollView&#41;)
