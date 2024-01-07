@@ -4,10 +4,12 @@ Celeste라는 게임을 직접 플레이하고 최대한 비슷하게 구현하�
 
 ## 메뉴
 
-점들은 푸아송 디스크 샘플링으로 xz평면 위치를 정하고   
-점들을 이쁘게 연결하기 위해 들로네 삼각분할 기법을 이용해 매쉬를 생성했습니다.   
-각 점들의 높이는 페럴린 노이즈를 샘플링해 구했습니다. [Triangle.Net](https://github.com/garykac/triangle.net)라이브러리와 해당 [영상](https://www.youtube.com/watch?v=sRn8TL3EKDU)의 도움을 받았습니다.   
-
+기존 게임에서는 메뉴화면에 로우폴리로 만들어진 산과 주변 풍경들이 배치되는데 블랜더로 모델을 직접 만들기에는 시간이 걸릴 것 같아서   
+절차적 생성방식을 활용해 랜덤으로 산지형을 생성했습니다.  xy너비값을 받아서 해당 지역내부에 우선 골고루 분포된 점들을 생성합니다.    
+단순히 랜덤값을 받아오면 점들이 밀집된 지역들이 생성되 지형이 자연스럽지 않았기 떄문에 푸아송 디스크 샘플링으로 점들의 xz위치를 정했습니다.   
+이후 점들을 자연스럽게 연결하기 위해 들로네 삼각분할 기법을 이용해 매쉬의 삼각형 인덱스 정보들을 채우고   
+각 점들의 높이는 페럴린 노이즈를 샘플링해 구했습니다. [Triangle.Net](https://github.com/garykac/triangle.net)라이브러리와 해당 [영상](https://www.youtube.com/watch?v=sRn8TL3EKDU)의 도움을 받았습니다.    
+화면전환은 쉐이더와 풀스크린 패스를 활용해서 구현했습니다. 전환 쉐이더는 [GLTransition 사이트](https://gl-transitions.com/)를 참고했습니다.
 
 ## 이펙트
 ### 대쉬시에 후드 색상 변경
@@ -192,6 +194,7 @@ Actor가 이동할 때마다 레벨에 존재하는 모든 Solid와 충돌을 �
         sm = new StateMachine(3);
         sm.SetCallbacks(StateNormal, NormalUpdate, NormalBegin, null);
         sm.SetCallbacks(StateDash, DashUpdate, DashBegin, DashEnd);
+        ...
         sm.State = StateNormal;
     }
 
