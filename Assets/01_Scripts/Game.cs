@@ -10,16 +10,13 @@ public class Game : MonoBehaviour
         (instance ??= (new GameObject("Manager")).AddComponent<Game>());
     private static Game instance = null;
     
-    [SerializeField] private GameObject playerPrefab;
-
     public const int Width = 320;
     public const int Height = 180;
     
+    [SerializeField] private GameObject playerPrefab;
     public static Player MainPlayer => instance.mainPlayer;
     private Player mainPlayer;
-    public static Level CurrentLevel => instance.currentLevel;
-    private Level currentLevel;
-
+    
     public static bool IsPaused
     {
         get;
@@ -28,7 +25,7 @@ public class Game : MonoBehaviour
 
     public static void Pause() => IsPaused = true;
     public static void Resume() => IsPaused = false;
-
+    
     void Awake() 
     {
         if (instance != this)
@@ -44,20 +41,9 @@ public class Game : MonoBehaviour
         DontDestroyOnLoad(mainPlayer);
         mainPlayer.gameObject.SetActive(false);
     }
-
-    void Start()
-    {
-        // set all levels to inactive.
-        
-        // Application.targetFrameRate = 144;
-        StartGame();
-    }
     
-    void StartGame()
-    {
-        // switch scene here.
-        
-        CurrentLevel.gameObject.SetActive(true);
-        CurrentLevel.StartLevel();
-    }
+    // void StartGame()
+    // {
+    //
+    // }
 } 

@@ -7,20 +7,26 @@ using UnityEngine.Tilemaps;
 /// <summary>
 /// base class for solid and actor
 /// </summary>
-public abstract class Entity : MonoBehaviour
+[RequireComponent(typeof(AudioSource))]
+public abstract class Entity : MonoBehaviour, ISoundable
 {
-    protected Level Level => Game.CurrentLevel;
-    
-    protected bool Collideable = true;
+    protected Level Level => Level.Current;
 
     [Header("Entity Settings")]
     [SerializeField] private Transform targetTransform;
-    public Vector2Int HitboxBottomLeftOffset;
+    public Vector2Int HitBoxBottomLeftOffset;
     [SerializeField] private Vector2Int hitBoxSize;
-    private Vector2Int positionWS;
+    [HideInInspector] public RectInt HitBoxWS;
     
     [HideInInspector] public Vector2Int PreviousPos;
-    [HideInInspector] public RectInt HitBoxWS;
+    private Vector2Int positionWS;
+    
+    
+    [HideInInspector] public Vector2 Speed;
+    protected Vector2 Remainder;
+    protected bool Collideable = true;
+    
+    protected const int TileSize = 8;
     
     #region Properties
     public Vector2Int PositionWS
@@ -29,7 +35,7 @@ public abstract class Entity : MonoBehaviour
         set 
         {
             positionWS = value;
-            HitBoxWS.position = value + HitboxBottomLeftOffset;
+            HitBoxWS.position = value + HitBoxBottomLeftOffset;
         }
     }
     public Vector2Int HitboxSize
@@ -58,25 +64,17 @@ public abstract class Entity : MonoBehaviour
     public int UpWS => HitBoxWS.yMax;
 
     #endregion
-
-    public const int TileSize = 8;
-
-
-    [HideInInspector] public Vector2 Speed;
-    protected Vector2 Remainder;
-    
-    // left to implement.
-    public virtual void Added(Level level)
-    {
-    }
     
     protected virtual void Awake()
     {
+        SndSource = GetComponent<AudioSource>();
+        SndSource.playOnAwake = false;
+        
         if (!targetTransform)
             targetTransform = transform;
         
         PositionWS = Vector2Int.RoundToInt(targetTransform.position);
-        HitBoxWS = new RectInt(PositionWS + HitboxBottomLeftOffset, hitBoxSize);
+        HitBoxWS = new RectInt(PositionWS + HitBoxBottomLeftOffset, hitBoxSize);
     }
     
     protected virtual void Start()
@@ -102,4 +100,18 @@ public abstract class Entity : MonoBehaviour
         }
         return false;
     }
+
+    // sounds
+    protected SoundClipManager Clips => SoundClipManager.I;
+    protected AudioSource SndSource;
+    public void PlaySound(AudioClip clip, float pitch = 1f, float startRatio = 0f)
+    {
+        SndSource.Stop();
+        SndSource.pitch = pitch;
+        SndSource.time = startRatio * clip.length;
+        SndSource.clip = clip;
+        SndSource.Play();
+    }
+
+    public void StopSound() => SndSource.Stop();
 }

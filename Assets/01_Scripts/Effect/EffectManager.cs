@@ -50,7 +50,7 @@ public class EffectManager : MonoBehaviour
     #region Camera effects
     
     public static Tweener ShakeCam(float duration, float strength) 
-        => Game.CurrentLevel.MainCam.DOShakePosition(duration, strength);
+        => Level.Current.CamShakerT.DOShakePosition(duration, strength);
     
     #endregion
 }

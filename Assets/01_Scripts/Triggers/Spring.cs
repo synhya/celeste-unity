@@ -16,8 +16,6 @@ public class Spring : Trigger
     
     private float timer;
 
-    public AudioSource Source;
-
     protected override void Start()
     {
         base.Start();
@@ -31,7 +29,7 @@ public class Spring : Trigger
         {
             var p = other as Player;
             p.OnBoost();
-            Source.Play();
+            PlaySound(Clips.springSnd);
         }
         
         onPlay = true;

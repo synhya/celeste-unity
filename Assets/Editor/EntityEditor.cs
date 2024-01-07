@@ -21,8 +21,8 @@ public class EntityEditor : Editor
         e.PositionWS = Vector2Int.RoundToInt(e.transform.position);
         var rect = new Rect
         {
-            x = e.PositionWS.x + e.HitboxBottomLeftOffset.x,
-            y = e.PositionWS.y + e.HitboxBottomLeftOffset.y,
+            x = e.PositionWS.x + e.HitBoxBottomLeftOffset.x,
+            y = e.PositionWS.y + e.HitBoxBottomLeftOffset.y,
             width = e.HitboxSize.x,
             height = e.HitboxSize.y
         };

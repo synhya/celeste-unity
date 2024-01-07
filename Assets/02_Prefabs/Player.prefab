@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3708085839628138960}
   - component: {fileID: 3301081140301246350}
+  - component: {fileID: 7519099207476352503}
   - component: {fileID: 3451402920003286382}
   - component: {fileID: 421289310013185746}
   - component: {fileID: -3679353752221976145}
@@ -59,21 +60,6 @@ MonoBehaviour:
   Speed: {x: 0, y: 0}
   deadBodyPrefab: {fileID: 7332204074699942299, guid: a82d9be9b0ab08446a7200708ec87c2c, type: 3}
   source: {fileID: -3679353752221976145}
-  jumpSnd:
-  - {fileID: 8300000, guid: 22ee24062d56cfd4c833faa1566f5919, type: 3}
-  - {fileID: 8300000, guid: 8446257e0c832f94e907b5f5da93216e, type: 3}
-  - {fileID: 8300000, guid: 94b034b310d00334bb8995b1630ae263, type: 3}
-  - {fileID: 8300000, guid: c5aafb78beab94d4fbea9a92d2a0bf7a, type: 3}
-  - {fileID: 8300000, guid: 7d12bdbf16a2f4345aa1ff15d2cf1c01, type: 3}
-  - {fileID: 8300000, guid: ad09b2a6e8297b2488917e5b0ce02d5e, type: 3}
-  wallJumpSnd:
-  - {fileID: 8300000, guid: e1acb5fa497cb0741926faba862d00a1, type: 3}
-  dashSnd:
-  - {fileID: 8300000, guid: 7d88c4839a3046743b1a5f57b9d8dca6, type: 3}
-  snowWalkSnd:
-  - {fileID: 8300000, guid: 72b0d0158b43f674fa5cb1e5580cc0a2, type: 3}
-  snowWalkSndIdx: 0
-  SR: {fileID: 0}
   runAnimThreshold: 1
   jumpTurnAroundThreshold: 50
   boostPower: 300
@@ -86,7 +72,6 @@ MonoBehaviour:
   - 0.045
   - 0.06
   - 0.08
-  playerTrailPrefab: {fileID: 5490173074874586281, guid: ee7d0947f13b4f8419ac65aa8aceebff, type: 3}
   MaxDashes: 1
   Dashes: 0
   DashDir: {x: 0, y: 0}
@@ -114,6 +99,84 @@ MonoBehaviour:
   TransitionTarget: {x: 0, y: 0}
   ForceFlipXValue: 0
   ForceSpriteFlip: 0
+--- !u!114 &7519099207476352503
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7743163333377343640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 483facbd9133406aac07a9505dafc78a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Mat: {fileID: 0}
+  tableTex: {fileID: 2800000, guid: ea24e37a455076d4da326758ddd92165, type: 3}
+  animTime: 0.25
+  maxIntensity: 1.2
+  colorToColorMap:
+    _serializedList:
+    - Key:
+        serializedVersion: 2
+        rgba: 4279436068
+      Value:
+        serializedVersion: 2
+        rgba: 4284353565
+    - Key:
+        serializedVersion: 2
+        rgba: 4279370532
+      Value:
+        serializedVersion: 2
+        rgba: 4284353565
+    - Key:
+        serializedVersion: 2
+        rgba: 4280158793
+      Value:
+        serializedVersion: 2
+        rgba: 4287509521
+    - Key:
+        serializedVersion: 2
+        rgba: 4280953734
+      Value:
+        serializedVersion: 2
+        rgba: 4290665525
+    - Key:
+        serializedVersion: 2
+        rgba: 4282536866
+      Value:
+        serializedVersion: 2
+        rgba: 4290665525
+    - Key:
+        serializedVersion: 2
+        rgba: 4283131822
+      Value:
+        serializedVersion: 2
+        rgba: 4293690202
+    - Key:
+        serializedVersion: 2
+        rgba: 4281348278
+      Value:
+        serializedVersion: 2
+        rgba: 4290139952
+    - Key:
+        serializedVersion: 2
+        rgba: 4280164904
+      Value:
+        serializedVersion: 2
+        rgba: 4280589992
+    - Key:
+        serializedVersion: 2
+        rgba: 4282863705
+      Value:
+        serializedVersion: 2
+        rgba: 4286704895
+    - Key:
+        serializedVersion: 2
+        rgba: 4279242768
+      Value:
+        serializedVersion: 2
+        rgba: 4284353565
 --- !u!212 &3451402920003286382
 SpriteRenderer:
   m_ObjectHideFlags: 0

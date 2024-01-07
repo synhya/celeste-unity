@@ -45,12 +45,10 @@ public partial class Player : Actor
     
     private DustVisualization Dust => EffectManager.GetDust();
     private DashLineVisualization DashLine => EffectManager.GetDashLine();
-
-    public AudioSource source;
     
     // effect
     private SpriteRenderer sr;
-    protected HoodColorHandler hoodColorHandler;
+    private HoodColorHandler hoodColorHandler;
 
     protected override void Awake()
     {
@@ -67,9 +65,6 @@ public partial class Player : Actor
         sm.SetCallbacks(StateDash, DashUpdate, DashBegin, DashEnd);
         sm.SetCallbacks(StateTransition, TransitionUpdate, TransitionBegin, TransitionEnd);
         sm.State = StateNormal;
-
-        source = GetComponent<AudioSource>();
-        source.playOnAwake = false;
     }
 
     protected override void Start()
@@ -151,13 +146,13 @@ public partial class Player : Actor
         
         if (inputX != 0 && !dashPressed && onGround)
         {
-            if(!source.isPlaying)
+            if(!SndSource.isPlaying)
             {
-                PlaySound(SoundManager.I.snowWalkSnd[0],2f);
+                PlaySound(Clips.snowWalkSnds[0],2f);
             }
-        } else if (source.clip == SoundManager.I.snowWalkSnd[0])
+        } else if (SndSource.clip == Clips.snowWalkSnds[0])
         {
-            source.Stop();
+            StopSound();
         }
         
         // StateMachine.Update Speed is determined here
@@ -196,15 +191,6 @@ public partial class Player : Actor
         // other things to do.
         
         SaveData.Instance.Strawberries.Add(id);
-    }
-
-    void PlaySound(AudioClip clip, float pitch = 1f, float playfrom = 0f)
-    {
-        source.Stop();
-        source.pitch = pitch;
-        source.time = playfrom;
-        source.clip = clip;
-        source.Play();
     }
 }
 

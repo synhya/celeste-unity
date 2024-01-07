@@ -25,7 +25,7 @@ public class RippleHandler : MonoBehaviour
     public void Ripple(Vector2 pos, float time) 
     {
         // pos to uv
-        Vector2 screenPos = Game.CurrentLevel.MainCam.WorldToScreenPoint(pos);
+        Vector2 screenPos = Level.Current.MainCam.WorldToScreenPoint(pos);
         
         mat.SetVector("_SpawnScreenPos", screenPos);
         mat.DOFloat(progressEnd, "_Progress", time)

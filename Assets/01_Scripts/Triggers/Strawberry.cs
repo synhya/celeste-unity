@@ -30,8 +30,6 @@ public class Strawberry : Trigger
 
     private TweenerCore<Vector3, Vector3, VectorOptions> lerpTween;
 
-    public AudioSource Source;
-
     protected override void Start()
     {
         base.Start();
@@ -58,7 +56,7 @@ public class Strawberry : Trigger
             lerpTween.Kill();
             transform.SetParent(Level.transform);
             
-            Source.Play();
+            PlaySound(Clips.strawberrySnd);
         }
     }
     public override void OnStay(Entity other)

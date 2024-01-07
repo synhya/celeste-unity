@@ -7274,10 +7274,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 481ceedc494f08f4b997513515c086ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingLevel: {fileID: 1094304493}
   playerPrefab: {fileID: 7743163333377343640, guid: 54b17f57f55f50b46ae99f329b2d8e9c, type: 3}
-  camShaderT: {fileID: 1023095428}
-  CurrentLevel: {fileID: 0}
 --- !u!1 &959858722
 GameObject:
   m_ObjectHideFlags: 0
@@ -7404,7 +7401,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91a5911afdcfc0748855de4346f0f417, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Source: {fileID: 959858723}
+  menuWindSnd: {fileID: 0}
+  menuClickSnd: {fileID: 0}
+  levelBgmSnd: {fileID: 0}
+  jumpSnd: {fileID: 0}
+  wallJumpSnd: {fileID: 0}
+  dashSnd: {fileID: 0}
+  snowWalkSnds: []
+  metalWalkSnds: []
+  playerDeathSnd: {fileID: 0}
+  playerReviveSnd: {fileID: 0}
+  gearBellSnd: {fileID: 0}
+  gearForwardSnd: {fileID: 0}
+  gearBackwardSnd: {fileID: 0}
+  brickShakeSnd: {fileID: 0}
+  springSnd: {fileID: 0}
+  strawberrySnd: {fileID: 0}
 --- !u!4 &959858725
 Transform:
   m_ObjectHideFlags: 0
@@ -90307,7 +90319,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e6bfbf801a0cdb4bbdad47729966a79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingRoom: {fileID: 1261508664}
+  startingRoom: {fileID: 1707297774}
   CurRoom: {fileID: 0}
   Map: {fileID: 0}
   IntroType: 1
@@ -90318,6 +90330,8 @@ MonoBehaviour:
       Dir: 0
       TransPosWS: {x: 0, y: 0}
     Room: {fileID: 0}
+  MainCam: {fileID: 519420031}
+  CamShakerT: {fileID: 1023095428}
 --- !u!4 &1127164478 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7816697030590669994, guid: 905e62ce3817641479d46660763e1372, type: 3}
@@ -91436,7 +91450,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 320, y: 180}
+  m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -98413,7 +98427,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2055282389}
   - component: {fileID: 2055282390}
-  - component: {fileID: 2055282394}
   - component: {fileID: 2055282393}
   - component: {fileID: 2055282392}
   - component: {fileID: 2055282391}
@@ -98495,83 +98508,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxPoolSize: 15
   prefab: {fileID: 5457032772199629363, guid: a365ce3c8f0ef5342a2e071ea3524515, type: 3}
---- !u!114 &2055282394
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2055282388}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 483facbd9133406aac07a9505dafc78a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tableTex: {fileID: 2800000, guid: ea24e37a455076d4da326758ddd92165, type: 3}
-  animTime: 0.25
-  maxIntensity: 1.2
-  colorToColorMap:
-    _serializedList:
-    - Key:
-        serializedVersion: 2
-        rgba: 4279436068
-      Value:
-        serializedVersion: 2
-        rgba: 4284353565
-    - Key:
-        serializedVersion: 2
-        rgba: 4279370532
-      Value:
-        serializedVersion: 2
-        rgba: 4284353565
-    - Key:
-        serializedVersion: 2
-        rgba: 4280158793
-      Value:
-        serializedVersion: 2
-        rgba: 4287509521
-    - Key:
-        serializedVersion: 2
-        rgba: 4280953734
-      Value:
-        serializedVersion: 2
-        rgba: 4290665525
-    - Key:
-        serializedVersion: 2
-        rgba: 4282536866
-      Value:
-        serializedVersion: 2
-        rgba: 4290665525
-    - Key:
-        serializedVersion: 2
-        rgba: 4283131822
-      Value:
-        serializedVersion: 2
-        rgba: 4293690202
-    - Key:
-        serializedVersion: 2
-        rgba: 4281348278
-      Value:
-        serializedVersion: 2
-        rgba: 4290139952
-    - Key:
-        serializedVersion: 2
-        rgba: 4280164904
-      Value:
-        serializedVersion: 2
-        rgba: 4280589992
-    - Key:
-        serializedVersion: 2
-        rgba: 4282863705
-      Value:
-        serializedVersion: 2
-        rgba: 4286704895
-    - Key:
-        serializedVersion: 2
-        rgba: 4279242768
-      Value:
-        serializedVersion: 2
-        rgba: 4284353565
 --- !u!114 &2055282395
 MonoBehaviour:
   m_ObjectHideFlags: 0

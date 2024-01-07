@@ -3006,7 +3006,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1585788907}
   m_LocalRotation: {x: -0.084308974, y: 0.0000000037252899, z: -9.3132246e-10, w: 0.9964397}
-  m_LocalPosition: {x: 0, y: 17.33, z: 14.01}
+  m_LocalPosition: {x: 0, y: 16.71, z: 10.37}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3724,7 +3724,7 @@ ParticleSystem:
     donutRadius: 0.2
     m_Position: {x: 0, y: 0, z: 0}
     m_Rotation: {x: 0, y: 0, z: 0}
-    m_Scale: {x: 40, y: 1, z: 30}
+    m_Scale: {x: 40, y: 1, z: 13.04}
     placementMode: 0
     m_MeshMaterialIndex: 0
     m_MeshNormalOffset: 0
@@ -3922,7 +3922,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 45
+      scalar: 60
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -8904,7 +8904,8 @@ MonoBehaviour:
   - {fileID: 453487124}
   - {fileID: 253579905}
   menuUI: {fileID: 1868991462}
-  levelUI: {fileID: 2054847429}
+  levelSelectUI: {fileID: 2054847429}
+  levelUI: {fileID: 1549194242}
   rectMoveAmount: 500
   rectMoveDuration: 1
 --- !u!4 &2040822305
@@ -8938,7 +8939,7 @@ GameObject:
   - component: {fileID: 2054847429}
   - component: {fileID: 2054847431}
   m_Layer: 5
-  m_Name: LevelUI
+  m_Name: LevelSelectUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

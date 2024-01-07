@@ -30,10 +30,10 @@ public class MenuManager : MonoBehaviour
 
     private StateMachine sm;
     private const int StMenu = 0;
-    private const int StLevel = 1;
+    private const int StLevelSelect = 1;
     private const int StForceRotation = 2;
+    private const int StLevel = 3;
     
-    private bool levelSelected = false;
     private float selectDelayTimer;
     private const float SelectDelayTime = 0.4f;
     
@@ -56,6 +56,7 @@ public class MenuManager : MonoBehaviour
         sm = new StateMachine(3); 
         
         sm.SetCallbacks(StMenu, MenuUpdate, MenuBegin, MenuEnd);
+        sm.SetCallbacks(StLevelSelect, LevelSelectUpdate, LevelSelectBegin, LevelSelectEnd);
         sm.SetCallbacks(StLevel, LevelUpdate, LevelBegin, LevelEnd);
         sm.SetCallbacks(StForceRotation, RotateUpdate, RotateBegin, null);
         
@@ -66,6 +67,10 @@ public class MenuManager : MonoBehaviour
         pos = levelSelectUI.position;
         pos.y += rectMoveAmount;
         levelSelectUI.position = pos;
+
+        pos = levelUI.position;
+        pos.x += rectMoveAmount;
+        levelUI.position = pos;
     }
 
     private void Update()
@@ -81,7 +86,7 @@ public class MenuManager : MonoBehaviour
             .Append(mtPivot.DORotate(Vector3.up * rotateYVal, 0.8f).SetEase(Ease.OutSine))
             .InsertCallback(0.6f, () =>
             {
-                sm.State = StLevel;
+                sm.State = StLevelSelect;
             });
     }
 
@@ -110,7 +115,7 @@ public class MenuManager : MonoBehaviour
                     return StForceRotation;
                 }
 
-                return StLevel;
+                return StLevelSelect;
             } 
             if (activeTextIdx == 1)
             {
@@ -153,57 +158,70 @@ public class MenuManager : MonoBehaviour
 
     #region State Level
 
-    private void LevelBegin()
+    private void LevelSelectBegin()
     {
         levelSelectionCam.Priority = 1;
         selectDelayTimer = SelectDelayTime;
         
-        levelSelectUI.DOMoveX(-rectMoveAmount, rectMoveDuration).SetRelative().SetEase(Ease.OutCubic);
+        levelSelectUI.DOMoveY(-rectMoveAmount, rectMoveDuration).SetRelative().SetEase(Ease.OutCubic);
     }
     
-    private int LevelUpdate()
+    private int LevelSelectUpdate()
     {
         if (selectDelayTimer > 0f) selectDelayTimer -= Time.deltaTime;
+
+
+        if (Input.GetKeyDown(oKey) && selectDelayTimer < 0f)
+            return StLevel;
         
-        if (levelSelected)
-        {
-            if (Input.GetKeyDown(oKey))
-            {
-                // start game.
-            }
-            
-            else if (Input.GetKeyDown(xKey))
-            {
-                levelSelected = false;
-                level1Cam.Priority = 0;
-                levelSelectionCam.Priority = 1;
-            }
-        }
-        else
-        {
-            if (Input.GetKeyDown(oKey) && selectDelayTimer < 0f)
-            {
-                levelSelected = true;
-                level1Cam.Priority = 1;
-                levelSelectionCam.Priority = 0;
-                
-                
-                // level select -> make new state
-                // levelUI
-            }
-            
-            else if (Input.GetKeyDown(xKey))
-                return StMenu;
-        }
+        else if (Input.GetKeyDown(xKey))
+            return StMenu;
+    
         
+        return StLevelSelect;
+    }
+
+    private void LevelSelectEnd()
+    {
+        levelSelectionCam.Priority = 0;
+        
+        levelSelectUI.DOMoveY(rectMoveAmount, rectMoveDuration).SetRelative().SetEase(Ease.OutCubic);
+    }
+
+    #endregion
+
+    #region State Level
+
+    private void LevelBegin()
+    {
+        level1Cam.Priority = 1;
+        
+        levelUI.DOMoveX(-rectMoveAmount, rectMoveDuration).SetRelative().SetEase(Ease.OutCubic);
+    }
+
+    private int LevelUpdate()
+    {
+        if (Input.GetKeyDown(oKey))
+        {
+            // scene transition
+            SceneSwitcher.I.LoadScene(SceneSwitcher.SceneLevel1);
+            
+            // Game.I.StartGame();
+        }
+            
+        else if (Input.GetKeyDown(xKey))
+        {
+            return StLevelSelect;
+        }
+
         return StLevel;
     }
 
     private void LevelEnd()
     {
-        levelSelectionCam.Priority = 0;
+        level1Cam.Priority = 0;
         
-        levelSelectUI.DOMoveX(rectMoveAmount, rectMoveDuration).SetRelative().SetEase(Ease.OutCubic);
+        levelUI.DOMoveX(rectMoveAmount, rectMoveDuration).SetRelative().SetEase(Ease.OutCubic);
     }
 
     #endregion

@@ -34,7 +34,6 @@ public class GearPlatform : Solid
 
     private Animator[] anims;
     private SpriteRenderer blockSR;
-    public AudioSource Source;
     public AudioClip[] forwardSnd;
     public AudioClip[] backwardSnd;
 
@@ -82,20 +81,14 @@ public class GearPlatform : Solid
             lightSR.sprite = lightSprites[0];
             lightSR.material.SetTexture("_EmissionTex", hdrTex[0]);
             
-            Source.pitch = 2f;
-            Source.time = 0.3f;
-            Source.clip = forwardSnd[0];
-            Source.Play();
+            PlaySound(Clips.gearForwardSnd, 2f, 0.3f);
         }
         else if (stoppedAtEdge)
         {
             stoppedAtEdge = false;
             isMovingBackward = true;
 
-            Source.pitch = 1f;
-            Source.time = 0.2f;
-            Source.clip = backwardSnd[0];
-            Source.Play();
+            PlaySound(Clips.gearBackwardSnd, 1f, 0.2f);
         }
         
         if (isMovingForward || isMovingBackward)
@@ -121,7 +114,7 @@ public class GearPlatform : Solid
                     lightSR.sprite = lightSprites[1];
                     lightSR.material.SetTexture("_EmissionTex", hdrTex[1]);
                     
-                    Source.Stop();
+                    StopSound();
                 }
                 else
                     Speed = Vector2.MoveTowards(Speed, dir * maxForwardSpeed, accel * Time.deltaTime);
@@ -139,7 +132,7 @@ public class GearPlatform : Solid
                     lightSR.sprite = lightSprites[2];
                     lightSR.material.SetTexture("_EmissionTex", hdrTex[2]);
                     
-                    Source.Stop();
+                    StopSound();
                 }
                 else
                     Speed = Vector2.MoveTowards(Speed, dir * maxRewindSpeed, accel * Time.deltaTime);

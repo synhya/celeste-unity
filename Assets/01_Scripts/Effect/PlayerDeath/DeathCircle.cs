@@ -66,7 +66,7 @@ public class DeathCircle : MonoBehaviour, IPoolable
             if (!didResetPivotPos)
             {
                 didResetPivotPos = true;
-                var spawnP = Game.CurrentLevel.CurRoom.SpawnPosWS;
+                var spawnP = Level.Current.CurRoom.SpawnPosWS;
                 Game.MainPlayer.PositionWS = spawnP;
                 spawnP.y += (int)circleYOffset;
                 pivotT.position = (Vector2)spawnP;
@@ -78,7 +78,7 @@ public class DeathCircle : MonoBehaviour, IPoolable
             if (!didSpawnPlayer)
             {
                 didSpawnPlayer = true;
-                Game.CurrentLevel.SpawnPlayer();
+                Level.Current.SpawnPlayer();
             }
             t.SetParent(originalParent);
             seq.Kill();

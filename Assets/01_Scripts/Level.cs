@@ -17,6 +17,9 @@ public enum IntroTypes
 
 public class Level : MonoBehaviour
 {
+    public static Level Current => instance;
+    private static Level instance;
+    
     [SerializeField] private Room startingRoom;
     
     [HideInInspector] public Room CurRoom;
@@ -37,11 +40,15 @@ public class Level : MonoBehaviour
     private Vector2 boundOffset = new Vector2(Game.Width / 2f,  Game.Height / 2f);
     
     
-    public Camera MainCam;
-    public Transform CamShakerT;
+    [HideInInspector] public Camera MainCam;
+    [HideInInspector] public Transform CamShakerT;
     
-    void Awake() 
+    void Awake()
     {
+        // 레벨 바뀔때 바꿔야되니까.
+        if(instance != null) Destroy(instance.gameObject);
+        instance = this;
+        
         CurRoom = startingRoom;
         Map = GetComponent<Tilemap>();
         Map.CompressBounds();
@@ -53,16 +60,12 @@ public class Level : MonoBehaviour
                 room.gameObject.SetActive(false);
         }
 
-        MainCam = Camera.main;
-        if(!MainCam) Debug.Log("No cam attached");
-        else
-        {
-            camT = MainCam.transform;
-            CamShakerT = camT.parent;
-        }
+        MainCam = Camera.current;
+        camT = MainCam.transform;
+        CamShakerT = camT.parent;
     }
 
-    public void StartLevel()
+    public void Start()
     {
         CurRoom.gameObject.SetActive(true); // 이러면 awake먼저 실행됨 이함수 도중에!
         
