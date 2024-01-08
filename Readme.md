@@ -5,6 +5,16 @@ Celeste Origin is playable in the linked website.
 [Game Play Video](https://www.youtube.com/watch?v=A_KDR0tZdBA)     
 [한국어버전 상세설명](https://github.com/wkd2314/ForPortfolio/blob/master/Readme_kr.md)
 
+## How To Play
+
+Download the CelesteClone.zip in Release tab on the right side.    
+Built for windows.    
+
+Arrow Key is for direction and movement    
+Press C to jump    
+Press X to dash   
+   
+---
 ## Features
 
 ### Menu
