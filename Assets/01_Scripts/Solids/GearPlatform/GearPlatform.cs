@@ -223,6 +223,9 @@ public class GearPlatform : Solid
         anims[1].speed = 1f;
         anims[0].enabled = false;
         anims[1].enabled = false;
+        
+        lightSR.sprite = lightSprites[2];
+        lightSR.material.SetTexture("_EmissionTex", hdrTex[2]);
     }
 
     #endregion
