@@ -60,8 +60,8 @@ TypeTile class that inherits RuleTile with AABB attached to handle collisions wi
 Player moves based on state machine.  
 I could implement every single state inherit from IState.  
 But I wanted to keep every state in player class because it looked more intuitive.  
-For example for [dash state](https://github.com/wkd2314/ForPortfolio/blob/master/Assets/01_Scripts/Actors/PlayerState/PlayerDashState.cs), I declared DashBegin(), DashUpdate(), DashEnd() in
-player script and linked as callback from state machine.
+For example for [normal state](https://github.com/wkd2314/ForPortfolio/blob/master/Assets/01_Scripts/Actors/PlayerState/PlayerNormalState.cs), I declared NormalBegin(), NormalUpdate(), NormalEnd() in
+player script and linked as callback from [state machine](https://github.com/wkd2314/ForPortfolio/blob/master/Assets/01_Scripts/StateMachine.cs).
 
 The player class was referenced by [this](https://github.com/NoelFB/Celeste/tree/master/Source/Player).
 
