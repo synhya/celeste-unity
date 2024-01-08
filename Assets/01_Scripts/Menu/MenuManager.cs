@@ -9,6 +9,7 @@ using UnityEngine.Serialization;
 
 
 // TODO: 레벨에서 돌아오면 상태유지하게 DontDestroy추가.
+[RequireComponent(typeof(AudioSource))]
 public class MenuManager : MonoBehaviour
 {
     // Cam settings 
@@ -56,6 +57,9 @@ public class MenuManager : MonoBehaviour
 
     [SerializeField] private Material transitionMat;
     private bool isOnSceneTransition = false;
+
+    private AudioSource clickSource;
+    private SoundClipManager Sound => SoundClipManager.I;
     
     private void Start()
     {
@@ -77,6 +81,8 @@ public class MenuManager : MonoBehaviour
         pos = levelUI.position;
         pos.x += rectMoveAmount;
         levelUI.position = pos;
+
+        clickSource = GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -115,6 +121,7 @@ public class MenuManager : MonoBehaviour
         {
             if (activeTextIdx == 0)
             {
+                Sound.Play(clickSource, Sound.menuClickSnd);
                 curYRotation = mtPivot.rotation.eulerAngles.y;
                 if (curYRotation <= leftMax || curYRotation >= rightMax) // 항상 0 ~ 360반환하니까. 
                 {
@@ -178,7 +185,10 @@ public class MenuManager : MonoBehaviour
 
 
         if (Input.GetKeyDown(oKey) && selectDelayTimer < 0f)
+        {
+            Sound.Play(clickSource, Sound.menuClickSnd);
             return StLevel;
+        }
         
         else if (Input.GetKeyDown(xKey))
             return StMenu;
@@ -219,6 +229,8 @@ public class MenuManager : MonoBehaviour
             isOnSceneTransition = true;
             transitionMat.SetVector("_CenterScreenPos", new Vector2(1920 / 2, 1080 / 2));
             transitionMat.SetFloat("_Progress", 0);
+            
+            Sound.Play(clickSource, Sound.menuClickSnd);
 
             DOTween.Sequence()
                 .Append(levelUI.DOMoveX(rectMoveAmount, rectMoveDuration).SetRelative().SetEase(Ease.OutCubic))

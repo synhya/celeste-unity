@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net.Http.Headers;
 using DG.Tweening;
 using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 using static UnityEngine.Mathf;
@@ -64,6 +63,7 @@ public partial class Player : Actor
         sm.SetCallbacks(StateNormal, NormalUpdate, NormalBegin, null);
         sm.SetCallbacks(StateDash, DashUpdate, DashBegin, DashEnd);
         sm.SetCallbacks(StateTransition, TransitionUpdate, TransitionBegin, TransitionEnd);
+        sm.SetCallbacks(StateIntroJump, IntroJumpUpdate, IntroJumpBegin, IntroJumpEnd);
         sm.State = StateNormal;
     }
 
@@ -146,11 +146,11 @@ public partial class Player : Actor
         
         if (inputX != 0 && !dashPressed && onGround)
         {
-            if(!SndSource.isPlaying)
+            if(!BaseSoundSource.isPlaying)
             {
                 PlaySound(Clips.snowWalkSnd,2f);
             }
-        } else if (SndSource.clip == Clips.snowWalkSnd)
+        } else if (BaseSoundSource.clip == Clips.snowWalkSnd)
         {
             StopSound();
         }
@@ -158,7 +158,7 @@ public partial class Player : Actor
         // StateMachine.Update Speed is determined here
         sm.Update();
 
-        if (sm.State != StateTransition)
+        if (!LockMovementBySpeed)
         {
             var moveAmount = Speed * Time.deltaTime;
         

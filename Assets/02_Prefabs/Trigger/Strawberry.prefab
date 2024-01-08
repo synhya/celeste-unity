@@ -33,7 +33,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6324282209891771607
 MonoBehaviour:
@@ -48,20 +48,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetTransform: {fileID: 0}
-  HitboxBottomLeftOffset: {x: -3, y: -4}
+  HitBoxBottomLeftOffset: {x: -3, y: -4}
   hitBoxSize: {x: 6, y: 8}
-  PreviousPos: {x: 0, y: 0}
   HitBoxWS:
-    x: 93
-    y: 153
+    x: -3
+    y: -4
     width: 0
     height: 0
+  PreviousPos: {x: 0, y: 0}
   Speed: {x: 0, y: 0}
+  Collideable: 1
   Triggered: 0
   shrinkDistanceThreshold: 8
   speed: 70
   id: 0
-  Source: {fileID: -2407812509553811737}
 --- !u!212 &3226476169270745516
 SpriteRenderer:
   m_ObjectHideFlags: 0

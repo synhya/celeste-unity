@@ -16,6 +16,7 @@ public enum IntroTypes
     None
 }
 
+[RequireComponent(typeof(AudioSource))]
 public class Level : MonoBehaviour
 {
     public static Level Current => instance;
@@ -46,9 +47,12 @@ public class Level : MonoBehaviour
     private Vector2 curBoundMax;
     private Vector2 boundOffset = new Vector2(Game.Width / 2f,  Game.Height / 2f);
     
-    
     [HideInInspector] public Camera MainCam;
     [HideInInspector] public Transform CamShakerT;
+
+    public Action OnPlayerIntroComplete;
+    
+    private AudioSource bgmSource;
     
     void Awake()
     {
@@ -67,9 +71,11 @@ public class Level : MonoBehaviour
                 room.gameObject.SetActive(false);
         }
 
-        MainCam = Camera.current;
+        MainCam = Camera.main;
         camT = MainCam.transform;
         CamShakerT = camT.parent;
+
+        OnPlayerIntroComplete = WipeOutCircle;
     }
 
     public void Start()
@@ -79,7 +85,6 @@ public class Level : MonoBehaviour
         player = Game.MainPlayer;
         var pt = player.transform;
         pt.SetParent(transform);
-        SpawnPlayer();
         
         curBoundMin = CurRoom.BoundRect.min + boundOffset;
         curBoundMax = CurRoom.BoundRect.max - boundOffset;
@@ -92,8 +97,19 @@ public class Level : MonoBehaviour
         introMat.DOFloat(targetProgress, "_Progress", 1f)
             .OnComplete(() =>
             {
-                // player intro
-            }); // after intro wipe out circle.
+                SpawnPlayer();
+                player.State = Player.StateIntroJump;
+            });
+        
+        // play bgm on loop
+        bgmSource = GetComponent<AudioSource>();
+        bgmSource.loop = true;
+        SoundClipManager.I.Play(bgmSource, SoundClipManager.I.levelBgmSnd);
+    }
+
+    private void WipeOutCircle()
+    {
+        introMat.DOFloat(0, "_Progress", 1f);
     }
 
     private void Update()
@@ -103,8 +119,9 @@ public class Level : MonoBehaviour
         camT.position
             = from + (CameraTarget - from) * (1f - Mathf.Pow(0.01f, Time.deltaTime));
         
-        // for each frame, check if player needs transition or is dead(out of boundary)
-        if(player.State != Player.StateTransition && !player.Dead)
+        // for each frame, check if player is collideable (if not, invincible),
+        // needs transition or is dead(out of boundary)
+        if(player.Collideable && player.State != Player.StateTransition && !player.Dead)
         {
             // up 
             if (player.UpWS > CurRoom.BoundRect.yMax)

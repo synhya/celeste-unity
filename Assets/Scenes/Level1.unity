@@ -90211,7 +90211,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   introMat: {fileID: 2100000, guid: 6b9ebac9278556949885687700826648, type: 2}
   cropScreenPos: {x: 138.6, y: 285.6}
-  targetProgress: 0.557
+  targetProgress: 0.61
   startingRoom: {fileID: 1707297774}
   CurRoom: {fileID: 0}
   Map: {fileID: 0}
@@ -96371,7 +96371,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9c7f6f44c6c40d7a5ef1d23c6ac9486, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SpawnPosWS: {x: 18, y: 36}
+  SpawnPosWS: {x: 24, y: 36}
   RoomLinks:
   - Door:
       StartPosWS: 240

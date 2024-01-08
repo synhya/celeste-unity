@@ -24,11 +24,42 @@ public abstract class Entity : MonoBehaviour, ISoundable
     
     [HideInInspector] public Vector2 Speed;
     protected Vector2 Remainder;
-    protected bool Collideable = true;
+    public bool Collideable = true;
     
     protected const int TileSize = 8;
     
     #region Properties
+    
+    public float X
+    {
+        get => positionWS.x;
+        set {
+            var pos = PositionWS;
+
+            Remainder.x += value;
+            int move = Mathf.RoundToInt(Remainder.x);
+            Remainder.x -= move;
+            
+            pos.x = move;
+            PositionWS = pos;
+        }
+    }
+    
+    public float Y
+    {
+        get => positionWS.y;
+        set {
+            var pos = PositionWS;
+            
+            Remainder.y += value;
+            int move = Mathf.RoundToInt(Remainder.y);
+            Remainder.y -= move;
+            
+            pos.y = move;
+            PositionWS = pos;
+        }
+    }
+    
     public Vector2Int PositionWS
     {
         get => positionWS;
@@ -67,8 +98,8 @@ public abstract class Entity : MonoBehaviour, ISoundable
     
     protected virtual void Awake()
     {
-        SndSource = GetComponent<AudioSource>();
-        SndSource.playOnAwake = false;
+        BaseSoundSource = GetComponent<AudioSource>();
+        BaseSoundSource.playOnAwake = false;
         
         if (!targetTransform)
             targetTransform = transform;
@@ -103,15 +134,15 @@ public abstract class Entity : MonoBehaviour, ISoundable
 
     // sounds
     protected SoundClipManager Clips => SoundClipManager.I;
-    protected AudioSource SndSource;
+    protected AudioSource BaseSoundSource;
     public void PlaySound(AudioClip clip, float pitch = 1f, float startRatio = 0f)
     {
-        SndSource.Stop();
-        SndSource.pitch = pitch;
-        SndSource.time = startRatio * clip.length;
-        SndSource.clip = clip;
-        SndSource.Play();
+        BaseSoundSource.Stop();
+        BaseSoundSource.pitch = pitch;
+        BaseSoundSource.time = startRatio * clip.length;
+        BaseSoundSource.clip = clip;
+        BaseSoundSource.Play();
     }
 
-    public void StopSound() => SndSource.Stop();
+    public void StopSound() => BaseSoundSource.Stop();
 }

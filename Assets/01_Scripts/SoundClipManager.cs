@@ -56,4 +56,13 @@ public class SoundClipManager : MonoBehaviour
         
         DontDestroyOnLoad(this);
     }
+    
+    public void Play(AudioSource source, AudioClip clip, float pitch = 1f, float startRatio = 0f)
+    {
+        source.Stop();
+        source.pitch = pitch;
+        source.time = startRatio * clip.length;
+        source.clip = clip;
+        source.Play();
+    }
 } 

@@ -11,9 +11,15 @@ public partial class Player
     [HideInInspector] public Vector2Int TransitionTarget;
     [HideInInspector] public bool ForceFlipXValue = false;
     [HideInInspector] public bool ForceSpriteFlip = false;
+    
+    [HideInInspector] public bool LockMovementBySpeed;
+    
+    #region State Transition
 
     public void TransitionBegin()
     {
+        LockMovementBySpeed = true;
+        
         RefillDash();
         wallSlideTimer = WallSlideTime;
         forceMoveXTimer = 0;
@@ -65,6 +71,7 @@ public partial class Player
 
     public void TransitionEnd()
     {
+        LockMovementBySpeed = false;
         ForceSpriteFlip = false;
         Level.OnTransitionEnd();
     }
@@ -92,54 +99,68 @@ public partial class Player
         sm.State = StateNormal; // if was dashing. have to stop x movement
         dashCoolDownTimer = DashCoolDown; 
     }
-    
 
+    #endregion
+    
     #region Level Intros
     
-    // private Facings introWalkDirection;
-    // private IntroTypes IntroType { get; set; }
-    //
-    // public override void Added(Level level)
-    // {
-    //     IntroType = level.IntroType;
-    //     switch (IntroType)
-    //     {
-    //         case IntroTypes.Respawn:
-    //             sm.State = StateNormal;
-    //             break;
-    //         case IntroTypes.WalkInRight:
-    //             introWalkDirection = Facings.Right;
-    //             sm.State = StateIntroWalk;
-    //             break;
-    //         case IntroTypes.WalkInLeft:
-    //             introWalkDirection = Facings.Left;
-    //             sm.State = StateIntroWalk;
-    //             break;
-    //         case IntroTypes.Jump:
-    //             sm.State = StateIntroJump;
-    //             break;
-    //         case IntroTypes.None:
-    //             sm.State = StateNormal;
-    //             break;
-    //         case IntroTypes.Fall:
-    //             sm.State = StateReflectionFall;
-    //             break;
-    //     }
-    //     IntroType = IntroTypes.Transition;
-    // }
-    
-    private void BeginIntroJump()
+    private void IntroJumpBegin()
     {
+        Collideable = false;
+        
+        Y = Room.BoundRect.y - 16;
+        X = Room.SpawnPosWS.x; // later change to move diagonal
+
+        // after update before late update
         StartCoroutine(IntroJumpCoroutine());
     }
 
+    private int IntroJumpUpdate() => StateIntroJump;
+
     private IEnumerator IntroJumpCoroutine()
     {
-        var start = PositionWS;
+        yield return new WaitForSeconds(0.5f);
+        // move up
+        {
+            // move with force
+            while (Y < Room.SpawnPosWS.y + 8)
+            {
+                Speed.y = 120;
+                yield return null;
+            }
+            Collideable = true;
+        }
         
+        // slow down
+        {
+            while (Speed.y > 0)
+            {
+                Speed.y -= 800 * Time.deltaTime;
+                yield return null;
+            }
+            Speed.y = 0; // stop at top
+        }
         
+        // fall down
+        {
+            while (!onGround)
+            {
+                Speed.y -= 800 * Time.deltaTime;
+                yield return null;
+            }
+        }
+        
+        // land
+        {
+            EffectManager.ShakeCam(0.6f, 1.2f);
+        }
+        
+        sm.State = StateNormal;
+    }
 
-        return null;
+    private void IntroJumpEnd()
+    {
+        Level.OnPlayerIntroComplete.Invoke();
     }
 
     #endregion

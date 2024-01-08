@@ -234,12 +234,11 @@ Shader "Custom/CircleCrop"
             
             float ratio = 3;
             float2 ratio2 = float2(1, 1 / ratio);
-            float progress = _Progress / 2.1;
+            float progress = _Progress / 2;
             
-            float s = pow(2.0 * abs(progress - 0.5), 3.0);
+            float s = pow(2.0 * abs(progress - 0.55), 3.0);
 
             float dist = length((screenUV) * ratio2);
-            
             
             surface.BaseColor = 0;
             surface.Alpha = step(s, dist);

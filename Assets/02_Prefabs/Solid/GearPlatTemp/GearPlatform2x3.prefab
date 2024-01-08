@@ -49,6 +49,10 @@ PrefabInstance:
       value: 24
       objectReference: {fileID: 0}
     - target: {fileID: 5566008088839716060, guid: 10cc5ec46aa5f06458a5f7a6bc8f919c, type: 3}
+      propertyPath: HitBoxBottomLeftOffset.x
+      value: -8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5566008088839716060, guid: 10cc5ec46aa5f06458a5f7a6bc8f919c, type: 3}
       propertyPath: HitboxBottomLeftOffset.x
       value: -8
       objectReference: {fileID: 0}

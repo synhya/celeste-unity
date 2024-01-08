@@ -1,9 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Serialization;
 
+[RequireComponent(typeof(AudioSource))]
 public class Game : MonoBehaviour
 {
     public static Game I =>
@@ -16,6 +18,8 @@ public class Game : MonoBehaviour
     [SerializeField] private GameObject playerPrefab;
     public static Player MainPlayer => instance.mainPlayer;
     private Player mainPlayer;
+
+    private AudioSource windSource;
     
     public static bool IsPaused
     {
@@ -41,7 +45,13 @@ public class Game : MonoBehaviour
         DontDestroyOnLoad(mainPlayer);
         mainPlayer.gameObject.SetActive(false);
     }
-    
+
+    private void Start()
+    {
+        windSource = GetComponent<AudioSource>();
+        SoundClipManager.I.Play(windSource, SoundClipManager.I.menuWindSnd);
+    }
+
     // void StartGame()
     // {
     //
