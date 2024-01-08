@@ -2,7 +2,7 @@
 Platformer based on [Celeste](https://www.celestegame.com/) and [Celeste Origin](https://maddymakesgamesinc.itch.io/celesteclassic)   
 
 [Game Play Video](https://www.youtube.com/watch?v=A_KDR0tZdBA)     
-[한국어버전 상세설명](https://github.com/wkd2314/ForPortfolio/blob/master/Readme_kr.md)
+[한국어 상세구현 설명](https://github.com/wkd2314/ForPortfolio/blob/master/Readme_kr.md)
 
 ## How To Play
 
