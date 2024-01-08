@@ -29,7 +29,7 @@ public class Spring : Trigger
         {
             var p = other as Player;
             p.OnBoost();
-            PlaySound(Clips.springSnd);
+            PlaySound(Sound.springSndData);
         }
         
         onPlay = true;

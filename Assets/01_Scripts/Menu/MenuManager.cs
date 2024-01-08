@@ -5,6 +5,7 @@ using DG.Tweening;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 
 
@@ -59,7 +60,7 @@ public class MenuManager : MonoBehaviour
     private bool isOnSceneTransition = false;
 
     private AudioSource clickSource;
-    private SoundClipManager Sound => SoundClipManager.I;
+    private SoundDataManager Sound => SoundDataManager.I;
     
     private void Start()
     {
@@ -83,6 +84,7 @@ public class MenuManager : MonoBehaviour
         levelUI.position = pos;
 
         clickSource = GetComponent<AudioSource>();
+        transitionMat.SetFloat("_Progress", 0);
     }
 
     private void Update()
@@ -121,7 +123,7 @@ public class MenuManager : MonoBehaviour
         {
             if (activeTextIdx == 0)
             {
-                Sound.Play(clickSource, Sound.menuClickSnd);
+                Sound.Play(clickSource, Sound.menuClickSndData);
                 curYRotation = mtPivot.rotation.eulerAngles.y;
                 if (curYRotation <= leftMax || curYRotation >= rightMax) // 항상 0 ~ 360반환하니까. 
                 {
@@ -186,7 +188,7 @@ public class MenuManager : MonoBehaviour
 
         if (Input.GetKeyDown(oKey) && selectDelayTimer < 0f)
         {
-            Sound.Play(clickSource, Sound.menuClickSnd);
+            Sound.Play(clickSource, Sound.menuClickSndData);
             return StLevel;
         }
         
@@ -228,14 +230,13 @@ public class MenuManager : MonoBehaviour
             // start transition
             isOnSceneTransition = true;
             transitionMat.SetVector("_CenterScreenPos", new Vector2(1920 / 2, 1080 / 2));
-            transitionMat.SetFloat("_Progress", 0);
             
-            Sound.Play(clickSource, Sound.menuClickSnd);
+            Sound.Play(clickSource, Sound.menuClickSndData);
 
             DOTween.Sequence()
                 .Append(levelUI.DOMoveX(rectMoveAmount, rectMoveDuration).SetRelative().SetEase(Ease.OutCubic))
                 .Join(transitionMat.DOFloat(1, "_Progress", 1))
-                .OnComplete(() => SceneSwitcher.I.LoadScene(SceneSwitcher.SceneLevel1));
+                .OnComplete(() => SceneManager.LoadScene(1));
         }
             
         else if (Input.GetKeyDown(xKey))

@@ -56,7 +56,7 @@ public class Strawberry : Trigger
             lerpTween.Kill();
             transform.SetParent(Level.transform);
             
-            PlaySound(Clips.strawberrySnd);
+            PlaySound(Sound.strawberrySndData);
         }
     }
     public override void OnStay(Entity other)

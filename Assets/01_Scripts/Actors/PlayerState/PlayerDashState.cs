@@ -103,7 +103,7 @@ public partial class Player
         EffectManager.CreateRipple(CenterWS);
         EffectManager.ShakeCam(0.3f, 1.3f);
 
-        PlaySound(Clips.dashSnd, 1f, 0.2f);
+        PlaySound(Sound.dashSndData);
     }
 
     private void DashEnd()

@@ -5,9 +5,11 @@ using System.Linq;
 using TriangleNet.Geometry;
 using TriangleNet.Meshing;
 using TriangleNet.Topology;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Serialization;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(MeshFilter)), RequireComponent(typeof(MeshRenderer)), RequireComponent(typeof(MeshCollider))]
@@ -249,6 +251,9 @@ public class TerrainGenerator : MonoBehaviour
         
         return heightGradient.Evaluate(gradientVal);
     }
+    
+
+    
     public void SaveMesh(int index = -1)
     {
         if (transform.GetComponent<MeshFilter>() != null)
@@ -259,7 +264,9 @@ public class TerrainGenerator : MonoBehaviour
                 path = "Assets/GeneratedMesh" + index + ".asset";
             }
             
+#if UNITY_EDITOR
             AssetDatabase.CreateAsset(transform.GetComponent<MeshFilter>().sharedMesh, path);
+#endif
         }
     }
 

@@ -49,7 +49,7 @@ public class Game : MonoBehaviour
     private void Start()
     {
         windSource = GetComponent<AudioSource>();
-        SoundClipManager.I.Play(windSource, SoundClipManager.I.menuWindSnd);
+        SoundDataManager.I.Play(windSource, SoundDataManager.I.menuWindSndData);
     }
 
     // void StartGame()

@@ -31,8 +31,8 @@ public class GearPlatform : Solid
     private StateMachine sm;
     private const int StWait = 1;
     private const int StForward = 2;
-    private const int StArrive = 2;
-    private const int StBackward = 2;
+    private const int StArrive = 3;
+    private const int StBackward = 4;
     
     private Vector2 forwardDirection;
     private Vector2 currentDirection;
@@ -90,7 +90,7 @@ public class GearPlatform : Solid
     {
         if (timer <= 0f && HasActorRiding())
         {
-            PlaySound(Clips.gearBellSnd);
+            PlaySound(Sound.gearBellSndData);
             timer = startDelayTime;
         }
         if (timer > 0f)
@@ -115,7 +115,7 @@ public class GearPlatform : Solid
         anims[0].enabled = true;
         anims[1].enabled = true;
         
-        PlaySound(Clips.gearSpinSnd, 2f);
+        PlaySound(Sound.gearSpinBackSndData);
     }
 
     int ForwardUpdate()
@@ -189,7 +189,7 @@ public class GearPlatform : Solid
         anims[0].enabled = true;
         anims[1].enabled = true;
         
-        PlaySound(Clips.gearSpinSnd, 1f);
+        PlaySound(Sound.gearSpinSndData);
     }
 
     private int BackwardUpdate()
@@ -217,6 +217,8 @@ public class GearPlatform : Solid
 
     private void BackwardEnd()
     {
+        StopSound();
+        
         anims[0].speed = 1f;
         anims[1].speed = 1f;
         anims[0].enabled = false;

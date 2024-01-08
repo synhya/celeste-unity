@@ -133,14 +133,15 @@ public abstract class Entity : MonoBehaviour, ISoundable
     }
 
     // sounds
-    protected SoundClipManager Clips => SoundClipManager.I;
+    protected SoundDataManager Sound => SoundDataManager.I;
     protected AudioSource BaseSoundSource;
-    public void PlaySound(AudioClip clip, float pitch = 1f, float startRatio = 0f)
+    public void PlaySound(AudioData data)
     {
         BaseSoundSource.Stop();
-        BaseSoundSource.pitch = pitch;
-        BaseSoundSource.time = startRatio * clip.length;
-        BaseSoundSource.clip = clip;
+        BaseSoundSource.pitch = data.pitch;
+        // BaseSoundSource.time = startRatio * data.length;
+        BaseSoundSource.volume = data.volume;
+        BaseSoundSource.clip = data.clip;
         BaseSoundSource.Play();
     }
 

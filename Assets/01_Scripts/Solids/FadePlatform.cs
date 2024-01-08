@@ -55,7 +55,7 @@ public class FadePlatform : Solid
             timer = FadeOutTime;
             
             // also start animation.
-            PlaySound(Clips.brickShakeSnd);
+            PlaySound(Sound.brickShakeSndData);
             for (int i = 0; i < blockTs.Count; i++)
             {
                 DOTween.Sequence()

@@ -104,7 +104,7 @@ public class Level : MonoBehaviour
         // play bgm on loop
         bgmSource = GetComponent<AudioSource>();
         bgmSource.loop = true;
-        SoundClipManager.I.Play(bgmSource, SoundClipManager.I.levelBgmSnd);
+        SoundDataManager.I.Play(bgmSource, SoundDataManager.I.levelBgmSndData);
     }
 
     private void WipeOutCircle()

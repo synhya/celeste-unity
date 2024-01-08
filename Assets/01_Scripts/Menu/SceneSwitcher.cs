@@ -23,7 +23,7 @@ public class SceneSwitcher : MonoBehaviour
     
     public void LoadScene(int idx)
     {
-        SceneManager.LoadScene(idx); // -> level.start()
+        ; // -> level.start()
     }
 }
 

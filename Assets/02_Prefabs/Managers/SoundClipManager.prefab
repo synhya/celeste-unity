@@ -44,20 +44,75 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91a5911afdcfc0748855de4346f0f417, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menuWindSnd: {fileID: 8300000, guid: f5e35a416d3be304aa9a92248e6decf3, type: 3}
-  menuClickSnd: {fileID: 8300000, guid: 0c0c112040d825644a256496d67beb39, type: 3}
-  menuStartLevelSnd: {fileID: 8300000, guid: cf212c394c87c5a45b11a222ad991499, type: 3}
-  levelBgmSnd: {fileID: 8300000, guid: 4bd9da6c346047f45bccc79996842fc8, type: 3}
-  jumpSnd: {fileID: 8300000, guid: 15277fe9e1237e6419e6decae5b367db, type: 3}
-  wallJumpSnd: {fileID: 8300000, guid: 017b535c1fdad3a4cab4dbcbdb5c72f8, type: 3}
-  dashSnd: {fileID: 8300000, guid: facb7132f2608bc4b9b9cc7d0fdd4b36, type: 3}
-  snowWalkSnd: {fileID: 8300000, guid: cb88bc574a0131b4885dc36f76fe336a, type: 3}
-  metalWalkSnd: {fileID: 8300000, guid: 38a49d68895c49e4aab18f5ff883fb96, type: 3}
-  stoneWalkSnd: {fileID: 8300000, guid: 0358c0559ece84444a82719f2bbf0a07, type: 3}
-  playerDeathSnd: {fileID: 8300000, guid: 06f3f3957e516cc498f5bd4e728f2c40, type: 3}
-  playerReviveSnd: {fileID: 8300000, guid: 3561606ce1d15384d855af5a422f5952, type: 3}
-  gearBellSnd: {fileID: 8300000, guid: 37e95ee0876605041b26ce8ced1f8efb, type: 3}
-  gearSpinSnd: {fileID: 8300000, guid: b545587278a55c44794b66b3814bfce3, type: 3}
-  brickShakeSnd: {fileID: 8300000, guid: aaca06637f629fd4eb66c80d4c6fafd3, type: 3}
-  springSnd: {fileID: 8300000, guid: 628274b4f890e604387aa9bb0f7d04d9, type: 3}
-  strawberrySnd: {fileID: 8300000, guid: 7cfb1d58288206544bc214a7d04914af, type: 3}
+  menuWindSndData:
+    clip: {fileID: 8300000, guid: f5e35a416d3be304aa9a92248e6decf3, type: 3}
+    volume: 0.5
+    pitch: 1
+  menuClickSndData:
+    clip: {fileID: 8300000, guid: 0c0c112040d825644a256496d67beb39, type: 3}
+    volume: 0.526
+    pitch: 1
+  menuStartLevelSndData:
+    clip: {fileID: 8300000, guid: cf212c394c87c5a45b11a222ad991499, type: 3}
+    volume: 0.519
+    pitch: 1
+  levelBgmSndData:
+    clip: {fileID: 8300000, guid: 4bd9da6c346047f45bccc79996842fc8, type: 3}
+    volume: 0.163
+    pitch: 1
+  jumpSndData:
+    clip: {fileID: 8300000, guid: 3f5d16b256f6d374d97c13fa52cc3735, type: 3}
+    volume: 0.294
+    pitch: 1
+  wallJumpSndData:
+    clip: {fileID: 8300000, guid: 3f5d16b256f6d374d97c13fa52cc3735, type: 3}
+    volume: 0.299
+    pitch: 1
+  dashSndData:
+    clip: {fileID: 8300000, guid: facb7132f2608bc4b9b9cc7d0fdd4b36, type: 3}
+    volume: 0.457
+    pitch: 1
+  snowWalkSndData:
+    clip: {fileID: 8300000, guid: 9548401ea233f4143a500456f6d92a4d, type: 3}
+    volume: 0.5
+    pitch: 2.01
+  metalWalkSndData:
+    clip: {fileID: 8300000, guid: 38a49d68895c49e4aab18f5ff883fb96, type: 3}
+    volume: 0.5
+    pitch: 1.1
+  stoneWalkSndData:
+    clip: {fileID: 8300000, guid: 0358c0559ece84444a82719f2bbf0a07, type: 3}
+    volume: 0.5
+    pitch: 1.27
+  playerDeathSndData:
+    clip: {fileID: 8300000, guid: 06f3f3957e516cc498f5bd4e728f2c40, type: 3}
+    volume: 0.407
+    pitch: 1
+  playerReviveSndData:
+    clip: {fileID: 8300000, guid: 3edaffc755fc81944898e6a1758e9a44, type: 3}
+    volume: 0.679
+    pitch: 1
+  gearBellSndData:
+    clip: {fileID: 8300000, guid: 37e95ee0876605041b26ce8ced1f8efb, type: 3}
+    volume: 0.5
+    pitch: 1
+  gearSpinSndData:
+    clip: {fileID: 8300000, guid: b545587278a55c44794b66b3814bfce3, type: 3}
+    volume: 0.5
+    pitch: 1.99
+  gearSpinBackSndData:
+    clip: {fileID: 8300000, guid: b545587278a55c44794b66b3814bfce3, type: 3}
+    volume: 0.5
+    pitch: 1
+  brickShakeSndData:
+    clip: {fileID: 8300000, guid: aaca06637f629fd4eb66c80d4c6fafd3, type: 3}
+    volume: 0.5
+    pitch: 1
+  springSndData:
+    clip: {fileID: 8300000, guid: 628274b4f890e604387aa9bb0f7d04d9, type: 3}
+    volume: 1
+    pitch: 1
+  strawberrySndData:
+    clip: {fileID: 8300000, guid: 7cfb1d58288206544bc214a7d04914af, type: 3}
+    volume: 0.26
+    pitch: 1

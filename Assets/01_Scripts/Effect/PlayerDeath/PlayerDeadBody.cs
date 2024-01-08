@@ -27,7 +27,7 @@ public class PlayerDeadBody : MonoBehaviour
     private SpriteRenderer sr;
 
     public AudioSource Source;
-    public SoundClipManager Sound => SoundClipManager.I;
+    public SoundDataManager Sound => SoundDataManager.I;
     
     // 최적화 필요.
     public void Init(Vector2 backDir, bool flipX)
@@ -51,7 +51,7 @@ public class PlayerDeadBody : MonoBehaviour
             {
                 sr.enabled = false;
                 
-                Sound.Play(Source, Sound.playerDeathSnd);
+                Sound.Play(Source, Sound.playerDeathSndData);
                 Source.Play();
                 
                 for (var dir = 0; dir <= 7; dir++)
@@ -66,7 +66,7 @@ public class PlayerDeadBody : MonoBehaviour
             .InsertCallback(2f, () =>
             {
                 Source.Stop();
-                Sound.Play(Source, Sound.playerReviveSnd);
+                Sound.Play(Source, Sound.playerReviveSndData);
                 Source.Play();
             })
             .InsertCallback(6f, () =>

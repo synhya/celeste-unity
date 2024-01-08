@@ -148,9 +148,9 @@ public partial class Player : Actor
         {
             if(!BaseSoundSource.isPlaying)
             {
-                PlaySound(Clips.snowWalkSnd,2f);
+                PlaySound(Sound.snowWalkSndData);
             }
-        } else if (BaseSoundSource.clip == Clips.snowWalkSnd)
+        } else if (BaseSoundSource.clip == Sound.snowWalkSndData.clip)
         {
             StopSound();
         }
