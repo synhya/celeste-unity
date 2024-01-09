@@ -152,12 +152,6 @@ public partial class Player
                 if (inputY == -1 && Speed.y >= mf)
                 {
                     maxFall = MoveTowards(maxFall, fmf, MaxFallAccel * deltaTime);
-
-                    float half = mf + (fmf - mf) * .5f;
-                    if (Speed.y >= half)
-                    {
-                        // sprite scale effect
-                    }
                 }
                 else
                 {

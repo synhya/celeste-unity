@@ -25,7 +25,7 @@ public class Level : MonoBehaviour
     // for intro
     [Header("Intro")]
     [SerializeField] private Material introMat;
-    [SerializeField] private Vector2 cropScreenPos;
+    private Vector2 cropScreenPos;
     [SerializeField] private float targetProgress; // from 1 to backward
     
     [Header("General")]
@@ -92,12 +92,17 @@ public class Level : MonoBehaviour
         camT.position = CameraTarget;
         
         // intro
+        Vector3 cropCenterWS = (Vector3Int)CurRoom.SpawnPosWS;
+        cropCenterWS.y += player.HitboxSize.y / 2f;
+        cropScreenPos = MainCam.WorldToScreenPoint(cropCenterWS);
+        
         introMat.SetVector("_CenterScreenPos", cropScreenPos);
         introMat.SetFloat("_Progress", 1);
         introMat.DOFloat(targetProgress, "_Progress", 1f)
             .OnComplete(() =>
             {
-                SpawnPlayer();
+                player.gameObject.SetActive(true);
+                player.OnSpawn();
                 player.State = Player.StateIntroJump;
             });
         
@@ -185,7 +190,6 @@ public class Level : MonoBehaviour
             Vector3 at = new Vector3(0 ,0, -10);
             Vector2 target = player.PositionWS;
             
-            
             at.x = Mathf.Clamp(target.x, curBoundMin.x, curBoundMax.x);
             at.y = Mathf.Clamp(target.y, curBoundMin.y, curBoundMax.y);
 
@@ -193,10 +197,11 @@ public class Level : MonoBehaviour
         }
     }
     
-    public void SpawnPlayer()
+    public void ReSpawnPlayer()
     {
         player.gameObject.SetActive(true);
         player.PositionWS = CurRoom.SpawnPosWS;
+        player.UpdatePosition();
         player.OnSpawn();
     }
 } 

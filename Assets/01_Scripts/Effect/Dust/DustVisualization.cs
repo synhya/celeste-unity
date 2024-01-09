@@ -94,7 +94,7 @@ public class DustVisualization : MonoBehaviour, IPoolable
             dustCompute.SetFloat("_LeftTime", aliveTimer);
             dustCompute.Dispatch(0, Mathf.CeilToInt(instanceCount / 256.0f), 1, 1);
             
-            Graphics.DrawMeshInstancedIndirect(instancedMesh, 0, instancedMaterial, bounds, argsBuffer);
+            Graphics.DrawMeshInstancedIndirect(instancedMesh, 0, instancedMaterial, bounds, argsBuffer, layer: 4);
             aliveTimer -= Time.deltaTime;
         } 
         else if (didBurst)

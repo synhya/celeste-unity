@@ -78,7 +78,7 @@ public class DeathCircle : MonoBehaviour, IPoolable
             if (!didSpawnPlayer)
             {
                 didSpawnPlayer = true;
-                Level.Current.SpawnPlayer();
+                Level.Current.ReSpawnPlayer();
             }
             t.SetParent(originalParent);
             seq.Kill();

@@ -25,10 +25,6 @@ public class EffectManager : MonoBehaviour
     public static DeathCircle GetCircle() => instance.dCirclePool.Pool.Get();
     public static DashTrail GetTrail() => instance.dashTrailPool.Pool.Get();
     public static void CreateRipple(Vector2 pos) => instance.rippleHandler.Ripple(pos);
-
-    // subscribers require different parameters so it would be messy.
-    // public Action DashStart;
-    // public Action DashEnd;
     
     void Awake() 
     {

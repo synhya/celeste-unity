@@ -48,6 +48,6 @@ Material:
     - _Fullscreen_SrcColorBlend: 5
     - _Progress: 0
     m_Colors:
-    - _CenterPosWS: {r: 335.79, g: 0, b: 0, a: 0}
-    - _CenterScreenPos: {r: 138.6, g: 285.6, b: 0, a: 0}
+    - _CenterPosWS: {r: 44, g: 39, b: 0, a: 0}
+    - _CenterScreenPos: {r: 143.99997, g: 258, b: 0, a: 0}
   m_BuildTextureStacks: []

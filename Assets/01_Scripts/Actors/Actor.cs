@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-/// <summary>
-/// Actors don’t have any concept of their own velocity, acceleration, or gravity.
-/// Every class that extends Actor takes care of that
-/// </summary>
 public class Actor : Entity
 {
     private Tilemap tileMap;
@@ -23,18 +19,6 @@ public class Actor : Entity
     protected virtual void Update()
     {
         
-    }
-    
-    protected void MoveTowardsH(int targetX, float amount)
-    {
-        // 남은 거리에 상관없이 일정 속도로 이동
-        // 도착후에 정지
-    }
-
-    protected void MoveTowardsV(int targetY, float amount)
-    {
-        // 남은 거리에 상관없이 일정 속도로 이동
-        // 도착후에 정지
     }
 
     public void MoveH(float amount, Action<CollisionData> onCollide)
@@ -95,11 +79,7 @@ public class Actor : Entity
     {
         get => lastSolidRiding && IsRiding(lastSolidRiding) ? lastSolidRiding.Speed : Vector2.zero;
     }
-    /// Typically, an Actor is riding a Solid if that Actor is immediately above the Solid.
-    /// But some Actors might want to override this function to change how it behaves
-    /// — for example, in TowerFall, players will also ride Solids
-    /// that they are ledge grabbing on, and flying monsters never ride Solids.
-    /// In Celeste, Madeline rides Solids when she stands on them or clings to the side of them.
+
     public virtual bool IsRiding(Solid solid)
     {
         if (!Collideable) return false;
@@ -145,13 +125,7 @@ public class Actor : Entity
         
         return ret;
     }
-
-
-    // left to implement
-    protected T CollideFirst<T>(Vector2Int offset) where T : Solid
-    {
-        return null;
-    }
+    
     
     /// <summary>
     /// collision check with ground type tiles + every solid 

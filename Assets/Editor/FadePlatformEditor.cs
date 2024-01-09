@@ -6,7 +6,7 @@ using UnityEngine;
 [CanEditMultipleObjects]
 public class FadePlatformEditor : SolidEditor
 {
-    protected override void OnSceneGUI()
+    public override void OnSceneGUI()
     {
         base.OnSceneGUI();
         

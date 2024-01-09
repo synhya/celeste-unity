@@ -112,7 +112,7 @@ public abstract class Entity : MonoBehaviour, ISoundable
     {
     }
 
-    protected void UpdatePosition()
+    public void UpdatePosition()
     {
         if (PositionWS != PreviousPos)
         {
