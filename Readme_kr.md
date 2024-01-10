@@ -2,6 +2,44 @@
 
 Celeste라는 게임을 직접 플레이하고 최대한 비슷하게 구현하는데 초점을 맞추었습니다.
 
+## 플레이어
+플레이어는 State Machine에 따라 움직입니다. 상태머신은 플레이어의 상태에 맞추어
+알맞은 Action을 실행합니다.
+
+    private void OnStateChange(int newState) 
+    {
+        if(currentStateIdx == newState) return;
+
+        if (stateDict.TryGetValue(newState, out var stateActions))
+        {
+            if (stateDict.TryGetValue(currentStateIdx, out var prevActions))
+            {
+                prevActions.end?.Invoke();
+            }
+            
+            stateActions.begin?.Invoke();
+            currentUpdateAction = stateActions.update;
+        }
+    }
+
+각각의 State마다 클래스를 생성할 수도 있었지만 플레이어 스크립트 내부에 Callback형식을   
+넣는것이 보기가 깔끔해서 해당 방식을 채택 했습니다.
+
+    // in player class
+    public const int StateNormal = 0;
+    public const int StateDash = 1;
+    
+    protected override void Start()
+    {
+        base.Start();
+        
+        sm = new StateMachine(3);
+        sm.SetCallbacks(StateNormal, NormalUpdate, NormalBegin, null);
+        sm.SetCallbacks(StateDash, DashUpdate, DashBegin, DashEnd);
+        ...
+        sm.State = StateNormal;
+    }
+
 ## 이펙트
 ### 대쉬시에 후드 색상 변경
 원작 게임에서 플레이어의 남은 대시 수에 따라서 머리의 색이 바뀝니다.   
@@ -156,44 +194,6 @@ Actor가 이동할 때마다 레벨에 존재하는 모든 Solid와
         PositionWS = was;
 
         return ret;
-    }
-
-## 플레이어
-플레이어는 State Machine에 따라 움직입니다. 상태머신은 플레이어의 상태에 맞추어
-알맞은 Action을 실행합니다.
-
-    private void OnStateChange(int newState) 
-    {
-        if(currentStateIdx == newState) return;
-
-        if (stateDict.TryGetValue(newState, out var stateActions))
-        {
-            if (stateDict.TryGetValue(currentStateIdx, out var prevActions))
-            {
-                prevActions.end?.Invoke();
-            }
-            
-            stateActions.begin?.Invoke();
-            currentUpdateAction = stateActions.update;
-        }
-    }
-
-각각의 State마다 클래스를 생성할 수도 있었지만 플레이어 스크립트 내부에 Callback형식을   
-넣는것이 보기가 깔끔해서 해당 방식을 채택 했습니다.
-
-    // in player class
-    public const int StateNormal = 0;
-    public const int StateDash = 1;
-    
-    protected override void Start()
-    {
-        base.Start();
-        
-        sm = new StateMachine(3);
-        sm.SetCallbacks(StateNormal, NormalUpdate, NormalBegin, null);
-        sm.SetCallbacks(StateDash, DashUpdate, DashBegin, DashEnd);
-        ...
-        sm.State = StateNormal;
     }
 
 ## 조작감 개선
